@@ -1,0 +1,15 @@
+# environments and caches
+.venv/
+__pycache__/
+*.pyc
+
+# large local inputs, never committed
+models/
+data/
+
+# generated, large
+traces/
+
+# build outputs
+build/
+*.o

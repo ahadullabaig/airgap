@@ -17,7 +17,7 @@ Two outcomes from one codebase:
 - There is no deadline. Week numbers in this plan give the order of work, not dates.
 - The NLP instructor expects an evaluation of Part A (section 2.5).
 - Target device (checked 2026-11-21): RTX 3050 Laptop GPU, 4 GB VRAM, driver 620.70, Fedora 44. No CUDA toolkit (`nvcc`) or PyTorch installed yet; system GCC is 16.2 and system Python is 3.14 (see the toolchain risk in section 6).
-- Model shape (from the SmolVLM2-500M config): the vision encoder sees 512 px frames in 16 px patches, so N = 1024 tokens per frame, hidden size 768, 12 heads, head size d = 64. Built-in video sampling is 1 fps. Confirm the 1024 when the model first loads.
+- Model shape (from the SmolVLM2-500M config): the vision encoder sees 512 px frames in 16 px patches, so N = 1024 tokens per frame, hidden size 768, 12 heads, head size d = 64. Built-in video sampling is 1 fps. Confirmed on first load (2026-11-21): the encoder outputs 1024 tokens per frame. Without image splitting, a 16:9 frame is stretched (not cropped or padded) to 512x512, so all 1024 patches are real image content. Other aspect ratios are unchecked. Each frame costs 64 tokens on the language side.
 
 **Still assumed (correct these first)**
 
@@ -62,8 +62,8 @@ A user points the tool at an aerial video. With the network off, it produces tim
 
 1. Load the model from local files; caption one clip with the network disabled.
 2. Windowing: split a video into fixed windows, sample a few frames per window, caption each window with a fixed prompt.
-   - Decode frames ourselves (PyAV or OpenCV wheels, which bundle their own FFmpeg; Fedora's stock FFmpeg may not decode H.264) rather than using the processor's 1 fps video path. The same decoder then serves the trace export.
-   - Decide image splitting on purpose. Passed as still images, each frame can become up to 17 tiles: better for small objects, but roughly 17x the encoder work.
+   - Decode frames ourselves with PyAV (`demo/sampling.py`) rather than using the processor's 1 fps video path. The same decoder then serves the trace export.
+   - Decide image splitting on purpose. With splitting on, a 16:9 720p frame becomes 13 tiles, and a one-frame prompt grows from 76 to 871 tokens: better for small objects, but roughly 13x the encoder work.
 3. Report generation: a fixed Markdown template holds the structure (timeline table, notable events, uncertain items), filled from the timestamped captions. The language model (the VLM's text side, or a small local text model loaded after the VLM is unloaded) writes only the summary paragraph. The 500M model's text side is small (hidden size 960).
    - "Uncertain items" needs a defined source, for example a caption's low mean token log-probability, or disagreement between neighbouring windows.
 4. Wrap in the CLI; log latency per window and peak VRAM.
@@ -160,7 +160,7 @@ Standalone CUDA C++, one benchmark binary each. Every version passes a correctne
 
 | ID | Kernel | Purpose |
 |---|---|---|
-| K0 | Block change map: mean absolute difference per 16x16 block between two frames (serial, OpenMP, CUDA) | Warm-up for the toolchain; measures real keep-rates early (X0); later produces change masks. Run it on the 512 px resized frame so each block is one encoder patch. |
+| K0 | Block change map: mean absolute difference per 16x16 block between two frames (serial, OpenMP, CUDA) | Warm-up for the toolchain; measures real keep-rates early (X0); later produces change masks. Run it on the frame stretched to 512x512, as the model sees it, so each block is one encoder patch. |
 | V1 | Attention as three kernels (scores, row softmax, output), storing N x N | Naive baseline |
 | V2 | Tiled matrix multiplies with shared memory | Middle rung |
 | V3 | One fused kernel with online softmax, no N x N storage | Dense fused baseline |
@@ -177,7 +177,7 @@ Measure before deciding.
 
 Single head and FP32 first, for correctness. Add multiple heads early, since it is one more grid dimension and timings must use the real shape (12 heads). FP16 only after everything is correct.
 
-For small M, G1 should also split the key range across blocks and merge the partial results (the Flash-Decoding approach). Otherwise one block sweeps all N keys alone while most of the GPU's SMs (16, estimated from the spec) sit idle.
+For small M, G1 should also split the key range across blocks and merge the partial results (the Flash-Decoding approach). Otherwise one block sweeps all N keys alone while most of the GPU's 16 SMs sit idle.
 
 ### 3.5 Baselines
 
@@ -292,7 +292,7 @@ paper/         source for the paper
 - [ ] Roles written into this file
 - [ ] NVIDIA driver, CUDA toolkit and PyTorch working together; versions committed
 - [ ] Nsight Compute can read performance counters
-- [ ] SmolVLM2-500M captions one aerial clip with the network off; N = 1024 confirmed
+- [x] SmolVLM2-500M captions one aerial clip with the network off; N = 1024 confirmed (`demo/caption_clip.py`)
 - [ ] ERA videos downloaded
 - [ ] A trivial CUDA kernel compiles, runs and is timed
 - [ ] Predicted time per kernel written down (section 3.1)

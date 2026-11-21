@@ -1,0 +1,63 @@
+{
+  "video": {
+    "path": "data/clips/sheboygan_falls.webm",
+    "duration_s": 98.164,
+    "fps": 29.97002997002997,
+    "width": 1280,
+    "height": 720,
+    "codec": "vp9"
+  },
+  "window": {
+    "start_s": 20.0,
+    "length_s": 8.0,
+    "frame_times_s": [
+      21.021,
+      23.023,
+      25.025,
+      27.027
+    ]
+  },
+  "image_splitting": false,
+  "pixel_values_shape": [
+    1,
+    4,
+    3,
+    512,
+    512
+  ],
+  "vision_encoder_output_shapes": [
+    [
+      4,
+      1024,
+      768
+    ]
+  ],
+  "prompt_tokens": 302,
+  "new_tokens": 19,
+  "caption": "The video shows a river flowing through a city, with buildings and trees in the background.",
+  "timing_s": {
+    "decode": 0.311,
+    "model_load": 0.887,
+    "generate_cold": 0.886,
+    "generate_warm": [
+      0.437,
+      0.431,
+      0.429
+    ]
+  },
+  "memory_mib": {
+    "torch_peak_allocated": 1068.0,
+    "torch_peak_reserved": 1098.0,
+    "device_used": 1226.6,
+    "device_total": 3790.0
+  },
+  "env": {
+    "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+    "driver": "620.70.06",
+    "torch": "2.15.0+cu132",
+    "torch_cuda": "13.2",
+    "transformers": "5.24.0",
+    "python": "3.12.13",
+    "hf_offline": "1"
+  }
+}
