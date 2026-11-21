@@ -1,0 +1,312 @@
+{
+ "what": "Eye check of clips the hover rule selects (bench/era_report.py, first scan): all 13 training clips it selects that the shot detector flags, plus 23 of the rest drawn with random.Random(1), excluding clips already in tra_sample_seed0.json.",
+ "made_with": "bench/era_sheets.py --frames 6 --thumb 150; every clip with a shot event, or that looked like it had a cut, re-checked at every frame around each event (6-frame strips had shown 7 of them as cuts; at every frame 6 are fast pans, tilts or zooms and 1 is unclear)",
+ "camera": "same codes as tra_sample_seed0.json, plus P: still for most of the clip, moving for part of it; judged for the whole clip",
+ "clips": [
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_008.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "zooms in on the player over the first ~1 s, then still"
+  },
+  {
+   "split": "Tra",
+   "cls": "Concert",
+   "id": "Concert_042.mp4",
+   "shot_flagged": true,
+   "camera": "S",
+   "shot": "single",
+   "note": "LED wall content changes; flagged by colour change"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_041.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "unclear",
+   "note": "camera moves behind thick smoke between ~4.5 and 5 s; cut or move cannot be told"
+  },
+  {
+   "split": "Tra",
+   "cls": "Landslide",
+   "id": "Landslide_045.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "fast tilt up at ~2.5 s, still before and after"
+  },
+  {
+   "split": "Tra",
+   "cls": "Mudslide",
+   "id": "Mudslide_027.mp4",
+   "shot_flagged": true,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_157.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "fast pan from beach to resort at ~2.7 s"
+  },
+  {
+   "split": "Tra",
+   "cls": "ParadeProtest",
+   "id": "ParadeProtest_007.mp4",
+   "shot_flagged": true,
+   "camera": "S",
+   "shot": "single",
+   "note": "large flag moves through frame"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_026.mp4",
+   "shot_flagged": true,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_045.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "two quick zoom-ins"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_013.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "camera tips toward the ground in the last frames"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_024.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "tilt up with exposure change at ~4 s"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_030.mp4",
+   "shot_flagged": true,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCongestion",
+   "id": "TrafficCongestion_005.mp4",
+   "shot_flagged": true,
+   "camera": "P",
+   "shot": "single",
+   "note": "pans to the coastline in the last ~1 s"
+  },
+  {
+   "split": "Tra",
+   "cls": "Baseball",
+   "id": "Baseball_012.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_003.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_010.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Boating",
+   "id": "Boating_005.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Conflict",
+   "id": "Conflict_011.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Constructing",
+   "id": "Constructing_038.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Cycling",
+   "id": "Cycling_009.mp4",
+   "shot_flagged": false,
+   "camera": "P",
+   "shot": "single",
+   "note": "still for ~4 s, then moves"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_001.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_056.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Flood",
+   "id": "Flood_038.mp4",
+   "shot_flagged": false,
+   "camera": "D",
+   "shot": "single",
+   "note": "slow drift over flood water"
+  },
+  {
+   "split": "Tra",
+   "cls": "Harvesting",
+   "id": "Harvesting_045.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Landslide",
+   "id": "Landslide_037.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_035.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_166.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_187.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Party",
+   "id": "Party_006.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_015.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_043.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ReligiousActivity",
+   "id": "ReligiousActivity_014.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Running",
+   "id": "Running_007.mp4",
+   "shot_flagged": false,
+   "camera": "P",
+   "shot": "single",
+   "note": "still for ~3 s, then turns"
+  },
+  {
+   "split": "Tra",
+   "cls": "Running",
+   "id": "Running_021.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Swimming",
+   "id": "Swimming_015.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCongestion",
+   "id": "TrafficCongestion_046.mp4",
+   "shot_flagged": false,
+   "camera": "S",
+   "shot": "single"
+  }
+ ],
+ "shot": {
+  "single": "one continuous shot",
+  "unclear": "cannot be told by eye"
+ }
+}

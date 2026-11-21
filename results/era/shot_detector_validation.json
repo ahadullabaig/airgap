@@ -1,0 +1,27 @@
+{
+ "clip": "sheboygan_falls.webm",
+ "threshold": 0.1,
+ "pair_s": 0.25,
+ "k": 7,
+ "boundaries": 10,
+ "found": 10,
+ "missed": [],
+ "false_events": [
+  [
+   43.68,
+   44.98,
+   0.25
+  ],
+  [
+   56.52,
+   56.92,
+   0.163
+  ],
+  [
+   63.56,
+   65.17,
+   0.17
+  ]
+ ],
+ "aerial_seconds": 89.8
+}

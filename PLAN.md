@@ -83,7 +83,7 @@ The NLP instructor expects an evaluation. Confirm its exact form with them; the 
 **Data: CapERA test split** (checked 2026-11-21)
 - 1,391 clips in 25 classes: 24 events plus NonEvent (155 clips). Class sizes range from 19 to 155. The class is in each clip's file name.
 - 5 captions per clip, about 9 words on average. One is the manual annotation; the other four are generated from it. Treat this as one human reference with paraphrases, not five independent references.
-- The repo holds captions only. The videos come from the ERA dataset and must be downloaded separately (week-1 checklist).
+- The repo holds captions only. The videos come from the ERA dataset, downloaded separately (DATA.md); every caption id matches a clip.
 
 | ID | What | How | Output |
 |---|---|---|---|
@@ -293,7 +293,7 @@ paper/         source for the paper
 - [ ] NVIDIA driver, CUDA toolkit and PyTorch working together; versions committed
 - [ ] Nsight Compute can read performance counters
 - [x] SmolVLM2-500M captions one aerial clip with the network off; N = 1024 confirmed (`demo/caption_clip.py`)
-- [ ] ERA videos downloaded
+- [x] ERA videos downloaded; all 2,864 match CapERA; per-clip scan in `results/era/` (DATA.md)
 - [ ] A trivial CUDA kernel compiles, runs and is timed
 - [ ] Predicted time per kernel written down (section 3.1)
 - [ ] Everyone on Part B has read the papers in section 3.2

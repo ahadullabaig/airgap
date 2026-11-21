@@ -1,0 +1,724 @@
+{
+ "what": "Hand labels for a class-stratified random sample of the ERA training split (4 clips per class, random.Random(0)), made from contact sheets before looking at any scan output.",
+ "made_with": "bench/era_sheets.py --sample 4 --split Tra --seed 0 (4 frames + first/last difference per clip); the 16 clips with a possible shot change re-checked at 12 frames per clip, and the 6 still in doubt at every 2nd frame; the 12 single-shot clips the scan flagged but that had not been re-checked were then checked at every frame around each event, after the scan (all single)",
+ "camera": {
+  "S": "still: framing unchanged to the eye between first and last frame",
+  "D": "drift: small, slow visible change of framing",
+  "M": "moving: clear translation, orbit, pan or zoom",
+  "T": "tracking: camera follows a subject over low-texture ground or water, so the picture looks steadier than the camera is"
+ },
+ "shot": {
+  "single": "one continuous shot",
+  "multi": "contains a cut or dissolve"
+ },
+ "clips": [
+  {
+   "split": "Tra",
+   "cls": "Baseball",
+   "id": "Baseball_003.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Baseball",
+   "id": "Baseball_025.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Baseball",
+   "id": "Baseball_027.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Baseball",
+   "id": "Baseball_049.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_017.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_026.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_032.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Basketball",
+   "id": "Basketball_033.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Boating",
+   "id": "Boating_020.mp4",
+   "camera": "T",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Boating",
+   "id": "Boating_023.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Boating",
+   "id": "Boating_031.mp4",
+   "camera": "T",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Boating",
+   "id": "Boating_051.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "CarRacing",
+   "id": "CarRacing_005.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "CarRacing",
+   "id": "CarRacing_007.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "CarRacing",
+   "id": "CarRacing_017.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "CarRacing",
+   "id": "CarRacing_019.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Concert",
+   "id": "Concert_007.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Concert",
+   "id": "Concert_009.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Concert",
+   "id": "Concert_019.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Concert",
+   "id": "Concert_049.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Conflict",
+   "id": "Conflict_009.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Conflict",
+   "id": "Conflict_018.mp4",
+   "camera": "M",
+   "shot": "single",
+   "note": "fast pan; looked like cuts at 4 and 12 frames per clip, continuous at every 2nd frame"
+  },
+  {
+   "split": "Tra",
+   "cls": "Conflict",
+   "id": "Conflict_020.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Conflict",
+   "id": "Conflict_023.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Constructing",
+   "id": "Constructing_010.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Constructing",
+   "id": "Constructing_039.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Constructing",
+   "id": "Constructing_052.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Constructing",
+   "id": "Constructing_058.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Cycling",
+   "id": "Cycling_005.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Cycling",
+   "id": "Cycling_007.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Cycling",
+   "id": "Cycling_020.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Cycling",
+   "id": "Cycling_047.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_022.mp4",
+   "camera": "M",
+   "shot": "single",
+   "note": "fast pan; looked like a cut at 12 frames per clip, continuous at every 2nd frame"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_044.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_055.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Fire",
+   "id": "Fire_058.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Flood",
+   "id": "Flood_007.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Flood",
+   "id": "Flood_023.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Flood",
+   "id": "Flood_031.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Flood",
+   "id": "Flood_036.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Harvesting",
+   "id": "Harvesting_027.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Harvesting",
+   "id": "Harvesting_041.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Harvesting",
+   "id": "Harvesting_056.mp4",
+   "camera": "T",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Harvesting",
+   "id": "Harvesting_062.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Landslide",
+   "id": "Landslide_004.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Landslide",
+   "id": "Landslide_017.mp4",
+   "camera": "D",
+   "shot": "single",
+   "note": "landslide happens during the clip; camera nearly steady"
+  },
+  {
+   "split": "Tra",
+   "cls": "Landslide",
+   "id": "Landslide_029.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Landslide",
+   "id": "Landslide_034.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Mudslide",
+   "id": "Mudslide_001.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Mudslide",
+   "id": "Mudslide_006.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Mudslide",
+   "id": "Mudslide_036.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Mudslide",
+   "id": "Mudslide_052.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_103.mp4",
+   "camera": "M",
+   "shot": "single",
+   "note": "fast pan with exposure change; continuous at every 2nd frame"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_172.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_182.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "NonEvent",
+   "id": "NonEvent_185.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ParadeProtest",
+   "id": "ParadeProtest_001.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ParadeProtest",
+   "id": "ParadeProtest_032.mp4",
+   "camera": "M",
+   "shot": "single",
+   "note": "hand-held at street level, not a drone"
+  },
+  {
+   "split": "Tra",
+   "cls": "ParadeProtest",
+   "id": "ParadeProtest_040.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ParadeProtest",
+   "id": "ParadeProtest_041.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Party",
+   "id": "Party_016.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Party",
+   "id": "Party_021.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Party",
+   "id": "Party_022.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Party",
+   "id": "Party_047.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_005.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_013.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_037.mp4",
+   "camera": "T",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Ploughing",
+   "id": "Ploughing_046.mp4",
+   "camera": "T",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PoliceChase",
+   "id": "PoliceChase_010.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PoliceChase",
+   "id": "PoliceChase_015.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PoliceChase",
+   "id": "PoliceChase_016.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PoliceChase",
+   "id": "PoliceChase_052.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PostEarthquake",
+   "id": "PostEarthquake_006.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PostEarthquake",
+   "id": "PostEarthquake_029.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PostEarthquake",
+   "id": "PostEarthquake_035.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "PostEarthquake",
+   "id": "PostEarthquake_052.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ReligiousActivity",
+   "id": "ReligiousActivity_006.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ReligiousActivity",
+   "id": "ReligiousActivity_021.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ReligiousActivity",
+   "id": "ReligiousActivity_032.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "ReligiousActivity",
+   "id": "ReligiousActivity_033.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Running",
+   "id": "Running_014.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Running",
+   "id": "Running_038.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Running",
+   "id": "Running_039.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Running",
+   "id": "Running_071.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_008.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_022.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_036.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Soccer",
+   "id": "Soccer_046.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Swimming",
+   "id": "Swimming_014.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Swimming",
+   "id": "Swimming_035.mp4",
+   "camera": "T",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Swimming",
+   "id": "Swimming_036.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "Swimming",
+   "id": "Swimming_039.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCollision",
+   "id": "TrafficCollision_006.mp4",
+   "camera": "M",
+   "shot": "single",
+   "note": "race broadcast camera with zoom, not a drone"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCollision",
+   "id": "TrafficCollision_019.mp4",
+   "camera": "D",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCollision",
+   "id": "TrafficCollision_029.mp4",
+   "camera": "M",
+   "shot": "multi",
+   "note": "dissolve over frames ~130-134 into a different, closer shot for the last 2 frames"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCollision",
+   "id": "TrafficCollision_038.mp4",
+   "camera": "M",
+   "shot": "single",
+   "note": "race broadcast camera, fast pan, not a drone"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCongestion",
+   "id": "TrafficCongestion_021.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCongestion",
+   "id": "TrafficCongestion_025.mp4",
+   "camera": "S",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCongestion",
+   "id": "TrafficCongestion_039.mp4",
+   "camera": "M",
+   "shot": "single"
+  },
+  {
+   "split": "Tra",
+   "cls": "TrafficCongestion",
+   "id": "TrafficCongestion_052.mp4",
+   "camera": "D",
+   "shot": "single"
+  }
+ ]
+}
