@@ -11,6 +11,7 @@ dependencies = [
     "av",
     "pillow",
     "num2words",
+    "matplotlib>=3.11.2",
 ]
 
 [tool.uv]

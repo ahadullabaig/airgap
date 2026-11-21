@@ -13,3 +13,6 @@ traces/
 # build outputs
 build/
 *.o
+
+# regenerable raw experiment outputs (summaries are committed)
+results/**/raw/

@@ -1,0 +1,24 @@
+{
+  "clip": "sheboygan_falls",
+  "source": "https://commons.wikimedia.org/wiki/File:Sheboygan_Falls,_Wisconsin;_aerial_drone_video.webm (CC BY 3.0)",
+  "method": "Shots identified from 1 fps contact sheets; boundaries placed at peaks of the 0.2 s-apart global frame difference. Edited TV footage: hard cuts and short dissolves, no hovering shots.",
+  "labels": {
+    "non_aerial": "not drone footage (graphics, studio)",
+    "hover": "camera roughly stationary",
+    "moving": "camera translating, orbiting or panning"
+  },
+  "boundary_margin_s": 0.5,
+  "segments": [
+    {"start": 0.0, "end": 8.41, "label": "non_aerial", "note": "station intro graphic, lens-flare transition"},
+    {"start": 8.41, "end": 20.02, "label": "moving", "note": "town centre, slow orbit; lower-third overlay until about 17 s"},
+    {"start": 20.02, "end": 25.82, "label": "moving", "note": "river rapids, looking straight down"},
+    {"start": 25.82, "end": 30.63, "label": "moving", "note": "rooftops, slow drift"},
+    {"start": 30.63, "end": 40.04, "label": "moving", "note": "park with pond, slow pan"},
+    {"start": 40.04, "end": 49.85, "label": "moving", "note": "bridge then river, forward flight"},
+    {"start": 49.85, "end": 60.46, "label": "moving", "note": "town flyover, fast"},
+    {"start": 60.46, "end": 70.27, "label": "moving", "note": "river and weir"},
+    {"start": 70.27, "end": 79.68, "label": "moving", "note": "tree-lined river and town, slow forward"},
+    {"start": 79.68, "end": 86.69, "label": "moving", "note": "park with pond, slow"},
+    {"start": 86.69, "end": 98.17, "label": "moving", "note": "dam and river, slow orbit"}
+  ]
+}

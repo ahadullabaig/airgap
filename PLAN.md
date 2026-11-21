@@ -192,7 +192,7 @@ Time B1 and B2 with and without CUDA Graphs. Pin the `scaled_dot_product_attenti
 
 | ID | Question | Sweep | Output |
 |---|---|---|---|
-| X0 | Is there redundancy to exploit? (gate, section 3.3) | K0 on 2-3 hovering and 2-3 moving aerial clips (need not be the demo videos: ERA clips, or the Stanford Drone Dataset for hovering footage, terms to check), from 1 fps up to the clips' native rate, several thresholds | Keep-rate vs frame rate and threshold, per footage type |
+| X0 | Is there redundancy to exploit? (gate, section 3.3) | K0 on 2-3 hovering and 2-3 moving aerial clips (need not be the demo videos: ERA clips, or the Stanford Drone Dataset for hovering footage, terms to check), from 1 fps up to the clips' native rate, several thresholds. Two modes: consecutive-sample pairs, and a per-block reference refreshed only when the block crosses the threshold (what a gate actually pays; pairs understate it). Shots hand-labelled hover / moving / non-aerial, with transitions excluded (`bench/x0_segments/`) | Keep-rate per sample and full-frame equivalents per second of video, vs frame rate and threshold, per footage type |
 | X1 | How do V1-V3 scale? | N from 128 to 32,768, d = 64 | Runtime and peak memory vs N; where each version fails. At N = 32,768 the FP32 score matrix alone is 4 GiB. V1 and V2 both store N x N, so they fail at the same N. |
 | X2 | Where does the time go at realistic N? (H1) | N = 1024, d = 64, 12 heads | Stacked breakdown: launch, compute, transfer; an empty-kernel launch as the fixed-cost floor |
 | X3 | When does gating pay off? (H2) | Keep-rate M/N from 5% to 100%; N = 1024 and others; 12 heads | Latency vs keep-rate for G1, G2, B1, B2, B3, B4; break-even points |
