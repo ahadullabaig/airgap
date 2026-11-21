@@ -1,0 +1,145 @@
+{
+ "clips": [
+  "Basketball_016 .mp4",
+  "Constructing_028 .mp4"
+ ],
+ "frames": 16,
+ "endpoints": {
+  "refresh_all/stride1": {
+   "keep": 1.0,
+   "A_con_mean": 0.0,
+   "B_con_mean": 0.0,
+   "A_stream": 0.0,
+   "B_stream": 0.0,
+   "hold_stride_stream": 0.0,
+   "hold_first_stream": 0.30546783190220594
+  },
+  "refresh_all/stride4": {
+   "keep": 1.0,
+   "A_con_mean": 0.0,
+   "B_con_mean": 0.0,
+   "A_stream": 0.13647112832404673,
+   "B_stream": 0.13647112832404673,
+   "hold_stride_stream": 0.13647112832404673,
+   "hold_first_stream": 0.30546783190220594
+  },
+  "refresh_none/stride1": {
+   "keep": 0.0,
+   "A_con_mean": 0.32583235402901967,
+   "B_con_mean": 0.32583235402901967,
+   "A_stream": 0.30546783190220594,
+   "B_stream": 0.30546783190220594,
+   "hold_stride_stream": 0.0,
+   "hold_first_stream": 0.30546783190220594
+  },
+  "refresh_none/stride4": {
+   "keep": 0.0,
+   "A_con_mean": 0.34074123700459796,
+   "B_con_mean": 0.34074123700459796,
+   "A_stream": 0.30546783190220594,
+   "B_stream": 0.30546783190220594,
+   "hold_stride_stream": 0.13647112832404673,
+   "hold_first_stream": 0.30546783190220594
+  }
+ },
+ "sensitivity": {
+  "Basketball_016.mp4": {
+   "same_frame": {
+    "encoder": {
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "connector": {
+     "mean": 0.0,
+     "max": 0.0
+    }
+   },
+   "noise_pm1": {
+    "encoder": {
+     "mean": 0.04478428512811661,
+     "max": 0.6152777075767517
+    },
+    "connector": {
+     "mean": 0.026566749438643456,
+     "max": 0.06725779175758362
+    },
+    "pixel_mad": 0.665740966796875
+   },
+   "next_frame": {
+    "encoder": {
+     "mean": 0.3101459741592407,
+     "max": 5.928921222686768
+    },
+    "connector": {
+     "mean": 0.23038235306739807,
+     "max": 1.4675544500350952
+    },
+    "pixel_mad": 3.16094970703125
+   },
+   "repeated_frame": {
+    "frames": [
+     101,
+     102
+    ],
+    "pixel_mad": 0.3716468811035156,
+    "encoder": {
+     "mean": 0.06146847829222679,
+     "max": 0.873762845993042
+    },
+    "connector": {
+     "mean": 0.037609685212373734,
+     "max": 0.14064165949821472
+    }
+   }
+  },
+  "Constructing_028.mp4": {
+   "same_frame": {
+    "encoder": {
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "connector": {
+     "mean": 0.0,
+     "max": 0.0
+    }
+   },
+   "noise_pm1": {
+    "encoder": {
+     "mean": 0.02800723910331726,
+     "max": 0.31102654337882996
+    },
+    "connector": {
+     "mean": 0.016789808869361877,
+     "max": 0.043426696211099625
+    },
+    "pixel_mad": 0.6579793294270834
+   },
+   "next_frame": {
+    "encoder": {
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "connector": {
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "pixel_mad": 0.0
+   },
+   "repeated_frame": {
+    "frames": [
+     0,
+     1
+    ],
+    "pixel_mad": 0.0,
+    "encoder": {
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "connector": {
+     "mean": 0.0,
+     "max": 0.0
+    }
+   }
+  }
+ }
+}
