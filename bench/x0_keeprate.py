@@ -45,26 +45,9 @@ from transformers import AutoImageProcessor
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "bench"))
 from k0lib import K0, changemap_numpy  # noqa: E402
+from x0core import RefGate, model_view  # noqa: E402
 
 DEFAULT_MODEL = ROOT / "models" / "SmolVLM2-500M-Video-Instruct"
-BLOCK = 16
-
-
-def model_view(ip, img, mean: np.ndarray, std: np.ndarray) -> np.ndarray:
-    """The 512x512 RGB image the encoder sees, as C-contiguous HWC uint8."""
-    pv = ip(images=[[img]], do_image_splitting=False, return_tensors="np")["pixel_values"]
-    x = np.asarray(pv)[0, 0].astype(np.float32)  # CHW, normalised
-    x = (x * std[:, None, None] + mean[:, None, None]) * 255.0
-    x = np.clip(np.rint(x), 0, 255).astype(np.uint8)
-    return np.ascontiguousarray(x.transpose(1, 2, 0))
-
-
-def refresh_blocks(ref: np.ndarray, frame: np.ndarray, mask: np.ndarray) -> None:
-    """Copy the masked blocks of frame into ref, in place."""
-    h, w, c = ref.shape
-    rv = ref.reshape(h // BLOCK, BLOCK, w // BLOCK, BLOCK, c).transpose(0, 2, 1, 3, 4)
-    fv = frame.reshape(h // BLOCK, BLOCK, w // BLOCK, BLOCK, c).transpose(0, 2, 1, 3, 4)
-    rv[mask] = fv[mask]
 
 
 def summarise(values) -> dict | None:
@@ -120,11 +103,9 @@ def main() -> None:
     max_mad: list[float] = []
     pair_maps = {s: [] for s in strides}
     pair_idx = {s: [] for s in strides}
-    refs: dict[tuple[int, float], np.ndarray] = {}
-    ref_keep = {(s, t): [] for s in strides for t in thresholds}
-    ref_idx = {s: [] for s in strides}
+    gate = RefGate(k0, strides, thresholds)
+    ref_keep, ref_idx = gate.keep, gate.index
     crosscheck = {"pairs": 0, "max_abs_diff_vs_numpy": 0.0, "serial_equals_omp": None}
-    refresh_checked = False
 
     t_start = time.perf_counter()
     t_pre = 0.0
@@ -155,29 +136,10 @@ def main() -> None:
                     crosscheck["pairs"] += 1
 
             for s in strides:
-                if i % s:
-                    continue
-                if i >= s:
+                if i % s == 0 and i >= s:
                     pair_maps[s].append(m1 if s == 1 else k0.changemap(f, ring[-1 - s]))
                     pair_idx[s].append(i)
-                first = (s, thresholds[0]) not in refs
-                if not first:
-                    ref_idx[s].append(i)
-                for thr in thresholds:
-                    key = (s, thr)
-                    if key not in refs:
-                        refs[key] = f.copy()
-                        continue
-                    m = k0.changemap(f, refs[key])
-                    mask = m > thr
-                    if mask.any():
-                        refresh_blocks(refs[key], f, mask)
-                        if not refresh_checked:  # the strided view assignment really writes into ref
-                            jy, jx = np.argwhere(mask)[0]
-                            blk = (slice(jy * BLOCK, (jy + 1) * BLOCK), slice(jx * BLOCK, (jx + 1) * BLOCK))
-                            assert np.array_equal(refs[key][blk], f[blk]), "refresh_blocks did not write"
-                            refresh_checked = True
-                    ref_keep[key].append(float(mask.mean()))
+            gate.push(i, f)
 
     elapsed = time.perf_counter() - t_start
     n_frames = len(times)

@@ -33,6 +33,18 @@ def is_hover(r) -> bool:
             and m["median_fw_per_s"] <= HOVER_MAX_FW_PER_S)
 
 
+def bucket(r, cut: float = HOVER_MAX_FW_PER_S) -> str:
+    """hover / moving / unreliable (no trustworthy motion estimate: water, smoke, fast motion)."""
+    m = r["motion"]
+    if m["median_fw_per_s"] is None or m["reliable_frac"] < HOVER_MIN_RELIABLE:
+        return "unreliable"
+    return "hover" if m["median_fw_per_s"] <= cut else "moving"
+
+
+def shot_flagged(r) -> bool:
+    return len(r["shot"]["events"]) > 0
+
+
 def clip_key(r):
     return (r["split"], r["cls"], r["id"])
 
@@ -130,11 +142,6 @@ def main() -> None:
 
     # Three buckets. The estimator finds hover clips; it is not a hover/moving classifier: in the labelled
     # sample the unreliable bucket is almost all eye-labelled moving or tracking footage (fast, water).
-    def bucket(r, cut=HOVER_MAX_FW_PER_S):
-        m = r["motion"]
-        if m["median_fw_per_s"] is None or m["reliable_frac"] < HOVER_MIN_RELIABLE:
-            return "unreliable"
-        return "hover" if m["median_fw_per_s"] <= cut else "moving"
     rep["buckets"] = {s_: Counter(bucket(r) for r in clips if r["split"] == s_) for s_ in ("Tra", "Test")}
     rep["buckets_vs_labels"] = Counter(f'{l["camera"]}->{bucket(r)}' for l, r in lab)
     rep["hover_cutoff_sensitivity"] = {
