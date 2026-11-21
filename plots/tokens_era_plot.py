@@ -48,20 +48,19 @@ def error_figure(r: dict, out: Path) -> None:
     groups = [g for g in ("hover", "moving", "unreliable") if g in r["groups"]]
     gates = r["gate_strides"]
     thr = r["thresholds_mad"]
-    floors = r["floors"]
-    checks = json.loads((ROOT / "results" / "tokens" / "gate_checks.json").read_text())
-    noise = sum(v["noise_pm1"]["connector"]["mean"] for v in checks["sensitivity"].values()) / len(checks["sensitivity"])
-    bf16 = floors["bf16_vs_fp32"]["connector"]["mean"]
+    noise = r["floors_per_clip"]["noise_pm1"]["mean"]["mean"]
+    bf16 = r["floors_per_clip"]["bf16_vs_fp32"]["mean"]["mean"]
 
     fig, axes = plt.subplots(1, len(groups), figsize=(max(12.0, 4.6 * len(groups)), 4.8), dpi=200,
                              facecolor=SURFACE, sharey=True, squeeze=False)
     for ax, g in zip(axes[0], groups):
         G = r["groups"][g]
         hold = sorted(((v["cost"], 100 * v["stream"]["mean"]) for v in G["hold"].values() if v["cost"] < 24))
+        first_cost = G["hold"]["first"]["cost"]
         ax.plot([c for c, _ in hold], [e for _, e in hold], color=MUTED, lw=1.5, ls=(0, (4, 3)), marker="o", ms=5,
                 label="Dense at a lower rate, output held")
         for c, e in hold:
-            ax.annotate(f"{c:g} fps", (c, e), xytext=(-5, 4), textcoords="offset points", ha="right", fontsize=7,
+            ax.annotate("first frame only" if c == first_cost else f"{c:g} fps", (c, e), xytext=(-5, 4), textcoords="offset points", ha="right", fontsize=7,
                         color=MUTED)
         for tier, color in (("A", BLUE), ("B", ORANGE)):
             for s, ls, mk in zip(gates, ("-", (0, (2, 2))), ("o", "s")):
@@ -75,16 +74,16 @@ def error_figure(r: dict, out: Path) -> None:
                     for t, x, y in zip(thr, xs, ys):
                         ax.annotate(f"{t:g}", (x, y), xytext=(4, -9), textcoords="offset points", fontsize=7,
                                     color=INK_2)
-        for y, lab, x, dy in ((100 * bf16, "bf16 vs fp32", 28, 3), (100 * noise, "±1 grey level noise", 0.22, 3)):
+        for y, lab, x, dy in ((100 * bf16, "bf16 vs fp32", 28, 3), (100 * noise, "±1 grey level noise", 0.045, 3)):
             ax.axhline(y, color=AXIS, lw=1)
             ax.annotate(lab, (x, y), xytext=(0, dy), textcoords="offset points", fontsize=7, color=MUTED,
                         ha="right" if x > 1 else "left")
         style(ax)
-        xt = [0.3, 1, 3, 6, 12, 24]
+        xt = [0.1, 0.3, 1, 3, 6, 12, 24]
         ax.xaxis.set_major_locator(FixedLocator(xt))
         ax.xaxis.set_minor_locator(NullLocator())
         ax.set_xticklabels([f"{x:g}" for x in xt])
-        ax.set_xlim(0.2, 30)
+        ax.set_xlim(0.04, 30)
         ax.set_xlabel("Cost (full-frame equivalents per second)")
         ax.set_title(f"{TITLES[g]} ({len(G['clips'])} clips)", loc="left", fontsize=10, color=INK)
     axes[0][0].set_ylabel("Connector output error at 24 fps (%)")
@@ -92,7 +91,8 @@ def error_figure(r: dict, out: Path) -> None:
     handles, labels = axes[0][0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.01, 0.94), ncol=3, frameon=False, fontsize=8)
     fig.suptitle("Gate error against cost on ERA, encoder + connector in fp32. Numbers on the blue line: "
-                 "pixel threshold (block MAD).", x=0.01, ha="left", fontsize=9, color=INK_2)
+                 "pixel threshold (block MAD). Stale input is plotted at the mask's cost, which no kernel "
+                 "achieves.", x=0.01, ha="left", fontsize=9, color=INK_2)
     fig.tight_layout(rect=(0, 0, 1, 0.84))
     fig.savefig(out, facecolor=SURFACE)
     print(f"wrote {out}")

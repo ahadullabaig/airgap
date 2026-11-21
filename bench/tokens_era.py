@@ -124,24 +124,51 @@ def dense_pass(vs: VisionStack, k0: K0, views: np.ndarray):
     return enc_all, con_all, tr, trc, mad
 
 
-def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float) -> dict:
-    """Reference-mode pixel gate at stride s and threshold thr; tiers A and B."""
-    n = len(views)
+def pixel_gate(views: np.ndarray, k0: K0, s: int, thr: float):
+    """Reference-mode pixel gate (same rule as X0). Yields (frame index, reference image, mask) per sample;
+    the mask is None for the first sample, which initialises the reference. The reference is updated in
+    place, so use it before advancing."""
     ref = None
-    cache: list[torch.Tensor] = []
-    keep_counts, per = [], {"A": [], "B": []}
-    con_out = {"A": {}, "B": {}}
-    idx = list(range(0, n, s))
-    for i in idx:
+    for i in range(0, len(views), s):
         f = views[i]
-        if ref is None:  # first sample initialises the reference: dense, not counted
+        if ref is None:
             ref = f.copy()
-            enc, con, hs = vs.forward(vs.pixels(f), keep_layers=True)
-            cache = hs
-            con_out["A"][i] = con_out["B"][i] = con[0]
+            yield i, ref, None
             continue
         mask = k0.changemap(f, ref) > thr
         refresh_blocks(ref, f, mask)
+        yield i, ref, mask
+
+
+def stream_errors(outputs: dict, con_all: torch.Tensor, s: int) -> tuple[list, list]:
+    """Connector output at 24 fps, each frame taking the latest sample's output: per-frame mean and
+    median over the 64 tokens of the relative error against dense."""
+    mean, med = [], []
+    for j in range(con_all.shape[0]):
+        e = tok_rel(outputs[(j // s) * s], con_all[j])
+        mean.append(round(float(e.mean()), 5))
+        med.append(round(float(e.median()), 5))
+    return mean, med
+
+
+def stream_stats(mean: list, med: list) -> dict:
+    a, m = np.asarray(mean), np.asarray(med)
+    n = len(a)
+    return {"mean": float(a.mean()), "token_median": float(m.mean()), "frame_p95": float(np.percentile(a, 95)),
+            "half1": float(a[: n // 2].mean()), "half2": float(a[n // 2:].mean())}
+
+
+def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float) -> dict:
+    """Reference-mode pixel gate at stride s and threshold thr; tiers A and B."""
+    cache: list[torch.Tensor] = []
+    keep_counts, per = [], {"A": [], "B": []}
+    con_out = {"A": {}, "B": {}}
+    for i, ref, mask in pixel_gate(views, k0, s, thr):
+        if mask is None:  # first sample: dense, not counted
+            enc, con, hs = vs.forward(vs.pixels(ref), keep_layers=True)
+            cache = hs
+            con_out["A"][i] = con_out["B"][i] = con[0]
+            continue
         keep_counts.append(int(mask.sum()))
         px = vs.pixels(ref)
         m = torch.from_numpy(mask.reshape(-1)).to(vs.device)
@@ -158,29 +185,33 @@ def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float) -> dict:
             te = tok_rel(e[0], enc_all[i])
             tc = tok_rel(c[0], con_all[i])
             per[tier].append({
-                "enc_mean": float(te.mean()), "enc_p95": float(te.quantile(0.95)),
+                "i": i,
+                "enc_mean": float(te.mean()), "enc_median": float(te.median()), "enc_p95": float(te.quantile(0.95)),
                 "enc_refreshed": float(te[m].mean()) if m.any() else None,
                 "enc_unrefreshed": float(te[~m].mean()) if (~m).any() else None,
-                "con_mean": float(tc.mean()), "con_p95": float(tc.quantile(0.95)),
+                "con_mean": float(tc.mean()), "con_median": float(tc.median()), "con_p95": float(tc.quantile(0.95)),
             })
             con_out[tier][i] = c[0]
-    # output stream at 24 fps: each frame gets the latest sample's output
-    stream = {}
+    stream, series = {}, {}
     for tier in ("A", "B"):
-        errs = np.array([float(tok_rel(con_out[tier][(j // s) * s], con_all[j]).mean()) for j in range(n)])
-        stream[tier] = {"mean": float(errs.mean()), "half1": float(errs[: n // 2].mean()),
-                        "half2": float(errs[n // 2:].mean())}
+        mean, med = stream_errors(con_out[tier], con_all, s)
+        stream[tier] = stream_stats(mean, med)
+        series[tier] = {"stream_mean": mean,
+                        "samples": {k: [None if x[k] is None else round(x[k], 5) for x in per[tier]]
+                                    for k in ("i", "con_mean", "enc_mean", "enc_refreshed", "enc_unrefreshed")}}
+
     def avg(v, k):
         xs = [x[k] for x in v if x[k] is not None]
         return float(np.mean(xs)) if xs else None
-    summ = {t: {k: avg(v, k) for k in v[0]} if v else None for t, v in per.items()}
-    return {"keep_counts": keep_counts, "samples": summ, "stream": stream}
+    summ = {t: {k: avg(v, k) for k in v[0] if k != "i"} if v else None for t, v in per.items()}
+    return {"keep_counts": keep_counts, "samples": summ, "stream": stream, "series": series}
 
 
 def hold_stream(con_all: torch.Tensor, s: int) -> dict:
-    n = con_all.shape[0]
-    errs = np.array([float(tok_rel(con_all[(j // s) * s], con_all[j]).mean()) for j in range(n)])
-    return {"mean": float(errs.mean()), "half1": float(errs[: n // 2].mean()), "half2": float(errs[n // 2:].mean())}
+    """Dense every s frames, output held in between. s >= frames means the first frame held throughout."""
+    outs = {j: con_all[j] for j in range(0, con_all.shape[0], s)}
+    mean, med = stream_errors(outs, con_all, s)
+    return {**stream_stats(mean, med), "stream_mean": mean}
 
 
 def trace_summary(tr, trc, mad) -> dict:
@@ -203,6 +234,41 @@ def trace_summary(tr, trc, mad) -> dict:
     return out
 
 
+_JW: dict = {}
+
+
+def _join_init() -> None:
+    from transformers import AutoImageProcessor
+    ip = AutoImageProcessor.from_pretrained(MODEL, local_files_only=True)
+    _JW.update(ip=ip, mean=np.array(ip.image_mean, np.float32), std=np.array(ip.image_std, np.float32),
+               k0=K0(threads=1))
+
+
+def _join_one(job) -> tuple:
+    c, era = job
+    views = load_views(Path(era) / "Videos" / c["split"] / c["cls"] / c["file"], _JW["ip"], _JW["mean"], _JW["std"])
+    counts = {f"{s}/{t:g}": [int(m.sum()) for _, _, m in pixel_gate(views, _JW["k0"], s, t) if m is not None]
+              for s in GATE_STRIDES for t in THRESHOLDS}
+    return er.clip_key(c), counts
+
+
+def check_join(args) -> None:
+    """CPU only: the pixel gate's keep counts for every sampled clip equal X0's (bench/x0_era.py)."""
+    from multiprocessing import Pool
+    x0 = {}
+    for line in (ROOT / "results" / "x0" / "era_tra" / "raw" / "per_clip.jsonl").read_text().splitlines():
+        r = json.loads(line)
+        x0[(r["split"], r["cls"], r["id"])] = r["keep_blocks"]
+    clips = pick_clips()
+    bad = []
+    with Pool(8, initializer=_join_init) as pool:
+        for key, counts in pool.imap_unordered(_join_one, [(c, args.era) for c in clips]):
+            bad += [(key, cell) for cell, v in counts.items() if v != x0[key][cell]]
+    print(f"join check: {len(clips)} clips x {len(GATE_STRIDES) * len(THRESHOLDS)} cells, mismatches: {len(bad)}")
+    if bad:
+        sys.exit(f"keep counts differ from X0: {bad[:5]}")
+
+
 def run(args) -> None:
     from transformers import AutoImageProcessor
     out = Path(args.out)
@@ -214,6 +280,8 @@ def run(args) -> None:
     if jsonl.exists():
         done = {(r["split"], r["cls"], r["id"]) for r in map(json.loads, jsonl.read_text().splitlines())}
     clips = [c for c in pick_clips() if er.clip_key(c) not in done]
+    if args.clips:
+        clips = [c for c in clips if c["id"] in args.clips]
     if args.limit:
         clips = clips[: args.limit]
     x0_raw = ROOT / "results" / "x0" / "era_tra" / "raw" / "per_clip.jsonl"
@@ -227,7 +295,9 @@ def run(args) -> None:
     ip = AutoImageProcessor.from_pretrained(MODEL, local_files_only=True)
     mean, std = np.array(ip.image_mean, np.float32), np.array(ip.image_std, np.float32)
     vs = VisionStack(str(MODEL))
+    vb = VisionStack(str(MODEL), dtype=torch.bfloat16)  # for the per-clip bf16 floor
     k0 = K0()
+    rng = np.random.default_rng(SEED)
     for ci, c in enumerate(clips):
         t0 = time.perf_counter()
         key = er.clip_key(c)
@@ -249,6 +319,14 @@ def run(args) -> None:
                 rec["cells"][f"{s}/{thr:g}"] = cell
         for s in HOLD_STRIDES:
             rec["hold"][str(s)] = hold_stream(con_all, s)
+        rec["hold"]["first"] = hold_stream(con_all, len(views))
+        # floors on this clip's first frame: bf16 vs fp32, and +-1 grey level of noise in fp32
+        _, cb, _ = vb.forward(vb.pixels(views[0]))
+        noisy = np.clip(views[0].astype(np.int16) + rng.integers(-1, 2, views[0].shape), 0, 255).astype(np.uint8)
+        _, cn, _ = vs.forward(vs.pixels(noisy))
+        eb, en = tok_rel(cb[0].float(), con_all[0]), tok_rel(cn[0], con_all[0])
+        rec["floors"] = {"bf16_vs_fp32": {"mean": float(eb.mean()), "median": float(eb.median())},
+                         "noise_pm1": {"mean": float(en.mean()), "median": float(en.median())}}
         rec["seconds"] = round(time.perf_counter() - t0, 1)
         with jsonl.open("a") as fh:
             fh.write(json.dumps(rec) + "\n")
@@ -278,13 +356,22 @@ def aggregate(out: Path) -> dict:
             cells[key] = {
                 "keep": keep, "cost": keep["mean"] * NATIVE_FPS / s,
                 **{f"{t}_{m}": pool([c["samples"][t][m] if c["samples"][t] else None for c in cl])
-                   for t in ("A", "B") for m in ("enc_mean", "enc_p95", "enc_refreshed", "enc_unrefreshed",
-                                                 "con_mean", "con_p95")},
+                   for t in ("A", "B") for m in ("enc_mean", "enc_median", "enc_p95", "enc_refreshed",
+                                                 "enc_unrefreshed", "con_mean", "con_median", "con_p95")},
                 **{f"{t}_stream": pool([c["stream"][t]["mean"] for c in cl]) for t in ("A", "B")},
+                **{f"{t}_stream_token_median": pool([c["stream"][t]["token_median"] for c in cl])
+                   for t in ("A", "B")},
                 **{f"{t}_stream_halves": [pool([c["stream"][t]["half1"] for c in cl])["mean"],
                                           pool([c["stream"][t]["half2"] for c in cl])["mean"]] for t in ("A", "B")},
             }
-        hold = {s: {"cost": NATIVE_FPS / int(s), "stream": pool([r["hold"][s]["mean"] for r in R])} for s in R[0]["hold"]}
+        hold = {}
+        for s in R[0]["hold"]:
+            cost = (float(np.mean([NATIVE_FPS / r["frames"] for r in R])) if s == "first"
+                    else NATIVE_FPS / int(s))
+            hold[s] = {"cost": cost, "stream": pool([r["hold"][s]["mean"] for r in R]),
+                       "stream_token_median": pool([r["hold"][s]["token_median"] for r in R]),
+                       "halves": [pool([r["hold"][s]["half1"] for r in R])["mean"],
+                                  pool([r["hold"][s]["half2"] for r in R])["mean"]]}
         trace = {}
         for s in R[0]["trace"]:
             trace[s] = {"pixel_keep": pool([r["trace"][s]["pixel_keep"] for r in R])["mean"], "layers": {}}
@@ -298,9 +385,14 @@ def aggregate(out: Path) -> dict:
             trace[s]["connector"] = {"mean": pool([r["trace"][s]["connector"]["mean"] for r in R])["mean"],
                                      "frac_gt": {e: pool([r["trace"][s]["connector"]["frac_gt"][e] for r in R])["mean"]
                                                  for e in R[0]["trace"][s]["connector"]["frac_gt"]}}
-        summ[g] = {"clips": [r["id"] for r in R], "cells": cells, "hold": hold, "trace": trace}
+        floors = {f: {k: pool([r["floors"][f][k] for r in R]) for k in ("mean", "median")}
+                  for f in ("bf16_vs_fp32", "noise_pm1")}
+        summ[g] = {"clips": [r["id"] for r in R], "cells": cells, "hold": hold, "trace": trace, "floors": floors}
+    all_floors = {f: {k: pool([r["floors"][f][k] for r in recs]) for k in ("mean", "median")}
+                  for f in ("bf16_vs_fp32", "noise_pm1")}
     return {"groups": summ,
-            "floors": {"bf16_vs_fp32": checks["bf16_vs_fp32_rel_error"],
+            "floors_per_clip": all_floors,
+            "floors_check_frame": {"bf16_vs_fp32": checks["bf16_vs_fp32_rel_error"],
                        "uint8_roundtrip": checks["roundtrip_rel_error"],
                        "batch_size": checks["batch8_vs_batch1_rel_error"]},
             "clips_processed": len(recs), "seconds": round(sum(r["seconds"] for r in recs), 1)}
@@ -312,8 +404,13 @@ def main() -> None:
     ap.add_argument("--out", default=str(ROOT / "results" / "tokens" / "era_tra"))
     ap.add_argument("--trace-dir", default=str(ROOT / "traces" / "era_tra"))
     ap.add_argument("--limit", type=int, help="first N clips of the sample not yet done (smoke tests)")
+    ap.add_argument("--clips", nargs="+", help="only these clip ids from the sample (smoke tests)")
     ap.add_argument("--aggregate-only", action="store_true")
+    ap.add_argument("--check-join", action="store_true", help="CPU-only keep-count check against X0, then exit")
     args = ap.parse_args()
+    if args.check_join:
+        check_join(args)
+        return
     if not args.aggregate_only:
         run(args)
     agg = aggregate(Path(args.out))
@@ -324,7 +421,10 @@ def main() -> None:
         "tiers": {"A": "stale input: dense encoder on the gate's reference image (a floor)",
                   "B": "stale rows (G1 option 1): pixel mask held through all layers, unrefreshed rows cached"},
         "error": "per-token relative error ||x - x_dense|| / ||x_dense||, mean over tokens then samples then clips",
-        "stream": "connector output at 24 fps, each method holding its latest output; mean over frames",
+        "stream": "connector output at 24 fps, each method holding its latest output; mean over frames of the "
+                  "token-mean error (token_median: of the token-median error); hold 'first' = first frame held",
+        "cost_note": "tier A is plotted at the pixel mask's cost, which no kernel achieves (it recomputes every "
+                     "token on the reference image)",
         "cost": "full-frame equivalents per second of video (keep x sampling fps); hold baseline costs its fps",
         "trace": "per-token relative change vs the previous sample (understates a gate); layer 0 = embedding, "
                  "1-12 = encoder layers, 13 = post-layernorm; inside/outside = pixel block MAD above/below 8",
