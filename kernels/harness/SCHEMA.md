@@ -1,6 +1,6 @@
 # Benchmark result schema `airgap-bench/1`
 
-Every benchmark writes one JSON file in this shape, whatever language it is written in. The C++ harness (`harness.h`) writes it today; the PyTorch baselines (B1, B2) need a Python writer that follows the same protocol and schema. C++ and Python ops cannot be interleaved in one process, so comparisons across the two are between separate runs.
+Every benchmark writes one JSON file in this shape, whatever language it is written in: the C++ harness (`harness.h`) for our kernels, and its Python twin (`bench/harness.py`, self-test `bench/harness_selftest.py`) for the PyTorch baselines. `bench/check_bench_schema.py` checks any result file against the fields below. C++ and Python ops cannot be interleaved in one process, so comparisons across the two are between separate runs.
 
 ## Protocol (PLAN.md section 3.7)
 
@@ -27,6 +27,8 @@ created       local time, ISO 8601
 warnings[]    e.g. measured limits missing (the plausibility guard is then off)
 env           gpu, cc, sms, memory_mib, max_sm_mhz, driver, cuda_runtime, cuda_driver_api, nvcc,
               host_compiler, ac ("on"/"off"), platform_profile, other_gpu_processes
+              Python: nvcc, host_compiler and cuda_driver_api are null; python, torch and tf32
+              (matmul, cudnn, float32_matmul_precision) are added
 limits        tflops, dram_gb_per_s (measured; results/cuda/peak.json)
 protocol      the constants above, plus the interleave and throttle rules as text
 groups[]      group, device_used_mib_before, device_used_mib_after_setup, warmup_s, warmup_sm_mhz[],
@@ -43,6 +45,8 @@ stage, error                     present when not ok
 check{ok, max_abs_err,           present when the op has a check
       max_rel_err, note}
 mem_mib                          device memory taken by this op's setup
+mem_peak_mib                     (Python) mem_mib plus the peak PyTorch allocates on top during one run;
+                                 library attention allocates its N x N inside the call
 work{flops, dram_bytes}          declared per iteration (0 = not declared)
 iters{event_batch, host_sync,    frozen iteration counts
       phases}
@@ -57,4 +61,4 @@ samples[]                        round, prev, event_batch_ms, host_sync_ms, phas
                                  temp_c, clock_events[], flagged, flag_reason
 ```
 
-One iteration is the whole operation being measured (for V1, its three launches). The two clocks differ most for small kernels: for an empty kernel, 1.7 us back to back against 4.5 us with a synchronise.
+One iteration is the whole operation being measured (for V1, its three launches). In the Python harness, `event_batch_ms` is event time over a Python loop of calls, so for short kernels it includes the gaps Python dispatch leaves between launches; that is part of what a PyTorch baseline costs. The two clocks differ most for small kernels: for an empty kernel, 1.7 us back to back against 4.5 us with a synchronise.

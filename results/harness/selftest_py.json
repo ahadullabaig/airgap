@@ -1,0 +1,1469 @@
+{
+ "schema": "airgap-bench/1",
+ "benchmark": "harness_selftest_py",
+ "created": "2026-11-23T20:46:03+0530",
+ "warnings": [],
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "cc": "8.6",
+  "sms": 16,
+  "memory_mib": 3790,
+  "max_sm_mhz": 2100,
+  "driver": "620.70.06",
+  "cuda_runtime": "13.2",
+  "cuda_driver_api": null,
+  "nvcc": null,
+  "host_compiler": null,
+  "python": "3.12.13",
+  "torch": "2.15.0+cu132",
+  "tf32": {
+   "matmul": false,
+   "cudnn": true,
+   "float32_matmul_precision": "highest"
+  },
+  "ac": "on",
+  "platform_profile": "performance",
+  "other_gpu_processes": [
+   "kwin_wayland"
+  ]
+ },
+ "limits": {
+  "tflops": 7.46,
+  "dram_gb_per_s": 188.16,
+  "source": "results/cuda/peak.json"
+ },
+ "protocol": {
+  "samples": 21,
+  "target_sample_ms": 20.0,
+  "warmup_s": [
+   1.0,
+   10.0
+  ],
+  "clock_tol": 0.01,
+  "throttle_drop": 0.03,
+  "rate_slack": 1.05,
+  "interleave": "seeded shuffle per round within a group (Python random.Random)",
+  "shuffle_seed": 20261123,
+  "throttle_rule": "flag a sample on a thermal or hardware-slowdown reason, or an SM clock more than throttle_drop below the op's median that the power cap does not explain; power cap recorded, not flagged; op invalid if more than half its samples are flagged",
+  "python_note": "event_batch_ms is CUDA-event time over a Python loop of calls, so it includes dispatch gaps between short kernels"
+ },
+ "groups": [
+  {
+   "group": "limits",
+   "device_used_mib_before": 120.625,
+   "device_used_mib_after_setup": 640.625,
+   "warmup_s": 1.068756365999434,
+   "warmup_sm_mhz": [
+    1500,
+    1500,
+    1500,
+    1500,
+    1942,
+    1942,
+    1942
+   ],
+   "median_sm_mhz": 1965,
+   "context_lost": false
+  },
+  {
+   "group": "guards",
+   "device_used_mib_before": 640.625,
+   "device_used_mib_after_setup": 640.625,
+   "warmup_s": 0.0,
+   "warmup_sm_mhz": [],
+   "median_sm_mhz": null,
+   "context_lost": false
+  },
+  {
+   "group": "oom",
+   "device_used_mib_before": 650.625,
+   "device_used_mib_after_setup": 650.625,
+   "warmup_s": 1.001573245000145,
+   "warmup_sm_mhz": [
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965,
+    1965
+   ],
+   "median_sm_mhz": 1965,
+   "context_lost": false
+  }
+ ],
+ "ops": [
+  {
+   "name": "copy",
+   "group": "limits",
+   "params": {},
+   "status": "ok",
+   "mem_mib": 512.0,
+   "mem_peak_mib": 512.0,
+   "work": {
+    "flops": 0.0,
+    "dram_bytes": 536870912.0
+   },
+   "iters": {
+    "event_batch": 7,
+    "host_sync": 4,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 2.923081261771066,
+     "p10": 2.9224959782191684,
+     "p90": 2.9242515563964844,
+     "min": 2.922349657331194,
+     "max": 2.926299503871373
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 2.943734999917069,
+     "p10": 2.9417762500543176,
+     "p90": 2.958420499908243,
+     "min": 2.9414080001970433,
+     "max": 2.9760512500160985
+    }
+   },
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": 183.6660920178166
+   },
+   "clock_time_corr": 0.231041327049249,
+   "plausibility": [],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "",
+     "event_batch_ms": 2.922349657331194,
+     "host_sync_ms": 2.9431312500491913,
+     "sm_mhz": 1942,
+     "mem_mhz": 6001,
+     "temp_c": 50,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.923519951956613,
+     "host_sync_ms": 2.9512942501241923,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "copy_twin",
+     "event_batch_ms": 2.922349657331194,
+     "host_sync_ms": 2.9414080001970433,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "",
+     "event_batch_ms": 2.9229349408830916,
+     "host_sync_ms": 2.9420670000490645,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.9233736310686385,
+     "host_sync_ms": 2.943166500017469,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.9417762500543176,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "copy_twin",
+     "event_batch_ms": 2.926299503871373,
+     "host_sync_ms": 2.958420499908243,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "",
+     "event_batch_ms": 2.9258605412074496,
+     "host_sync_ms": 2.945779000128823,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "copy_twin",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.94860450003398,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "copy_twin",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.941613499842788,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "",
+     "event_batch_ms": 2.922642299107143,
+     "host_sync_ms": 2.944403750007041,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.9602512499877776,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.9239589146205356,
+     "host_sync_ms": 2.946362500097166,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.942502750101994,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.923227310180664,
+     "host_sync_ms": 2.94317900011265,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "copy_twin",
+     "event_batch_ms": 2.922642299107143,
+     "host_sync_ms": 2.942470249990947,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "copy_twin",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.9475747498963756,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "",
+     "event_batch_ms": 2.9233736310686385,
+     "host_sync_ms": 2.9760512500160985,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "",
+     "event_batch_ms": 2.9242515563964844,
+     "host_sync_ms": 2.9427482500068436,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "",
+     "event_batch_ms": 2.9224959782191684,
+     "host_sync_ms": 2.943734999917069,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.9441432500334486,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "copy_twin",
+   "group": "limits",
+   "params": {},
+   "status": "ok",
+   "mem_mib": 0.0,
+   "mem_peak_mib": 0.0,
+   "work": {
+    "flops": 0.0,
+    "dram_bytes": 536870912.0
+   },
+   "iters": {
+    "event_batch": 7,
+    "host_sync": 4,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 2.922788619995117,
+     "p10": 2.9224959782191684,
+     "p90": 2.92410523550851,
+     "min": 2.922349657331194,
+     "max": 2.925421578543527
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 2.9427555000438588,
+     "p10": 2.9411324999273347,
+     "p90": 2.9472467501818755,
+     "min": 2.940145750017109,
+     "max": 2.9583377499875496
+    }
+   },
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": 183.68448143228943
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "copy",
+     "event_batch_ms": 2.922788619995117,
+     "host_sync_ms": 2.9425077498217433,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "",
+     "event_batch_ms": 2.92410523550851,
+     "host_sync_ms": 2.941260250054256,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "",
+     "event_batch_ms": 2.9233736310686385,
+     "host_sync_ms": 2.94203675002791,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "copy",
+     "event_batch_ms": 2.923227310180664,
+     "host_sync_ms": 2.9411324999273347,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "copy",
+     "event_batch_ms": 2.922349657331194,
+     "host_sync_ms": 2.9432665000967972,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "",
+     "event_batch_ms": 2.922642299107143,
+     "host_sync_ms": 2.9430462500386056,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.922349657331194,
+     "host_sync_ms": 2.942793249985698,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "copy",
+     "event_batch_ms": 2.9224959782191684,
+     "host_sync_ms": 2.9417485000067245,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "",
+     "event_batch_ms": 2.92410523550851,
+     "host_sync_ms": 2.943166500017469,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "",
+     "event_batch_ms": 2.9224959782191684,
+     "host_sync_ms": 2.9410575000383687,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.9229349408830916,
+     "host_sync_ms": 2.941340250117719,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.925421578543527,
+     "host_sync_ms": 2.9505380000500736,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "",
+     "event_batch_ms": 2.922788619995117,
+     "host_sync_ms": 2.941971499922147,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "copy",
+     "event_batch_ms": 2.9224959782191684,
+     "host_sync_ms": 2.9472467501818755,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "copy",
+     "event_batch_ms": 2.923519951956613,
+     "host_sync_ms": 2.940145750017109,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.922788619995117,
+     "host_sync_ms": 2.943038500006878,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "",
+     "event_batch_ms": 2.9236662728445872,
+     "host_sync_ms": 2.941448000001401,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "copy",
+     "event_batch_ms": 2.923227310180664,
+     "host_sync_ms": 2.9583377499875496,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "overclaimed",
+     "event_batch_ms": 2.923081261771066,
+     "host_sync_ms": 2.9436347501814453,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "copy",
+     "event_batch_ms": 2.922642299107143,
+     "host_sync_ms": 2.943421749932895,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "copy",
+     "event_batch_ms": 2.922642299107143,
+     "host_sync_ms": 2.9427555000438588,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "overclaimed",
+   "group": "limits",
+   "params": {},
+   "status": "ok",
+   "mem_mib": 0.0,
+   "mem_peak_mib": 0.0,
+   "work": {
+    "flops": 0.0,
+    "dram_bytes": 671088640.0
+   },
+   "iters": {
+    "event_batch": 55,
+    "host_sync": 26,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 0.3670760761607777,
+     "p10": 0.36703883084383876,
+     "p90": 0.36739259199662644,
+     "min": 0.36698299754749647,
+     "max": 0.3681187022816051
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 0.3839549231088313,
+     "p10": 0.38351407692971407,
+     "p90": 0.3874623846338811,
+     "min": 0.3796267307664563,
+     "max": 0.39176553848217455
+    }
+   },
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": 1828.2004292376332
+   },
+   "clock_time_corr": null,
+   "plausibility": [
+    "DRAM rate above the measured bandwidth"
+   ],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.36733672402121803,
+     "host_sync_ms": 0.3839549231088313,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.36703883084383876,
+     "host_sync_ms": 0.3874623846338811,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "copy",
+     "event_batch_ms": 0.36739259199662644,
+     "host_sync_ms": 0.38355030770057613,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.3670760761607777,
+     "host_sync_ms": 0.38351407692971407,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "",
+     "event_batch_ms": 0.36703883084383876,
+     "host_sync_ms": 0.38382238461473694,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.36705745350230823,
+     "host_sync_ms": 0.3835672692170752,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "",
+     "event_batch_ms": 0.3670760761607777,
+     "host_sync_ms": 0.3833572692341337,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.3673553466796875,
+     "host_sync_ms": 0.3848528076909693,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "copy",
+     "event_batch_ms": 0.36731810136274856,
+     "host_sync_ms": 0.3846138846221528,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "copy",
+     "event_batch_ms": 0.36702020818536935,
+     "host_sync_ms": 0.3844266153604482,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "copy",
+     "event_batch_ms": 0.36705745350230823,
+     "host_sync_ms": 0.38355880769813666,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "copy",
+     "event_batch_ms": 0.36739259199662644,
+     "host_sync_ms": 0.3796267307664563,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.3673553466796875,
+     "host_sync_ms": 0.39176553848217455,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "",
+     "event_batch_ms": 0.3670760761607777,
+     "host_sync_ms": 0.38429446154763214,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "",
+     "event_batch_ms": 0.36703883084383876,
+     "host_sync_ms": 0.3857826538408587,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "",
+     "event_batch_ms": 0.36703883084383876,
+     "host_sync_ms": 0.3849117692180488,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "copy",
+     "event_batch_ms": 0.3670760761607777,
+     "host_sync_ms": 0.3836836538609462,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.3675229159268466,
+     "host_sync_ms": 0.387500538461329,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "copy",
+     "event_batch_ms": 0.36698299754749647,
+     "host_sync_ms": 0.38368019232411127,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.3671505321155895,
+     "host_sync_ms": 0.3837044615605779,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "copy_twin",
+     "event_batch_ms": 0.3681187022816051,
+     "host_sync_ms": 0.38469865386594815,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "planted_error",
+   "group": "guards",
+   "params": {},
+   "status": "check_failed",
+   "check": {
+    "ok": false,
+    "max_abs_err": 1.0,
+    "max_rel_err": null,
+    "note": "multiply by 1 must leave the input unchanged"
+   },
+   "mem_mib": 0.0,
+   "mem_peak_mib": null,
+   "work": {
+    "flops": 0.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 0,
+    "host_sync": 0,
+    "phases": 0
+   },
+   "clocks": {},
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": []
+  },
+  {
+   "name": "too_big",
+   "group": "oom",
+   "params": {},
+   "status": "failed",
+   "stage": "setup",
+   "error": "OutOfMemoryError: CUDA out of memory. Tried to allocate 64.00 GiB. GPU 0 has a total capacity of 3.70 GiB of which 3.07 GiB is free. Process 2714 has 6.29 MiB memory in use. Including non-PyTorch memory, this process has 620.00 MiB memory in use. Of the allocated memory 512.00 MiB is allocated by PyTorch, and 8.00 MiB is reserved by PyTorch but unallocated. expandable_segments is enabled. If instead the process is running out of virtual address space (VSZ), expandable segments may be over-reserving VA (each segment reserves ~9/8 of device memory, times the number of streams); reduce it via PYTORCH_CUDA_ALLOC_CONF expandable_segments_reserve / expandable_segments_reserve_by_class.",
+   "mem_mib": null,
+   "mem_peak_mib": null,
+   "work": {
+    "flops": 0.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 0,
+    "host_sync": 0,
+    "phases": 0
+   },
+   "clocks": {},
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": []
+  },
+  {
+   "name": "after_oom",
+   "group": "oom",
+   "params": {},
+   "status": "ok",
+   "mem_mib": 0.0,
+   "mem_peak_mib": 0.0,
+   "work": {
+    "flops": 0.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 9328,
+    "host_sync": 1823,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 0.0021674373342078913,
+     "p10": 0.002155252222744924,
+     "p90": 0.0021993825611487466,
+     "min": 0.002153605580534371,
+     "max": 0.002248343022773442
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 0.005344148107397543,
+     "p10": 0.005324395501904438,
+     "p90": 0.0053766620954726245,
+     "min": 0.005317531541398958,
+     "max": 0.0055504750412220475
+    }
+   },
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "",
+     "event_batch_ms": 0.0021613995779439883,
+     "host_sync_ms": 0.005322823916512474,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "",
+     "event_batch_ms": 0.0021674373342078913,
+     "host_sync_ms": 0.005329330773377459,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "",
+     "event_batch_ms": 0.002172267661904389,
+     "host_sync_ms": 0.005346533186658593,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "",
+     "event_batch_ms": 0.002183245344799951,
+     "host_sync_ms": 0.005420293472387178,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "",
+     "event_batch_ms": 0.0022036638717913095,
+     "host_sync_ms": 0.0053766620954726245,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "",
+     "event_batch_ms": 0.0021948816436846096,
+     "host_sync_ms": 0.00532509928666551,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "",
+     "event_batch_ms": 0.0021630462201545414,
+     "host_sync_ms": 0.005361300603737979,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "",
+     "event_batch_ms": 0.002162497407576232,
+     "host_sync_ms": 0.005324395501904438,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "",
+     "event_batch_ms": 0.0021719382516720283,
+     "host_sync_ms": 0.005325132199597475,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "",
+     "event_batch_ms": 0.0021646930668407197,
+     "host_sync_ms": 0.005335915523998495,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "",
+     "event_batch_ms": 0.0021682057536077746,
+     "host_sync_ms": 0.005348715304419046,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "",
+     "event_batch_ms": 0.00215503261592335,
+     "host_sync_ms": 0.005332035655521532,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "",
+     "event_batch_ms": 0.002155252222744924,
+     "host_sync_ms": 0.005317531541398958,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "",
+     "event_batch_ms": 0.002158216096933669,
+     "host_sync_ms": 0.005373765770930078,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "",
+     "event_batch_ms": 0.002159204123155126,
+     "host_sync_ms": 0.005340993417511494,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "",
+     "event_batch_ms": 0.002153605580534371,
+     "host_sync_ms": 0.005357503016842576,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "",
+     "event_batch_ms": 0.0021690839764184444,
+     "host_sync_ms": 0.005360690619660591,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "",
+     "event_batch_ms": 0.002248343022773442,
+     "host_sync_ms": 0.005342702688327925,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "",
+     "event_batch_ms": 0.0021993825611487466,
+     "host_sync_ms": 0.0055504750412220475,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "",
+     "event_batch_ms": 0.0021693035832400184,
+     "host_sync_ms": 0.005344148107397543,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "",
+     "event_batch_ms": 0.002156569454723116,
+     "host_sync_ms": 0.005352606143707031,
+     "sm_mhz": 1965,
+     "mem_mhz": 6001,
+     "temp_c": 49,
+     "clock_events": [
+      "reliability_voltage"
+     ],
+     "flagged": false
+    }
+   ]
+  }
+ ]
+}

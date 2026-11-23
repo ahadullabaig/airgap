@@ -1,0 +1,48 @@
+  <unnamed>::v1_scores(const float *, const float *, float *, int, float) (64, 64, 12)x(16, 16, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    ----------------------------------------------------------- ----------- ------------
+    Metric Name                                                 Metric Unit Metric Value
+    ----------------------------------------------------------- ----------- ------------
+    dram__bytes_read.sum                                              Mbyte         7.21
+    dram__bytes_write.sum                                             Mbyte        50.34
+    dram__throughput.avg.pct_of_peak_sustained_elapsed                    %         1.58
+    gpu__time_duration.sum                                               ms        19.03
+    l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum                           50,331,648
+    l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum                   sector  452,984,832
+    l1tex__throughput.avg.pct_of_peak_sustained_active                    %        99.78
+    lts__throughput.avg.pct_of_peak_sustained_elapsed                     %         1.42
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active           %         1.68
+    sm__throughput.avg.pct_of_peak_sustained_elapsed                      %        22.56
+    ----------------------------------------------------------- ----------- ------------
+  <unnamed>::v1_softmax(float *, int, int) (1536, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    ----------------------------------------------------------- ----------- ------------
+    Metric Name                                                 Metric Unit Metric Value
+    ----------------------------------------------------------- ----------- ------------
+    dram__bytes_read.sum                                              Mbyte       143.47
+    dram__bytes_write.sum                                             Mbyte        50.27
+    dram__throughput.avg.pct_of_peak_sustained_elapsed                    %        96.24
+    gpu__time_duration.sum                                               ms         1.05
+    l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum                            1,179,648
+    l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum                   sector    4,718,592
+    l1tex__throughput.avg.pct_of_peak_sustained_active                    %        15.18
+    lts__throughput.avg.pct_of_peak_sustained_elapsed                     %        46.38
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active           %         5.51
+    sm__throughput.avg.pct_of_peak_sustained_elapsed                      %        10.50
+    ----------------------------------------------------------- ----------- ------------
+  <unnamed>::v1_output(const float *, const float *, float *, int) (256, 12, 1)x(64, 4, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    ----------------------------------------------------------- ----------- ------------
+    Metric Name                                                 Metric Unit Metric Value
+    ----------------------------------------------------------- ----------- ------------
+    dram__bytes_read.sum                                              Mbyte        53.50
+    dram__bytes_write.sum                                             Mbyte         3.73
+    dram__throughput.avg.pct_of_peak_sustained_elapsed                    %         9.21
+    gpu__time_duration.sum                                               ms         3.24
+    l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum                           50,331,648
+    l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum                   sector  125,829,120
+    l1tex__throughput.avg.pct_of_peak_sustained_active                    %        99.64
+    lts__throughput.avg.pct_of_peak_sustained_elapsed                     %        36.52
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active           %         7.10
+    sm__throughput.avg.pct_of_peak_sustained_elapsed                      %        99.58
+    ----------------------------------------------------------- ----------- ------------

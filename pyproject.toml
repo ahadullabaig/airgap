@@ -12,6 +12,7 @@ dependencies = [
     "pillow",
     "num2words",
     "matplotlib>=3.11.2",
+    "nvidia-ml-py>=13.615.71",
 ]
 
 [tool.uv]
