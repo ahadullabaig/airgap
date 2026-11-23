@@ -12,8 +12,10 @@
 // Each test: warm-up, then SAMPLES timed samples (CUDA events around a batch of launches);
 // median, min and max are reported. SM clock, memory clock, temperature and NVML clock-event
 // (throttle) reasons are read before and after each test. Writes JSON to stdout.
-// "reliability_voltage" is the normal cap on the top boost clocks; "sw_power_cap" and the thermal
-// reasons are the ones that indicate a throttled measurement.
+// "reliability_voltage" is the normal cap on the top boost clocks, and "sw_power_cap" is this laptop's
+// steady state under compute load (the sustained FMA run sits there throughout). Thermal and
+// hardware-slowdown reasons, or an SM clock well below the run's median, mark a throttled measurement
+// (the rule kernels/harness applies).
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
