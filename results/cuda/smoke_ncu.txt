@@ -1,0 +1,9 @@
+  vec_add(const float *, const float *, float *, int) (65536, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    ---------------------- ----------- ------------
+    Metric Name            Metric Unit Metric Value
+    ---------------------- ----------- ------------
+    dram__bytes_read.sum         Mbyte       134.22
+    dram__bytes_write.sum        Mbyte        66.92
+    gpu__time_duration.sum          ms         1.09
+    ---------------------- ----------- ------------

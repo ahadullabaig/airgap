@@ -16,7 +16,7 @@ Two outcomes from one codebase:
 - The paper is a course paper in conference format. No venue submission is required.
 - There is no deadline. Week numbers in this plan give the order of work, not dates.
 - The NLP instructor expects an evaluation of Part A (section 2.5).
-- Target device (checked 2026-11-21): RTX 3050 Laptop GPU, 4 GB VRAM, driver 620.70, Fedora 44. No CUDA toolkit (`nvcc`) or PyTorch installed yet; system GCC is 16.2 and system Python is 3.14 (see the toolchain risk in section 6).
+- Target device (checked 2026-11-21): RTX 3050 Laptop GPU, 4 GB VRAM, driver 620.70, Fedora 44. Toolchain (checked 2026-11-23, `results/cuda/toolchain.txt`): CUDA toolkit 13.5 from NVIDIA's repository, which accepts the system GCC 16.2 (its host-compiler limit is 16); PyTorch 2.15 built for CUDA 13.2 in a uv environment on Python 3.12. Kernels are standalone binaries, so the toolkit and PyTorch's CUDA versions need not match.
 - Model shape (from the SmolVLM2-500M config): the vision encoder sees 512 px frames in 16 px patches, so N = 1024 tokens per frame, hidden size 768, 12 heads, head size d = 64. Built-in video sampling is 1 fps. Confirmed on first load (2026-11-21): the encoder outputs 1024 tokens per frame. Without image splitting, a 16:9 frame is stretched (not cropped or padded) to 512x512, so all 1024 patches are real image content. Other aspect ratios are unchecked. Each frame costs 64 tokens on the language side.
 
 **Still assumed (correct these first)**
@@ -265,7 +265,7 @@ The paper is the harder goal, so it gets most of the people for most of the time
 | Demo eats paper time | Hard freeze in week 4. UI work is optional after that. |
 | Model too slow for a live demo | Shorter video, fewer frames per window, or the 256M model. Fallback recording regardless. |
 | One GPU for the whole team | Develop on CPU or a free cloud GPU; book the laptop for measurement runs; all reported numbers come from a named device. |
-| Driver, CUDA toolkit and PyTorch versions disagree on Fedora | System GCC 16.2 is probably newer than nvcc supports (unverified: check the host-compiler table of the toolkit you pin), and system Python 3.14 may lack wheels. Cleanest fix: a container (podman with the NVIDIA container toolkit and a CUDA devel image) or a pixi/conda environment with its own nvcc, an older GCC and Python 3.12. Pin and commit versions in week 1. |
+| Driver, CUDA toolkit and PyTorch versions disagree on Fedora | Resolved in week 1: CUDA 13.5 accepts GCC 16.2, and PyTorch runs from a uv environment on Python 3.12 (`results/cuda/toolchain.txt`). Lock the driver and toolkit packages during measurement weeks. |
 | CapERA has no stated licence | Fine for coursework and internal checks; confirm terms before putting its content in a published paper. Part B does not depend on it. |
 | ERA videos unavailable (CapERA ships captions only) | Check in week 1. Fallback: ask the ERA authors; otherwise hand-caption about 100 public aerial clips and evaluate on those. |
 
@@ -290,11 +290,11 @@ paper/         source for the paper
 - [ ] Conference template chosen (ask the Parallel Programming instructor which one)
 - [ ] Ask the NLP instructor what form the evaluation should take (section 2.5)
 - [ ] Roles written into this file
-- [ ] NVIDIA driver, CUDA toolkit and PyTorch working together; versions committed
-- [ ] Nsight Compute can read performance counters
+- [x] NVIDIA driver, CUDA toolkit and PyTorch working together; versions committed (`results/cuda/toolchain.txt`)
+- [x] Nsight Compute can read performance counters (`NVreg_RestrictProfilingToAdminUsers=0`; `make -C kernels/smoke profile`)
 - [x] SmolVLM2-500M captions one aerial clip with the network off; N = 1024 confirmed (`demo/caption_clip.py`)
 - [x] ERA videos downloaded; all 2,864 match CapERA; per-clip scan in `results/era/` (DATA.md)
-- [ ] A trivial CUDA kernel compiles, runs and is timed
+- [x] A trivial CUDA kernel compiles, runs and is timed (`kernels/smoke`, `results/cuda/smoke.json`)
 - [ ] Predicted time per kernel written down (section 3.1)
 - [ ] Everyone on Part B has read the papers in section 3.2
 - [ ] Literature search done; novelty table updated; research question frozen

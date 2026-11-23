@@ -1,0 +1,5 @@
+{
+ "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU", "cc": "8.6", "sms": 16, "runtime": 13050, "driver_api": 13050,
+ "vec_add": {"n": 16777216, "ms": 1.0887, "effective_gb_per_s": 184.9, "mismatches": 0},
+ "empty_launch_us": 1.719
+}

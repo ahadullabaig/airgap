@@ -1,0 +1,9 @@
+# nvcc
+Cuda compilation tools, release 13.5, V13.5.37
+Build cuda_13.5.r13.5/compiler.39125733_0
+# host compiler
+g++ (GCC) 16.2.1 20261029 (Red Hat 16.2.1-3)
+# driver
+NVIDIA GeForce RTX 3050 Laptop GPU, 620.70.06, 8.6
+# torch
+2.15.0+cu132 cuda 13.2
