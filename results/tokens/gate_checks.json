@@ -40,6 +40,34 @@
    "B_stream": 0.305469375,
    "hold_stride_stream": 0.13647125,
    "hold_first_stream": 0.305469375
+  },
+  "C_select_all/stride1": {
+   "cost_fraction": 1.0,
+   "C_con_mean": 0.0,
+   "C_stream": 0.0,
+   "hold_stride_stream": 0.0,
+   "hold_first_stream": 0.305469375
+  },
+  "C_select_all/stride4": {
+   "cost_fraction": 1.0,
+   "C_con_mean": 0.0,
+   "C_stream": 0.13647125,
+   "hold_stride_stream": 0.13647125,
+   "hold_first_stream": 0.305469375
+  },
+  "C_select_none/stride1": {
+   "cost_fraction": 0.0576923076923077,
+   "C_con_mean": 0.32583235402901967,
+   "C_stream": 0.305469375,
+   "hold_stride_stream": 0.0,
+   "hold_first_stream": 0.305469375
+  },
+  "C_select_none/stride4": {
+   "cost_fraction": 0.0576923076923077,
+   "C_con_mean": 0.34074123700459796,
+   "C_stream": 0.305469375,
+   "hold_stride_stream": 0.13647125,
+   "hold_first_stream": 0.305469375
   }
  },
  "sensitivity": {

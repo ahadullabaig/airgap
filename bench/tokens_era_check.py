@@ -1,8 +1,9 @@
 """Checks for bench/tokens_era.py on a short stretch of one clip. Writes results/tokens/gate_checks.json.
 
 1. Endpoints of the gate simulation: refreshing every block (threshold below 0)
-   reproduces the dense outputs in both tiers; refreshing none (threshold above
-   255) reproduces the first frame's output held, in both tiers.
+   reproduces the dense outputs in tiers A and B; refreshing none (threshold above
+   255) reproduces the first frame's output held. Tier C likewise: selecting every
+   token reproduces dense, selecting none holds the first frame.
 2. Sensitivity yardstick: how much the encoder and connector outputs move when
    the input changes by tiny amounts that carry no content: the same frame
    again (must be 0), +-1 grey level of random noise, and a repeated frame from
@@ -57,7 +58,19 @@ def main() -> None:
                 "A_stream": cell["stream"]["A"]["mean"], "B_stream": cell["stream"]["B"]["mean"],
                 "hold_stride_stream": te.hold_stream(con_all, s)["mean"], "hold_first_stream": hold_first["mean"],
             }
+    for label, eps in (("C_select_all", -1.0), ("C_select_none", 1e9)):
+        for s in (1, 4):
+            cell = te.token_gate_cell(vs, views, enc_all, con_all, s, eps)
+            out["endpoints"][f"{label}/stride{s}"] = {
+                "cost_fraction": cell["cost_fraction"], "C_con_mean": cell["samples"]["con_mean"],
+                "C_stream": cell["stream"]["mean"], "hold_stride_stream": te.hold_stream(con_all, s)["mean"],
+                "hold_first_stream": te.hold_stream(con_all, 10**6)["mean"]}
     ep = out["endpoints"]
+    for s in (1, 4):
+        a = ep[f"C_select_all/stride{s}"]
+        assert a["cost_fraction"] == 1.0 and a["C_con_mean"] == 0.0 and abs(a["C_stream"] - a["hold_stride_stream"]) < 1e-6, a
+        n = ep[f"C_select_none/stride{s}"]
+        assert abs(n["C_stream"] - n["hold_first_stream"]) < 1e-6, n
     for s in (1, 4):
         a = ep[f"refresh_all/stride{s}"]
         assert a["keep"] == 1.0 and a["A_con_mean"] < 1e-4 and a["B_con_mean"] < 1e-4, a

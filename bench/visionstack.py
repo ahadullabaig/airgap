@@ -95,3 +95,35 @@ class VisionStack:
         o = (w @ v).transpose(1, 2).reshape(b, -1, d)
         x = h[:, rows] + att.out_proj(o)
         return x + lay.mlp(lay.layer_norm2(x))
+
+    @torch.no_grad()
+    def layer_gated(self, i: int, x: torch.Tensor, st: dict, eps: float):
+        """Layer i with two token-delta gates (tier C: G2-style gating with exact attention, design option 3).
+
+        Gate 1 sits before layer_norm1 and the q/k/v projections: a token is recomputed when its input x
+        differs from the reference r1 (its input when last recomputed) by more than eps, relative; selected
+        tokens update r1. Attention is then exact for every row on q/k/v from r1 (unchanged rows get the
+        exact update a kernel would apply). Gate 2 sits before layer_norm2 and the MLP, on z = r1 + attention,
+        against reference r2. The layer output is r2 + MLP(r2), so an unselected token keeps its cached MLP
+        result. eps < 0 reproduces the dense layer; eps = inf holds the first sample.
+
+        st holds this layer's references; empty on the first sample (dense, references initialised).
+        Returns (output, share of tokens through gate 1, share through gate 2)."""
+        lay = self.layers[i]
+
+        def rel(a, b):
+            return (a - b).norm(dim=-1) / b.norm(dim=-1).clamp_min(1e-12)
+
+        if not st:
+            st["r1"] = x.clone()
+            z = x + lay.self_attn(lay.layer_norm1(x), attention_mask=None)[0]
+            st["r2"] = z.clone()
+            return z + lay.mlp(lay.layer_norm2(z)), 1.0, 1.0
+        s1 = rel(x, st["r1"]) > eps
+        st["r1"] = torch.where(s1[..., None], x, st["r1"])
+        r1 = st["r1"]
+        z = r1 + lay.self_attn(lay.layer_norm1(r1), attention_mask=None)[0]
+        s2 = rel(z, st["r2"]) > eps
+        st["r2"] = torch.where(s2[..., None], z, st["r2"])
+        r2 = st["r2"]
+        return r2 + lay.mlp(lay.layer_norm2(r2)), float(s1.float().mean()), float(s2.float().mean())

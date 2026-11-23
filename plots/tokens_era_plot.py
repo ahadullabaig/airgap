@@ -5,7 +5,9 @@ sees, at 24 fps with each method holding its latest output) against cost, per
 footage group. Dense at a lower frame rate with the output held is the
 equal-cost baseline; the gate is shown for stale input (tier A, a floor) and
 stale rows (tier B), at 24 and 6 fps, one point per pixel threshold.
-Horizontal lines: bf16-vs-fp32 and +-1 grey-level noise.
+Tier C (token-delta gates with exact attention) is plotted at its estimated FLOP
+cost, one point per token threshold. Horizontal lines: bf16-vs-fp32 and +-1
+grey-level noise.
 
 tokens_era_spread.png: per-layer change between consecutive frames for tokens
 inside and outside the pixel mask (block MAD > 8), at 24 fps.
@@ -74,6 +76,18 @@ def error_figure(r: dict, out: Path) -> None:
                     for t, x, y in zip(thr, xs, ys):
                         ax.annotate(f"{t:g}", (x, y), xytext=(4, -9), textcoords="offset points", fontsize=7,
                                     color=INK_2)
+        eps = r.get("tier_c_thresholds", [])
+        if "token_cells" in G and eps:
+            for s, ls, mk in zip(gates, ("-", (0, (2, 2))), ("o", "s")):
+                cells = [G["token_cells"][f"{s}/{e:g}"] for e in eps]
+                xs = [c["cost"] for c in cells]
+                ys = [100 * c["C_stream"]["mean"] for c in cells]
+                ax.plot(xs, ys, color=AQUA, lw=2, ls=ls, marker=mk, ms=6, markeredgecolor=SURFACE,
+                        markeredgewidth=1.5, label=f"Gate at {24 / s:g} fps, token deltas + exact attention")
+                if s == gates[0]:
+                    for e, x, y in zip(eps, xs, ys):
+                        ax.annotate(f"{e:g}", (x, y), xytext=(4, 5), textcoords="offset points", fontsize=7,
+                                    color=INK_2)
         for y, lab, x, dy in ((100 * bf16, "bf16 vs fp32", 28, 3), (100 * noise, "±1 grey level noise", 0.045, 3)):
             ax.axhline(y, color=AXIS, lw=1)
             ax.annotate(lab, (x, y), xytext=(0, dy), textcoords="offset points", fontsize=7, color=MUTED,
@@ -89,11 +103,11 @@ def error_figure(r: dict, out: Path) -> None:
     axes[0][0].set_ylabel("Connector output error at 24 fps (%)")
     axes[0][0].set_ylim(0, None)
     handles, labels = axes[0][0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.01, 0.94), ncol=3, frameon=False, fontsize=8)
-    fig.suptitle("Gate error against cost on ERA, encoder + connector in fp32. Numbers on the blue line: "
-                 "pixel threshold (block MAD). Stale input is plotted at the mask's cost, which no kernel "
-                 "achieves.", x=0.01, ha="left", fontsize=9, color=INK_2)
-    fig.tight_layout(rect=(0, 0, 1, 0.84))
+    fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.01, 0.91), ncol=4, frameon=False, fontsize=8)
+    fig.suptitle("Gate error against cost on ERA, encoder + connector in fp32. Numbers: pixel threshold (blue), "
+                 "token-delta threshold (green).\nStale input is plotted at the mask's cost, which no kernel "
+                 "achieves; token-delta cost is a FLOP estimate.", x=0.01, ha="left", fontsize=8.5, color=INK_2)
+    fig.tight_layout(rect=(0, 0, 1, 0.80))
     fig.savefig(out, facecolor=SURFACE)
     print(f"wrote {out}")
 

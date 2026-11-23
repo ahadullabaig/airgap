@@ -19,6 +19,9 @@ connector (bench/visionstack.py, fp32, TF32 off).
      B  stale rows (G1, design option 1): the pixel mask is held through every
         layer; refreshed rows are computed against all keys and values, the
         other rows keep their cached output from when they were last refreshed.
+   Tier C is separate from the pixel gate: token-delta gates before the q/k/v
+   projections and before the MLP at every layer, with exact attention for every
+   row (G2-style gating with the exact update, design option 3), thresholds 0.05-0.5.
    Errors are per-token relative errors against the dense output of the true
    frame, at the encoder output (refreshed and unrefreshed tokens separately)
    and at the connector output (what the language model sees).
@@ -28,8 +31,8 @@ connector (bench/visionstack.py, fp32, TF32 off).
    held, and the bf16-vs-fp32 floor from results/tokens/checks.json.
 
 Needs results/x0/era_tra/raw/per_clip.jsonl (bench/x0_era.py) and results/tokens/
-checks.json (bench/visionstack_check.py). About 3 minutes per clip on an RTX 3050
-Laptop, 39 clips; per-clip results are appended as they finish and a rerun skips
+checks.json (bench/visionstack_check.py). About 4 minutes per clip on an RTX 3050
+Laptop, 39 clips (about 2.7 hours); per-clip results are appended as they finish and a rerun skips
 clips already done.
 
 Example:
@@ -61,6 +64,18 @@ GATE_STRIDES = (1, 4)
 HOLD_STRIDES = (1, 2, 4, 8, 24)
 THRESHOLDS = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0)
 EPS = (0.01, 0.03, 0.1, 0.3)  # token-level change thresholds for the dense trace
+EPS_C = (0.05, 0.1, 0.2, 0.3, 0.5)  # tier C token-delta thresholds; grid chosen by cost span only (two clips)
+# Tier C cost model, per layer, in units of N*d^2 (N = 1024 tokens, d = 768): q/k/v projections 3 (gated by
+# gate 1), attention 4N/d = 5.33 (changed rows plus the exact update of the other rows, about 2 x the gate-1
+# share, capped at dense), output projection 1 (counted dense: every row's attention output can change),
+# MLP 8 (gated by gate 2). Embedding, post-layernorm and connector are left out (small).
+ATT_UNITS = 4 * 1024 / 768
+DENSE_UNITS = 3 + ATT_UNITS + 1 + 8
+
+
+def c_cost(k1: float, k2: float) -> float:
+    """Estimated share of a dense layer's FLOPs for tier C given the shares through gates 1 and 2."""
+    return (3 * k1 + ATT_UNITS * min(1.0, 2 * k1) + 1 + 8 * k2) / DENSE_UNITS
 PIXEL_MASK_THR = 8.0  # inside/outside split of the dense trace
 PER_GROUP = 12
 SEED = 2
@@ -207,6 +222,37 @@ def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float) -> dict:
     return {"keep_counts": keep_counts, "samples": summ, "stream": stream, "series": series}
 
 
+def token_gate_cell(vs, views, enc_all, con_all, s: int, eps: float) -> dict:
+    """Tier C: token-delta gates at every layer (VisionStack.layer_gated), on the true frames at stride s."""
+    states = [dict() for _ in vs.layers]
+    per, con_out, k_layers = [], {}, []
+    for i in range(0, len(views), s):
+        h = vs.embed(vs.pixels(views[i]))
+        ks = []
+        for layer in range(len(vs.layers)):
+            h, k1, k2 = vs.layer_gated(layer, h, states[layer], eps)
+            ks.append((k1, k2))
+        enc, con = vs.head(h)
+        con_out[i] = con[0]
+        if i == 0:  # first sample: dense, references initialised, not counted
+            continue
+        k_layers.append(ks)
+        te_ = tok_rel(enc[0], enc_all[i])
+        tc = tok_rel(con[0], con_all[i])
+        per.append({"i": i, "cost": float(np.mean([c_cost(a, b) for a, b in ks])),
+                    "enc_mean": float(te_.mean()), "enc_median": float(te_.median()),
+                    "con_mean": float(tc.mean()), "con_median": float(tc.median()), "con_p95": float(tc.quantile(0.95))})
+    mean, med = stream_errors(con_out, con_all, s)
+    kl = np.array(k_layers)  # samples, layers, 2
+    return {"cost_fraction": float(np.mean([x["cost"] for x in per])),
+            "k1_by_layer": kl[..., 0].mean(axis=0).round(4).tolist(),
+            "k2_by_layer": kl[..., 1].mean(axis=0).round(4).tolist(),
+            "samples": {k: float(np.mean([x[k] for x in per])) for k in per[0] if k != "i"},
+            "stream": stream_stats(mean, med),
+            "series": {"stream_mean": mean, "samples": {k: [round(x[k], 5) for x in per]
+                                                        for k in ("i", "cost", "con_mean", "enc_mean")}}}
+
+
 def hold_stream(con_all: torch.Tensor, s: int) -> dict:
     """Dense every s frames, output held in between. s >= frames means the first frame held throughout."""
     outs = {j: con_all[j] for j in range(0, con_all.shape[0], s)}
@@ -317,6 +363,10 @@ def run(args) -> None:
                 assert cell["keep_counts"] == expect, (key, s, thr, "keep counts differ from X0")
                 cell["keep"] = float(np.mean(cell.pop("keep_counts"))) / TOKENS
                 rec["cells"][f"{s}/{thr:g}"] = cell
+        rec["token_cells"] = {}
+        for s in GATE_STRIDES:
+            for eps in EPS_C:
+                rec["token_cells"][f"{s}/{eps:g}"] = token_gate_cell(vs, views, enc_all, con_all, s, eps)
         for s in HOLD_STRIDES:
             rec["hold"][str(s)] = hold_stream(con_all, s)
         rec["hold"]["first"] = hold_stream(con_all, len(views))
@@ -364,6 +414,22 @@ def aggregate(out: Path) -> dict:
                 **{f"{t}_stream_halves": [pool([c["stream"][t]["half1"] for c in cl])["mean"],
                                           pool([c["stream"][t]["half2"] for c in cl])["mean"]] for t in ("A", "B")},
             }
+        tcells = {}
+        for key in R[0]["token_cells"]:
+            s = int(key.split("/")[0])
+            cl = [r["token_cells"][key] for r in R]
+            frac = pool([c["cost_fraction"] for c in cl])
+            tcells[key] = {
+                "cost_fraction": frac, "cost": frac["mean"] * NATIVE_FPS / s,
+                "k1_by_layer": np.mean([c["k1_by_layer"] for c in cl], axis=0).round(4).tolist(),
+                "k2_by_layer": np.mean([c["k2_by_layer"] for c in cl], axis=0).round(4).tolist(),
+                **{f"C_{m}": pool([c["samples"][m] for c in cl]) for m in ("enc_mean", "enc_median", "con_mean",
+                                                                        "con_median", "con_p95")},
+                "C_stream": pool([c["stream"]["mean"] for c in cl]),
+                "C_stream_token_median": pool([c["stream"]["token_median"] for c in cl]),
+                "C_stream_halves": [pool([c["stream"]["half1"] for c in cl])["mean"],
+                                    pool([c["stream"]["half2"] for c in cl])["mean"]],
+            }
         hold = {}
         for s in R[0]["hold"]:
             cost = (float(np.mean([NATIVE_FPS / r["frames"] for r in R])) if s == "first"
@@ -387,7 +453,8 @@ def aggregate(out: Path) -> dict:
                                                  for e in R[0]["trace"][s]["connector"]["frac_gt"]}}
         floors = {f: {k: pool([r["floors"][f][k] for r in R]) for k in ("mean", "median")}
                   for f in ("bf16_vs_fp32", "noise_pm1")}
-        summ[g] = {"clips": [r["id"] for r in R], "cells": cells, "hold": hold, "trace": trace, "floors": floors}
+        summ[g] = {"clips": [r["id"] for r in R], "cells": cells, "token_cells": tcells, "hold": hold,
+                   "trace": trace, "floors": floors}
     all_floors = {f: {k: pool([r["floors"][f][k] for r in recs]) for k in ("mean", "median")}
                   for f in ("bf16_vs_fp32", "noise_pm1")}
     return {"groups": summ,
@@ -419,7 +486,13 @@ def main() -> None:
         "view": "encoder view as in X0 (uint8 512x512), fp32 vision tower + connector, TF32 off",
         "gate": "reference-mode pixel gate as in X0 (keep counts asserted equal to X0's per clip)",
         "tiers": {"A": "stale input: dense encoder on the gate's reference image (a floor)",
-                  "B": "stale rows (G1 option 1): pixel mask held through all layers, unrefreshed rows cached"},
+                  "B": "stale rows (G1 option 1): pixel mask held through all layers, unrefreshed rows cached",
+                  "C": "token-delta gates before q/k/v and before the MLP at every layer, exact attention for all "
+                       "rows (G2-style gating with design option 3); true frames, no pixel gate"},
+        "tier_c_thresholds": list(EPS_C),
+        "tier_c_cost": "estimated FLOP share of the dense encoder layers (cost model in bench/tokens_era.py: "
+                       "q/k/v 3, attention 5.33 at about 2 x the gate-1 share, output projection 1 dense, MLP 8, "
+                       "in N*d^2 units); its minimum is 1/17.3 = 0.058 because the output projection stays dense",
         "error": "per-token relative error ||x - x_dense|| / ||x_dense||, mean over tokens then samples then clips",
         "stream": "connector output at 24 fps, each method holding its latest output; mean over frames of the "
                   "token-mean error (token_median: of the token-median error); hold 'first' = first frame held",
