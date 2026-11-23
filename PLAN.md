@@ -115,6 +115,24 @@ Hypotheses:
 
 N is the number of tokens; M is the number that changed since the last frame.
 
+**Predicted times** (written 2026-11-23, before any attention kernel; `bench/predict_times.py`, full output in `results/cuda/predicted_times.json`). Inputs are this GPU's measured limits (`kernels/microbench`, `results/cuda/peak.json`): FP32 FMA 7.46 TFLOPS sustained over 10 s (about 1.9 GHz, at the software power cap; a short burst gives 7.5), DRAM 188 GB/s read and 183 GB/s copy, L2 reads at least 0.73 TB/s (512 KiB working set), empty-kernel launch 1.7 us back to back and 4.6 us with a sync. Shape: N = 1024, 12 heads, d = 64, FP32. Ranges come from assumed efficiencies (stated in the script), not from measurements.
+
+| Kernel | Predicted time | What sets it |
+|---|---|---|
+| V1 (three kernels, N x N in DRAM) | 2.0-4.9 ms | Untiled matmuls at 10-30% of peak, assuming 16 x 16 blocks reuse operand rows from L1 (without that reuse, L2 traffic alone would take about 9 ms per matmul), plus about 0.5 ms of softmax traffic |
+| V2 (tiled, N x N in DRAM) | 1.2-1.6 ms | Four N x N passes through DRAM (about 1 ms) plus tiled matmuls at 40-70% of peak |
+| V3 (fused, online softmax) | 0.66-1.2 ms | Compute: 3.2 GFLOP at 35-65% of peak; DRAM traffic only 13 MB |
+| B1 (library attention) | 0.5-1.8 ms | 35-85% of peak (the low end is the rate the whole PyTorch encoder reaches, 2.7 TFLOPS); the math backend also round-trips N x N |
+
+Gated, at keep-rate k = M / N (G1 against our V3, B2 against B1):
+- G1 recomputing changed rows only (design option 1): break-even near k = 0.8-0.9. At small M the time is set by wave quantisation, 0.05-0.22 ms for k below 0.1, which split-KV would reduce.
+- G1 with the exact update (option 3): break-even near k = 0.42, since updating every unchanged row costs about 2k(1 - k) of dense on top of the changed rows.
+- B2 (PyTorch selection plus library attention): break-even near k = 0.9 against B1, with 50-150 us of fixed cost (the sync to learn M, index operations, dispatch). Rows-only G1 and B2 are the like-for-like pair (both leave unchanged rows stale); their predicted ranges overlap at every keep-rate, so the model does not order them. Whether H2 holds depends on how close our kernels get to library efficiency, which B1's measured time will show.
+- Launch costs are microseconds against dense times near a millisecond, as H1 expects.
+- Attention is about 18% of an encoder layer's FLOPs at this shape, so gating attention alone bounds the encoder-level saving.
+
+The decision gate compares measured keep-rates on real footage with these break-evens; the measured kernel times replace the predictions as they arrive.
+
 Notes on the hypotheses:
 - H1 replaces an earlier version that said fixed per-launch costs dominate at ViT lengths. That result (Dispatch-Aware Ragged Attention) was measured at 197 tokens or fewer on a much faster GPU (RTX 4000 Ada), with about 50 µs of host-side dispatch per call.
 - Estimate, unmeasured: dense attention at N = 1024 with 12 heads is about 3.2 GFLOP, on the order of 1 ms on this GPU, against a few µs per raw kernel launch. Write predicted times for every kernel before the first benchmark; a large miss means a broken kernel or a wrong model.
@@ -171,7 +189,7 @@ Design question to settle in week 1 after reading Eventful Transformers section 
 
 1. Accept stale rows and measure the error.
 2. Add a periodic full refresh, which bounds the drift.
-3. Exact update (novelty unchecked). Cache each row's online-softmax state, which V3 computes anyway: running max m, denominator l, unnormalised output o. When the tokens in set C change, update every unchanged row exactly: remove the old exp(s_ij - m_i) terms and their v_j contributions for j in C, then add the new ones. Old scores come from q_i and a cached copy of the old K rows. Estimated cost is about 2x option 1, with O(N x d) memory and no N x N cache. If a row put most of its weight on changed keys, the subtraction loses precision; recompute that row instead.
+3. Exact update (novelty unchecked). Cache each row's online-softmax state, which V3 computes anyway: running max m, denominator l, unnormalised output o. When the tokens in set C change, update every unchanged row exactly: remove the old exp(s_ij - m_i) terms and their v_j contributions for j in C, then add the new ones. Old scores come from q_i and a cached copy of the old K rows. Estimated work is k(3 - 2k) of dense attention at keep-rate k (the changed rows, plus about 4d multiply-adds per unchanged row and changed key), so about 3x option 1 at small k and break-even with dense near k = 0.5 before fixed costs; O(N x d) memory and no N x N cache. If a row put most of its weight on changed keys, the subtraction loses precision; recompute that row instead.
 
 Measure before deciding.
 
@@ -295,7 +313,7 @@ paper/         source for the paper
 - [x] SmolVLM2-500M captions one aerial clip with the network off; N = 1024 confirmed (`demo/caption_clip.py`)
 - [x] ERA videos downloaded; all 2,864 match CapERA; per-clip scan in `results/era/` (DATA.md)
 - [x] A trivial CUDA kernel compiles, runs and is timed (`kernels/smoke`, `results/cuda/smoke.json`)
-- [ ] Predicted time per kernel written down (section 3.1)
+- [x] Predicted time per kernel written down (section 3.1; `results/cuda/predicted_times.json`)
 - [ ] Everyone on Part B has read the papers in section 3.2
 - [ ] Literature search done; novelty table updated; research question frozen
 - [ ] Stale, refresh or exact-update design question (section 3.4) answered

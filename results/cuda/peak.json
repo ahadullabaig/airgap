@@ -1,0 +1,18 @@
+{
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU", "cc": "8.6", "sms": 16, "l2_bytes": 1572864, "runtime": 13050, "driver_api": 13050,
+  "max_sm_mhz": 2100, "max_mem_mhz": 6001, "fp32_lanes_per_sm": 128,
+  "fma": {"ms_median": 1.138944, "ms_min": 1.137510, "ms_max": 1.457869, "tflops": 7.54, "tflops_best": 7.55,
+    "sm_mhz": [1500, 1920], "mem_mhz": [6001, 6001], "temp_c": [41, 47], "clock_events_before": [], "clock_events_after": ["sw_power_cap"]},
+  "fma_sustained": {"tflops_settled": 7.46, "tflops_per_second": [7.43, 7.44, 7.43, 7.43, 7.43, 7.43, 7.42, 7.47, 7.47, 7.46], "sm_mhz_per_second": [1905, 1905, 1897, 1897, 1897, 1897, 1890, 1905, 1905, 1897],
+    "temp_c": [47, 54], "clock_events_before": ["sw_power_cap"], "clock_events_after": ["sw_power_cap"]},
+  "dram_read": {"ms_median": 2.853274, "ms_min": 2.852250, "ms_max": 2.854880, "gb_per_s": 188.16, "gb_per_s_best": 188.23,
+    "sm_mhz": [1897, 1957], "mem_mhz": [6001, 6001], "temp_c": [54, 54], "clock_events_before": ["sw_power_cap"], "clock_events_after": ["reliability_voltage"]},
+  "dram_copy": {"ms_median": 2.929050, "ms_min": 2.926592, "ms_max": 2.931507, "gb_per_s": 183.29, "gb_per_s_best": 183.45,
+    "sm_mhz": [1957, 1957], "mem_mhz": [6001, 6001], "temp_c": [54, 53], "clock_events_before": ["reliability_voltage"], "clock_events_after": ["reliability_voltage"]},
+  "l2_read": {"ms_median": 0.735232, "ms_min": 0.731712, "ms_max": 0.740762, "gb_per_s": 730.21, "gb_per_s_best": 733.72,
+    "sm_mhz": [1957, 1957], "mem_mhz": [6001, 6001], "temp_c": [53, 53], "clock_events_before": ["reliability_voltage"], "clock_events_after": ["reliability_voltage"]},
+  "launch_b2b": {"ms_median": 0.001773, "ms_min": 0.001677, "ms_max": 0.001844, "mcalls_per_s": 0.56, "mcalls_per_s_best": 0.60,
+    "sm_mhz": [1957, 1957], "mem_mhz": [6001, 6001], "temp_c": [53, 53], "clock_events_before": ["reliability_voltage"], "clock_events_after": ["reliability_voltage"]},
+  "launch_rt": {"ms_median": 0.004575, "ms_min": 0.004554, "ms_max": 0.004807, "mcalls_per_s": 0.22, "mcalls_per_s_best": 0.22,
+    "sm_mhz": [1957, 1957], "mem_mhz": [6001, 6001], "temp_c": [53, 53], "clock_events_before": ["reliability_voltage"], "clock_events_after": ["reliability_voltage"]}
+}

@@ -1,0 +1,229 @@
+{
+ "shape": {
+  "N": 1024,
+  "head_dim": 64,
+  "heads": 12,
+  "dtype": "fp32"
+ },
+ "measured_limits": {
+  "fp32_tflops_sustained": 7.46,
+  "fp32_tflops_burst": 7.54,
+  "dram_gb_per_s": 188.16,
+  "l2_gb_per_s": 730.21,
+  "launch_back_to_back_us": 1.773,
+  "launch_roundtrip_us": 4.575,
+  "source": "results/cuda/peak.json"
+ },
+ "assumptions": {
+  "efficiency_share_of_peak": {
+   "naive_matmul": [
+    0.1,
+    0.3
+   ],
+   "tiled_matmul": [
+    0.4,
+    0.7
+   ],
+   "fused_fp32": [
+    0.35,
+    0.65
+   ],
+   "library": [
+    0.35,
+    0.85
+   ]
+  },
+  "v1_l1_reuse": 16,
+  "block_rows": 64,
+  "blocks_per_sm": [
+   2,
+   4
+  ],
+  "g1_fixed_us": [
+   5,
+   15
+  ],
+  "b2_fixed_us": [
+   50,
+   150
+  ]
+ },
+ "work": {
+  "flops_qk_plus_pv": 3221225472,
+  "nxn_matrix_mb": 50.331648,
+  "qkvo_mb": 12.582912,
+  "attention_share_of_encoder_layer_flops": 0.18181818181818182
+ },
+ "dense_ms": {
+  "V1": [
+   1.98,
+   4.858
+  ],
+  "V2": [
+   1.157,
+   1.62
+  ],
+  "V3": [
+   0.666,
+   1.235
+  ],
+  "B1": [
+   0.51,
+   1.776
+  ]
+ },
+ "gated_ms": [
+  {
+   "keep": 0.02,
+   "M": 20,
+   "G1_rows_only": [
+    0.048,
+    0.222
+   ],
+   "G1_exact_update": [
+    0.074,
+    0.27
+   ],
+   "B2": [
+    0.06,
+    0.186
+   ]
+  },
+  {
+   "keep": 0.05,
+   "M": 51,
+   "G1_rows_only": [
+    0.048,
+    0.222
+   ],
+   "G1_exact_update": [
+    0.111,
+    0.339
+   ],
+   "B2": [
+    0.075,
+    0.239
+   ]
+  },
+  {
+   "keep": 0.1,
+   "M": 102,
+   "G1_rows_only": [
+    0.09,
+    0.222
+   ],
+   "G1_exact_update": [
+    0.209,
+    0.444
+   ],
+   "B2": [
+    0.101,
+    0.328
+   ]
+  },
+  {
+   "keep": 0.2,
+   "M": 205,
+   "G1_rows_only": [
+    0.173,
+    0.428
+   ],
+   "G1_exact_update": [
+    0.386,
+    0.823
+   ],
+   "B2": [
+    0.152,
+    0.505
+   ]
+  },
+  {
+   "keep": 0.3,
+   "M": 307,
+   "G1_rows_only": [
+    0.214,
+    0.428
+   ],
+   "G1_exact_update": [
+    0.493,
+    0.946
+   ],
+   "B2": [
+    0.203,
+    0.683
+   ]
+  },
+  {
+   "keep": 0.5,
+   "M": 512,
+   "G1_rows_only": [
+    0.339,
+    0.634
+   ],
+   "G1_exact_update": [
+    0.671,
+    1.25
+   ],
+   "B2": [
+    0.305,
+    1.038
+   ]
+  },
+  {
+   "keep": 0.75,
+   "M": 768,
+   "G1_rows_only": [
+    0.505,
+    1.045
+   ],
+   "G1_exact_update": [
+    0.754,
+    1.508
+   ],
+   "B2": [
+    0.432,
+    1.482
+   ]
+  },
+  {
+   "keep": 1.0,
+   "M": 1024,
+   "G1_rows_only": [
+    0.671,
+    1.25
+   ],
+   "G1_exact_update": [
+    0.671,
+    1.25
+   ],
+   "B2": [
+    0.56,
+    1.926
+   ]
+  }
+ ],
+ "breakeven_keep_vs_V3": {
+  "G1_rows_only": [
+   0.93,
+   0.81
+  ],
+  "G1_exact_update": [
+   0.43,
+   0.42
+  ]
+ },
+ "breakeven_keep_vs_each_other": "rows-only G1 and B2 are like for like (both leave unchanged rows stale); their ranges overlap at every keep-rate, so B1's measured time decides",
+ "breakeven_keep_vs_B1": {
+  "B2": [
+   0.9,
+   0.91
+  ]
+ },
+ "notes": [
+  "Launch costs are a few microseconds against dense times near a millisecond, so H1 expects dense attention at N = 1024 to be limited by compute and memory traffic, not fixed costs.",
+  "V2 cannot avoid four N x N passes through DRAM (about 1 ms here); V3 removes them, so fusion is predicted to matter about as much as tiling.",
+  "G1 work is quantised into waves of thread blocks: at small M one partly filled wave sets the time (split-KV would lower it).",
+  "Attention is only about a fifth of an encoder layer's FLOPs at this shape, so gating attention alone bounds the encoder-level saving; the token-wise layers need gating too.",
+  "Break-even keep-rates are against the dense kernel's own time, not against running dense at a lower frame rate."
+ ]
+}

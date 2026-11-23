@@ -65,17 +65,19 @@ HOLD_STRIDES = (1, 2, 4, 8, 24)
 THRESHOLDS = (1.0, 2.0, 4.0, 8.0, 16.0, 32.0)
 EPS = (0.01, 0.03, 0.1, 0.3)  # token-level change thresholds for the dense trace
 EPS_C = (0.05, 0.1, 0.2, 0.3, 0.5)  # tier C token-delta thresholds; grid chosen by cost span only (two clips)
-# Tier C cost model, per layer, in units of N*d^2 (N = 1024 tokens, d = 768): q/k/v projections 3 (gated by
-# gate 1), attention 4N/d = 5.33 (changed rows plus the exact update of the other rows, about 2 x the gate-1
-# share, capped at dense), output projection 1 (counted dense: every row's attention output can change),
-# MLP 8 (gated by gate 2). Embedding, post-layernorm and connector are left out (small).
-ATT_UNITS = 4 * 1024 / 768
+# Tier C cost model, per layer, in multiply-adds, in units of N*d^2 (N = 1024 tokens, d = 768): q/k/v
+# projections 3 (gated by gate 1), attention 2N/d = 2.67 (QK^T and PV, N^2*d each; changed rows k plus the
+# exact update of the other rows, about 4d multiply-adds per (unchanged row, changed key): k(3 - 2k) of dense,
+# capped at dense, as in bench/predict_times.py), output projection 1 (counted
+# dense: every row's attention output can change), MLP 8 (gated by gate 2). Softmax, embedding,
+# post-layernorm and connector are left out (small).
+ATT_UNITS = 2 * 1024 / 768
 DENSE_UNITS = 3 + ATT_UNITS + 1 + 8
 
 
 def c_cost(k1: float, k2: float) -> float:
     """Estimated share of a dense layer's FLOPs for tier C given the shares through gates 1 and 2."""
-    return (3 * k1 + ATT_UNITS * min(1.0, 2 * k1) + 1 + 8 * k2) / DENSE_UNITS
+    return (3 * k1 + ATT_UNITS * min(1.0, k1 * (3 - 2 * k1)) + 1 + 8 * k2) / DENSE_UNITS
 PIXEL_MASK_THR = 8.0  # inside/outside split of the dense trace
 PER_GROUP = 12
 SEED = 2
@@ -491,8 +493,8 @@ def main() -> None:
                        "rows (G2-style gating with design option 3); true frames, no pixel gate"},
         "tier_c_thresholds": list(EPS_C),
         "tier_c_cost": "estimated FLOP share of the dense encoder layers (cost model in bench/tokens_era.py: "
-                       "q/k/v 3, attention 5.33 at about 2 x the gate-1 share, output projection 1 dense, MLP 8, "
-                       "in N*d^2 units); its minimum is 1/17.3 = 0.058 because the output projection stays dense",
+                       "q/k/v 3, attention 2.67 x k1(3 - 2 k1) capped at 1 (exact update), output projection 1 dense, MLP 8, "
+                       "in N*d^2 units); its minimum is 1/14.7 = 0.068 because the output projection stays dense",
         "error": "per-token relative error ||x - x_dense|| / ||x_dense||, mean over tokens then samples then clips",
         "stream": "connector output at 24 fps, each method holding its latest output; mean over frames of the "
                   "token-mean error (token_median: of the token-median error); hold 'first' = first frame held",
