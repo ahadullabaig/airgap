@@ -2,10 +2,17 @@
 // thread counts. Configurations are interleaved in rounds so slow drift
 // (thermals, turbo) spreads across all of them instead of biasing one.
 //
-// Usage: k0_bench [output.json]   (JSON goes to stdout if no path is given)
+// Frames: by default each size has a ring of frames totalling at least 4x the
+// L3 cache (RING_BYTES), and each call compares the next consecutive pair, so
+// frames come from DRAM as a stream of new frames would (the GPU benchmark does
+// the same with its L2). --hot re-reads one pair, which stays in cache for
+// sizes up to 1080p (the behaviour before 2026-11-23).
+//
+// Usage: k0_bench [--hot] [output.json]   (JSON goes to stdout if no path is given)
 #include "k0.h"
 
 #include <algorithm>
+#include <cmath>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
@@ -30,8 +37,11 @@ struct Config {
 
 struct Frames {
     int h, w, c;
-    std::vector<uint8_t> a, b;
+    std::vector<std::vector<uint8_t>> ring;  // consecutive pairs (k, k + 1)
+    size_t next = 0;
 };
+
+constexpr double RING_BYTES = 64.0 * 1048576;  // 4 x the 16 MB L3 of the Ryzen 7 5800H
 
 std::string read_first_line(const char *path) {
     std::ifstream f(path);
@@ -73,12 +83,14 @@ double pct(std::vector<double> v, double q) {
     return v[lo] + (v[hi] - v[lo]) * (idx - lo);
 }
 
-double run_once(const Config &k, const Frames &f, std::vector<float> &out) {
+double run_once(const Config &k, Frames &f, std::vector<float> &out) {
+    const size_t i = f.next++ % (f.ring.size() - 1);
+    const uint8_t *a = f.ring[i + 1].data(), *b = f.ring[i].data();
     const auto t0 = std::chrono::steady_clock::now();
     if (k.omp)
-        k0_changemap_omp(f.a.data(), f.b.data(), f.h, f.w, f.c, k.block, out.data());
+        k0_changemap_omp(a, b, f.h, f.w, f.c, k.block, out.data());
     else
-        k0_changemap_serial(f.a.data(), f.b.data(), f.h, f.w, f.c, k.block, out.data());
+        k0_changemap_serial(a, b, f.h, f.w, f.c, k.block, out.data());
     const auto t1 = std::chrono::steady_clock::now();
     return std::chrono::duration<double, std::micro>(t1 - t0).count();
 }
@@ -86,6 +98,12 @@ double run_once(const Config &k, const Frames &f, std::vector<float> &out) {
 }  // namespace
 
 int main(int argc, char **argv) {
+    bool hot = false;
+    const char *out_path = nullptr;
+    for (int i = 1; i < argc; ++i) {
+        if (std::string(argv[i]) == "--hot") hot = true;
+        else out_path = argv[i];
+    }
     const int sizes[][2] = {{512, 512}, {720, 1280}, {1080, 1920}, {2160, 3840}};
     const int thread_counts[] = {1, 2, 4, 8, 16};
     const int c = 3, block = 16, rounds = 5, warmup = 3;
@@ -96,11 +114,12 @@ int main(int argc, char **argv) {
     std::uniform_int_distribution<int> dist(0, 255);
     std::vector<Frames> frames;
     for (auto &s : sizes) {
-        Frames f{s[0], s[1], c, {}, {}};
-        f.a.resize(static_cast<size_t>(f.h) * f.w * c);
-        f.b.resize(f.a.size());
-        for (auto &v : f.a) v = static_cast<uint8_t>(dist(rng));
-        for (auto &v : f.b) v = static_cast<uint8_t>(dist(rng));
+        Frames f{s[0], s[1], c, {}, 0};
+        const size_t n = static_cast<size_t>(f.h) * f.w * c;
+        const size_t count = hot ? 2 : std::max<size_t>(3, static_cast<size_t>(std::ceil(RING_BYTES / n)) + 1);
+        f.ring.assign(count, std::vector<uint8_t>(n));
+        for (auto &fr : f.ring)
+            for (auto &v : fr) v = static_cast<uint8_t>(dist(rng));
         frames.push_back(std::move(f));
     }
 
@@ -149,7 +168,9 @@ int main(int argc, char **argv) {
     js << "    \"OMP_PROC_BIND\": " << json_str(bind ? bind : "") << "\n  },\n";
     js << "  \"protocol\": {\"rounds\": " << rounds << ", \"warmup_calls\": " << warmup
        << ", \"batch_budget_us\": " << batch_budget_us << ", \"batch_min\": " << batch_min
-       << ", \"batch_max\": " << batch_max << ", \"data\": \"uniform random bytes, seed 42\"},\n";
+       << ", \"batch_max\": " << batch_max << ", \"data\": \"uniform random bytes, seed 42\", \"frames\": "
+       << json_str(hot ? "hot: one pair re-read (cache-resident up to 1080p)"
+                       : "ring >= 64 MB per size (4x L3), consecutive pairs") << "},\n";
     js << "  \"results\": [\n";
     for (size_t i = 0; i < configs.size(); ++i) {
         const Config &k = configs[i];
@@ -157,16 +178,17 @@ int main(int argc, char **argv) {
         const double bytes = 2.0 * k.h * k.w * k.c;
         js << "    {\"h\": " << k.h << ", \"w\": " << k.w << ", \"c\": " << k.c << ", \"block\": " << k.block
            << ", \"impl\": " << json_str(k.omp ? "omp" : "serial_ref") << ", \"threads\": " << k.threads
-           << ", \"n\": " << samples[i].size() << ", \"median_us\": " << med
+           << ", \"ring_frames\": " << frames[frame_of[i]].ring.size() << ", \"n\": " << samples[i].size()
+           << ", \"median_us\": " << med
            << ", \"p10_us\": " << pct(samples[i], 0.1) << ", \"p90_us\": " << pct(samples[i], 0.9)
            << ", \"read_gb_per_s\": " << bytes / med / 1e3 << "}" << (i + 1 < configs.size() ? "," : "") << "\n";
     }
     js << "  ]\n}\n";
 
-    if (argc > 1) {
-        std::ofstream f(argv[1]);
+    if (out_path) {
+        std::ofstream f(out_path);
         f << js.str();
-        std::fprintf(stderr, "wrote %s\n", argv[1]);
+        std::fprintf(stderr, "wrote %s\n", out_path);
     } else {
         std::fputs(js.str().c_str(), stdout);
     }

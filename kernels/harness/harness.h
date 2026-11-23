@@ -22,8 +22,11 @@
 //      NVML (SM and memory clock, temperature, clock-event reasons) is read after each sample,
 //      outside the timed regions.
 //   6. flag samples: a thermal or hardware-slowdown reason, or an SM clock more than THROTTLE_DROP below
-//      the op's own median clock (not the group's: memory-bound ops clock higher than power-capped
-//      compute-bound ones, and a group median would flag the latter wholesale). The software power cap is this laptop's steady state under compute load:
+//      the op's own median clock when the software power cap does not explain the drop. Under the power
+//      cap (this laptop's steady state for compute- and memory-heavy work alike) the controller dithers
+//      the SM clock by +-15%; that is part of the sustained behaviour being measured, not a throttled
+//      sample (K0, memory-bound, ran its fastest 4K sample at 1477 MHz). The correlation between an op's
+//      times and its SM clocks is recorded to show whether the op is clock-sensitive at all. The software power cap is this laptop's steady state under compute load:
 //      recorded, not flagged. An op with more than half its samples flagged is "invalid_throttled".
 //   7. derive rates from declared work (FLOPs, DRAM bytes) and flag rates above the measured limits
 //      (results/cuda/peak.json) as implausible: the kernel is probably not doing the declared work.
@@ -198,9 +201,10 @@ inline int flag_samples(std::vector<Sample>& samples) {
         if (m.snap.reasons & THROTTLE_MASK) {
             m.flagged = true;
             m.flag_reason = "thermal or hardware slowdown";
-        } else if (!std::isnan(med) && m.snap.sm < (1 - THROTTLE_DROP) * med) {
+        } else if (!std::isnan(med) && m.snap.sm < (1 - THROTTLE_DROP) * med &&
+                   !(m.snap.reasons & nvmlClocksEventReasonSwPowerCap)) {
             m.flagged = true;
-            m.flag_reason = "SM clock below the op's median";
+            m.flag_reason = "SM clock below the op's median, not explained by the power cap";
         }
         n += m.flagged;
     }
@@ -305,7 +309,8 @@ class Runner {
           << ", \"interleave\": \"seeded shuffle per round within a group\", \"shuffle_seed\": " << SHUFFLE_SEED
           << ", \"throttle_rule\": "
              "\"flag a sample on a thermal or hardware-slowdown reason, or an SM clock more than throttle_drop below the "
-             "op's median; power cap recorded, not flagged; op invalid if more than half its samples are flagged\"},\n"
+             "op's median that the power cap does not explain; power cap recorded, not flagged; op invalid if more "
+             "than half its samples are flagged\"},\n"
           << " \"groups\": [";
         for (size_t i = 0; i < groups_json_.size(); ++i) f << (i ? ", " : "") << groups_json_[i];
         f << "],\n \"ops\": [\n";
@@ -323,6 +328,7 @@ class Runner {
         std::vector<Sample> samples;
         std::map<std::string, Stats> clocks;
         double tflops = NAN, dram_gb_per_s = NAN;
+        double clock_time_corr = NAN;  // Pearson r between event_batch_ms and SM clock over all samples
         std::vector<std::string> plausibility;
     };
     const std::vector<State>& results() const { return ops_; }
@@ -628,6 +634,15 @@ class Runner {
             s->clocks["host_sync_ms"] = stats_of(hs);
             for (auto& [k, v] : ph) s->clocks["phase_" + k + "_ms"] = stats_of(v);
             if (mostly_flagged(flagged, s->samples.size())) s->status = "invalid_throttled";
+            {
+                double n = 0, sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+                for (auto& smp : s->samples) {
+                    double x = smp.snap.sm, y = smp.event_batch_ms;
+                    n += 1; sx += x; sy += y; sxx += x * x; syy += y * y; sxy += x * y;
+                }
+                double vx = sxx - sx * sx / n, vy = syy - sy * sy / n;
+                if (n > 2 && vx > 0 && vy > 0) s->clock_time_corr = (sxy - sx * sy / n) / std::sqrt(vx * vy);
+            }
             double t = s->clocks["event_batch_ms"].median * 1e-3;
             if (s->op.flops > 0 && t > 0) {
                 s->tflops = s->op.flops / t / 1e12;
@@ -684,7 +699,8 @@ class Runner {
         size_t i = 0;
         for (auto& [k, v] : s.clocks) o << (i++ ? ", " : "") << jstr(k) << ": " << jstats(v);
         o << "},\n   \"rates\": {\"tflops\": " << jnum(s.tflops) << ", \"dram_gb_per_s\": " << jnum(s.dram_gb_per_s)
-          << "}, \"plausibility\": " << jlist(s.plausibility) << ",\n   \"samples\": [";
+          << "}, \"clock_time_corr\": " << jnum(s.clock_time_corr) << ", \"plausibility\": " << jlist(s.plausibility)
+          << ",\n   \"samples\": [";
         for (size_t k = 0; k < s.samples.size(); ++k) {
             const Sample& m = s.samples[k];
             o << (k ? ",\n    " : "\n    ") << "{\"round\": " << m.round << ", \"prev\": " << jstr(m.prev)

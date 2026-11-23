@@ -89,12 +89,18 @@ static void test_flags() {
     for (unsigned c : {1897u, 1905u, 1920u, 1935u, 1957u, 1897u, 1912u})
         steady.push_back(mk(c, nvmlClocksEventReasonSwPowerCap | nvmlClocksEventReasonReliability));
     expect(harness::flag_samples(steady) == 0, "flags: power cap and normal clock spread are not flagged");
-    // one thermal sample, one clock sag (10% below the median), the rest normal
+    // power-cap dither: a 15% sag under the power cap is the steady state, not flagged
+    std::vector<Sample> dither = steady;
+    dither[3].snap.sm = 1650;
+    expect(harness::flag_samples(dither) == 0, "flags: a clock sag under the power cap is not flagged");
+    // one thermal sample, one clock sag the power cap does not explain, the rest normal
     std::vector<Sample> mixed = steady;
     mixed[2].snap.reasons |= nvmlClocksEventReasonSwThermalSlowdown;
     mixed[4].snap.sm = 1730;
+    mixed[4].snap.reasons = nvmlClocksEventReasonReliability;
     int n = harness::flag_samples(mixed);
-    expect(n == 2 && mixed[2].flagged && mixed[4].flagged, "flags: a thermal reason and a clock sag are flagged");
+    expect(n == 2 && mixed[2].flagged && mixed[4].flagged,
+           "flags: a thermal reason and an unexplained clock sag are flagged");
     expect(!harness::mostly_flagged(n, mixed.size()), "flags: 2 of 7 flagged leaves the op valid");
     // majority thermal: op invalid
     std::vector<Sample> hot = steady;
