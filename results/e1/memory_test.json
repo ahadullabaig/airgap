@@ -1,0 +1,8 @@
+{
+ "clips": 20,
+ "torch_peak_allocated_mib": 1067.96826171875,
+ "torch_peak_reserved_mib": 1098.0,
+ "device_used_mib": 1226.625,
+ "device_total_mib": 3790.0,
+ "note": "device_used includes the CUDA context and other processes (the desktop)"
+}

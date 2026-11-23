@@ -1,0 +1,252 @@
+{
+ "cider_is": "CIDEr-D (pycocoevalcap): Gaussian length penalty, sigma 6 words",
+ "corr_cider_vs_words": -0.3356004354221371,
+ "corr_cider_vs_abs_length_gap": -0.4548880815469228,
+ "mean_length_gap_words": 7.339468008626887,
+ "corpus": {
+  "BLEU-1": 0.32037291630863035,
+  "BLEU-2": 0.1753332444111919,
+  "BLEU-3": 0.10090920685970914,
+  "BLEU-4": 0.05858463510822863,
+  "METEOR": 0.16764676870524048,
+  "ROUGE_L": 0.30352573633441593,
+  "CIDEr": 0.20965154265620792
+ },
+ "corpus_cider_no_length_penalty": 0.3805887567476144,
+ "first_100_stratified_test_clips": {
+  "BLEU-1": 0.3126506024094502,
+  "BLEU-2": 0.15953985617693828,
+  "BLEU-3": 0.09222868506473864,
+  "BLEU-4": 0.05330854074629227,
+  "METEOR": 0.1732322061648162,
+  "ROUGE_L": 0.30105593008523496,
+  "CIDEr": 0.2559021932969681
+ },
+ "by_class": {
+  "Baseball": {
+   "words": 16.6,
+   "METEOR": 0.19618017611653388,
+   "CIDEr": 0.3078369453598154,
+   "CIDEr_no_length_penalty": 0.5373601782961703,
+   "rank_METEOR": 7,
+   "rank_CIDEr": 5,
+   "rank_CIDEr_no_length_penalty": 5
+  },
+  "Basketball": {
+   "words": 14.645833333333334,
+   "METEOR": 0.28970965770349183,
+   "CIDEr": 0.7327552894528286,
+   "CIDEr_no_length_penalty": 1.0914717922641888,
+   "rank_METEOR": 2,
+   "rank_CIDEr": 1,
+   "rank_CIDEr_no_length_penalty": 1
+  },
+  "Boating": {
+   "words": 15.411764705882353,
+   "METEOR": 0.19316924431422128,
+   "CIDEr": 0.1664309470413345,
+   "CIDEr_no_length_penalty": 0.3304081706948556,
+   "rank_METEOR": 8,
+   "rank_CIDEr": 15,
+   "rank_CIDEr_no_length_penalty": 15
+  },
+  "CarRacing": {
+   "words": 16.210526315789473,
+   "METEOR": 0.20978196537891425,
+   "CIDEr": 0.18975711840218173,
+   "CIDEr_no_length_penalty": 0.39741429594090494,
+   "rank_METEOR": 6,
+   "rank_CIDEr": 12,
+   "rank_CIDEr_no_length_penalty": 10
+  },
+  "Concert": {
+   "words": 17.632653061224488,
+   "METEOR": 0.14396753259591086,
+   "CIDEr": 0.13966798913449485,
+   "CIDEr_no_length_penalty": 0.2698241252151191,
+   "rank_METEOR": 20,
+   "rank_CIDEr": 16,
+   "rank_CIDEr_no_length_penalty": 18
+  },
+  "Conflict": {
+   "words": 19.12,
+   "METEOR": 0.16092581573845302,
+   "CIDEr": 0.11110909963386408,
+   "CIDEr_no_length_penalty": 0.24217366169966767,
+   "rank_METEOR": 16,
+   "rank_CIDEr": 20,
+   "rank_CIDEr_no_length_penalty": 19
+  },
+  "Constructing": {
+   "words": 17,
+   "METEOR": 0.17700526288636584,
+   "CIDEr": 0.22225485341039994,
+   "CIDEr_no_length_penalty": 0.4089406829684231,
+   "rank_METEOR": 10,
+   "rank_CIDEr": 8,
+   "rank_CIDEr_no_length_penalty": 7
+  },
+  "Cycling": {
+   "words": 14.566037735849056,
+   "METEOR": 0.3005812102746338,
+   "CIDEr": 0.5192942916268577,
+   "CIDEr_no_length_penalty": 0.7662071898581475,
+   "rank_METEOR": 1,
+   "rank_CIDEr": 2,
+   "rank_CIDEr_no_length_penalty": 2
+  },
+  "Fire": {
+   "words": 16.589285714285715,
+   "METEOR": 0.17657003944197988,
+   "CIDEr": 0.38735776988035187,
+   "CIDEr_no_length_penalty": 0.5396402045914472,
+   "rank_METEOR": 11,
+   "rank_CIDEr": 3,
+   "rank_CIDEr_no_length_penalty": 4
+  },
+  "Flood": {
+   "words": 16.816326530612244,
+   "METEOR": 0.15028686627106225,
+   "CIDEr": 0.1712161664900014,
+   "CIDEr_no_length_penalty": 0.277620335087056,
+   "rank_METEOR": 19,
+   "rank_CIDEr": 14,
+   "rank_CIDEr_no_length_penalty": 17
+  },
+  "Harvesting": {
+   "words": 15.25,
+   "METEOR": 0.11546887093342405,
+   "CIDEr": 0.11969182217098698,
+   "CIDEr_no_length_penalty": 0.19066482030306112,
+   "rank_METEOR": 25,
+   "rank_CIDEr": 19,
+   "rank_CIDEr_no_length_penalty": 23
+  },
+  "Landslide": {
+   "words": 17.122448979591837,
+   "METEOR": 0.1319729219213179,
+   "CIDEr": 0.088735537250612,
+   "CIDEr_no_length_penalty": 0.16122598814640765,
+   "rank_METEOR": 23,
+   "rank_CIDEr": 22,
+   "rank_CIDEr_no_length_penalty": 24
+  },
+  "Mudslide": {
+   "words": 17.431372549019606,
+   "METEOR": 0.15698266020779614,
+   "CIDEr": 0.11096001202757516,
+   "CIDEr_no_length_penalty": 0.23364044417514193,
+   "rank_METEOR": 18,
+   "rank_CIDEr": 21,
+   "rank_CIDEr_no_length_penalty": 20
+  },
+  "NonEvent": {
+   "words": 18.18064516129032,
+   "METEOR": 0.17401388275082785,
+   "CIDEr": 0.12240595886226367,
+   "CIDEr_no_length_penalty": 0.3453799166959077,
+   "rank_METEOR": 12,
+   "rank_CIDEr": 18,
+   "rank_CIDEr_no_length_penalty": 14
+  },
+  "ParadeProtest": {
+   "words": 17.897959183673468,
+   "METEOR": 0.16710149089654916,
+   "CIDEr": 0.17613893864843655,
+   "CIDEr_no_length_penalty": 0.3194357178240112,
+   "rank_METEOR": 15,
+   "rank_CIDEr": 13,
+   "rank_CIDEr_no_length_penalty": 16
+  },
+  "Party": {
+   "words": 16.94,
+   "METEOR": 0.18336960507571543,
+   "CIDEr": 0.24371456678397402,
+   "CIDEr_no_length_penalty": 0.42730301815726224,
+   "rank_METEOR": 9,
+   "rank_CIDEr": 7,
+   "rank_CIDEr_no_length_penalty": 6
+  },
+  "Ploughing": {
+   "words": 13.596153846153847,
+   "METEOR": 0.1246240463699161,
+   "CIDEr": 0.05719379282341505,
+   "CIDEr_no_length_penalty": 0.1078591097509281,
+   "rank_METEOR": 24,
+   "rank_CIDEr": 25,
+   "rank_CIDEr_no_length_penalty": 25
+  },
+  "PoliceChase": {
+   "words": 17.03921568627451,
+   "METEOR": 0.15884301139400456,
+   "CIDEr": 0.24706202081515274,
+   "CIDEr_no_length_penalty": 0.4045724401533286,
+   "rank_METEOR": 17,
+   "rank_CIDEr": 6,
+   "rank_CIDEr_no_length_penalty": 8
+  },
+  "PostEarthquake": {
+   "words": 15.909090909090908,
+   "METEOR": 0.13204965460216506,
+   "CIDEr": 0.08449944826932987,
+   "CIDEr_no_length_penalty": 0.20525277820437976,
+   "rank_METEOR": 22,
+   "rank_CIDEr": 23,
+   "rank_CIDEr_no_length_penalty": 21
+  },
+  "ReligiousActivity": {
+   "words": 18.51851851851852,
+   "METEOR": 0.14302055615538184,
+   "CIDEr": 0.06450200962681789,
+   "CIDEr_no_length_penalty": 0.1939762143209973,
+   "rank_METEOR": 21,
+   "rank_CIDEr": 24,
+   "rank_CIDEr_no_length_penalty": 22
+  },
+  "Running": {
+   "words": 17,
+   "METEOR": 0.17030895118195793,
+   "CIDEr": 0.21303929732410712,
+   "CIDEr_no_length_penalty": 0.36629697956413493,
+   "rank_METEOR": 13,
+   "rank_CIDEr": 10,
+   "rank_CIDEr_no_length_penalty": 12
+  },
+  "Soccer": {
+   "words": 15.887096774193548,
+   "METEOR": 0.23338629580458295,
+   "CIDEr": 0.1925822478528626,
+   "CIDEr_no_length_penalty": 0.40384196219493923,
+   "rank_METEOR": 4,
+   "rank_CIDEr": 11,
+   "rank_CIDEr_no_length_penalty": 9
+  },
+  "Swimming": {
+   "words": 15.745098039215685,
+   "METEOR": 0.26486817656199,
+   "CIDEr": 0.3775654659002621,
+   "CIDEr_no_length_penalty": 0.6648344645646572,
+   "rank_METEOR": 3,
+   "rank_CIDEr": 4,
+   "rank_CIDEr_no_length_penalty": 3
+  },
+  "TrafficCollision": {
+   "words": 17.69811320754717,
+   "METEOR": 0.16913772163109406,
+   "CIDEr": 0.21413495286743034,
+   "CIDEr_no_length_penalty": 0.3692772913583518,
+   "rank_METEOR": 14,
+   "rank_CIDEr": 9,
+   "rank_CIDEr_no_length_penalty": 11
+  },
+  "TrafficCongestion": {
+   "words": 17.8,
+   "METEOR": 0.22276990386613918,
+   "CIDEr": 0.13202167820366928,
+   "CIDEr_no_length_penalty": 0.34620018297293703,
+   "rank_METEOR": 5,
+   "rank_CIDEr": 17,
+   "rank_CIDEr_no_length_penalty": 13
+  }
+ }
+}

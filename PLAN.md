@@ -78,7 +78,7 @@ A user points the tool at an aerial video. With the network off, it produces tim
 
 ### 2.5 Evaluation (required)
 
-The NLP instructor expects an evaluation. Confirm its exact form with them; the default below is sized to finish, not to be exhaustive. All results are zero-shot: nothing is trained on CapERA.
+The NLP instructor expects an evaluation but prescribes no form (asked, 2026-11-23), so the design below is ours. It is sized to finish, not to be exhaustive. All results are zero-shot: nothing is trained on CapERA.
 
 **Data: CapERA test split** (checked 2026-11-21)
 - 1,391 clips in 25 classes: 24 events plus NonEvent (155 clips). Class sizes range from 19 to 155. The class is in each clip's file name.
@@ -306,7 +306,7 @@ paper/         source for the paper
 
 - [x] Both instructors approve the plan
 - [ ] Conference template chosen (ask the Parallel Programming instructor which one)
-- [ ] Ask the NLP instructor what form the evaluation should take (section 2.5)
+- [x] Ask the NLP instructor what form the evaluation should take (section 2.5): no prescribed form; we use E1-E4
 - [ ] Roles written into this file
 - [x] NVIDIA driver, CUDA toolkit and PyTorch working together; versions committed (`results/cuda/toolchain.txt`)
 - [x] Nsight Compute can read performance counters (`NVreg_RestrictProfilingToAdminUsers=0`; `make -C kernels/smoke profile`)

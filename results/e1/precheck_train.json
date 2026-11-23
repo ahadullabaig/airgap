@@ -1,0 +1,10 @@
+{
+ "split": "train",
+ "clips": 1473,
+ "frames_per_clip": 4,
+ "failures": [],
+ "duration_s": {
+  "min": 5.25,
+  "max": 5.833333333333334
+ }
+}

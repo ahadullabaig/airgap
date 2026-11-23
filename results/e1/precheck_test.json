@@ -1,0 +1,10 @@
+{
+ "split": "test",
+ "clips": 1391,
+ "frames_per_clip": 4,
+ "failures": [],
+ "duration_s": {
+  "min": 4.875,
+  "max": 6.375
+ }
+}

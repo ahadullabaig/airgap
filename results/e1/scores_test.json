@@ -1,0 +1,142 @@
+{
+ "experiment": "E1 caption quality, CapERA test split, zero-shot (as far as the model card shows)",
+ "config": {
+  "frozen": "2026-11-23T21:27:08+0530",
+  "prompt": "These frames are from an aerial drone video, in time order. Describe in one or two sentences what is happening on the ground.",
+  "prompt_id": "P1",
+  "frames": 4,
+  "image_splitting": false,
+  "max_new_tokens": 48,
+  "dtype": "bfloat16",
+  "decoding": "greedy",
+  "window": "each clip's whole length"
+ },
+ "selection": {
+  "split": "train",
+  "clips": 100,
+  "metric": "CIDEr",
+  "candidates": [
+   {
+    "id": "P1",
+    "prompt": "These frames are from an aerial drone video, in time order. Describe in one or two sentences what is happening on the ground.",
+    "mean_words": 16.88,
+    "CIDEr": 0.3115878281356639
+   },
+   {
+    "id": "P2",
+    "prompt": "These frames are from an aerial drone video, in time order. Describe the scene in one short sentence.",
+    "mean_words": 20.89,
+    "CIDEr": 0.19408668786545952
+   },
+   {
+    "id": "P3",
+    "prompt": "Write one short sentence describing what this aerial video shows.",
+    "mean_words": 21.98,
+    "CIDEr": 0.10692101963579026
+   },
+   {
+    "id": "P4",
+    "prompt": "Describe this aerial drone video in one short sentence, mentioning the main event and the setting.",
+    "mean_words": 21.82,
+    "CIDEr": 0.1205083019596293
+   }
+  ]
+ },
+ "clips_scored": 1391,
+ "clips_missing": [],
+ "references": "5 per clip: one human caption and four paraphrases of it, not five independent references",
+ "scores": {
+  "BLEU-1": 0.32037291630863035,
+  "BLEU-2": 0.1753332444111919,
+  "BLEU-3": 0.10090920685970914,
+  "BLEU-4": 0.05858463510822863,
+  "METEOR": 0.16764676870524048,
+  "ROUGE_L": 0.30352573633441593,
+  "CIDEr": 0.20965154265620792
+ },
+ "controls": {
+  "shuffled_references": {
+   "BLEU-1": 0.22048461935039437,
+   "BLEU-2": 0.08915678013874688,
+   "BLEU-3": 0.03616989794778738,
+   "BLEU-4": 0.013395869458129301,
+   "METEOR": 0.08995894653044072,
+   "ROUGE_L": 0.20631772678581772,
+   "CIDEr": 0.034963229197207714
+  },
+  "constant_caption": {
+   "caption": "an aerial view of buildings, roads and trees",
+   "BLEU-1": 0.15328684411082255,
+   "BLEU-2": 0.03306248509965781,
+   "BLEU-3": 0.006208691698675914,
+   "BLEU-4": 4.210854236510721e-07,
+   "METEOR": 0.04987423180102475,
+   "ROUGE_L": 0.1247396886731473,
+   "CIDEr": 0.03541616620038049
+  },
+  "human_vs_other_references": {
+   "BLEU-1": 0.9315467925575582,
+   "BLEU-2": 0.8650772089992038,
+   "BLEU-3": 0.7992832017931184,
+   "BLEU-4": 0.7327479205635694,
+   "METEOR": 0.4882258721012456,
+   "ROUGE_L": 0.800725042932415,
+   "CIDEr": 3.171549883348826
+  }
+ },
+ "outputs": {
+  "mean_words": 16.73040977713875,
+  "median_words": 16,
+  "reference_mean_words": 9.390941768511862,
+  "empty": 0,
+  "truncated_at_max_new_tokens": 2,
+  "multi_sentence": 84,
+  "contained_newline": 0
+ },
+ "latency_s": {
+  "generate_median": 0.4746,
+  "generate_p90": 0.5955,
+  "per_clip_total_median": 0.6593,
+  "per_clip_total_p90": 0.7837,
+  "note": "first call excluded; decode and preprocess on the CPU, generation on the GPU"
+ },
+ "cider_by_class": {
+  "Baseball": 0.3078369453598154,
+  "Basketball": 0.7327552894528286,
+  "Boating": 0.1664309470413345,
+  "CarRacing": 0.18975711840218173,
+  "Concert": 0.13966798913449485,
+  "Conflict": 0.11110909963386408,
+  "Constructing": 0.22225485341039994,
+  "Cycling": 0.5192942916268577,
+  "Fire": 0.38735776988035187,
+  "Flood": 0.1712161664900014,
+  "Harvesting": 0.11969182217098698,
+  "Landslide": 0.088735537250612,
+  "Mudslide": 0.11096001202757516,
+  "NonEvent": 0.12240595886226367,
+  "ParadeProtest": 0.17613893864843655,
+  "Party": 0.24371456678397402,
+  "Ploughing": 0.05719379282341505,
+  "PoliceChase": 0.24706202081515274,
+  "PostEarthquake": 0.08449944826932987,
+  "ReligiousActivity": 0.06450200962681789,
+  "Running": 0.21303929732410712,
+  "Soccer": 0.1925822478528626,
+  "Swimming": 0.3775654659002621,
+  "TrafficCollision": 0.21413495286743034,
+  "TrafficCongestion": 0.13202167820366928
+ },
+ "memory": {
+  "clips": 20,
+  "torch_peak_allocated_mib": 1067.96826171875,
+  "torch_peak_reserved_mib": 1098.0,
+  "device_used_mib": 1226.625,
+  "device_total_mib": 3790.0,
+  "note": "device_used includes the CUDA context and other processes (the desktop)"
+ },
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "torch": "2.15.0+cu132"
+ }
+}
