@@ -172,6 +172,20 @@ Notes on the hypotheses:
 
 Otherwise write the floor paper and treat the gated kernel as future work. G1 losing to the baselines does not fail the gate: a measured and explained loss is a result (section 6).
 
+**Token traces, 2026-11-24** (`bench/tokens_era.py`, `results/tokens/era_tra/summary.json`, `plots/tokens_era_error.png`, `plots/tokens_era_spread.png`). 36 ERA training clips, 12 each with the camera still, moving and untrackable, plus 3 clips that look still but the hover rule rejected. Error is measured on the connector output, i.e. what the language model sees, at 24 fps.
+- **Written criterion: met by every group once the threshold is high enough, so on its own it does not discriminate.** Keep-rate says nothing about the error at that threshold. Against the predicted break-evens (0.8-0.9 for rows-only G1, 0.42 for the exact update):
+  - Pixel mask at 24 fps, thresholds 1/4/8: still 0.48/0.18/0.10, moving 0.76/0.55/0.41, untrackable 0.85/0.62/0.47.
+  - Token deltas at 24 fps, thresholds 0.1/0.3/0.5: still 0.30/0.09/0.03, moving 0.68/0.36/0.18, untrackable 0.78/0.44/0.23.
+- **A baseline the gate did not include: dense at a lower frame rate, with the output held.**
+  - At equal cost, per clip, against the chord between the strides run (counts over the three main groups; the 3 still-by-eye clips are not in them):
+    - Stale rows have the lower error in 30 of 412 settings.
+    - Token deltas with exact attention have it in 3 of 360.
+    - Stale input (a floor no kernel reaches) wins 213 of 412, mostly by 1-2 points. That margin is smaller than what ±1 grey level of noise does (2.8%).
+  - The cost axis flatters the gates: FLOP shares, whole-layer skipping, no fixed costs. The loss is therefore conservative.
+- **Still open.**
+  - Connector-output distance is not caption change, so the caption-level check decides whether the difference matters.
+  - G1 does not exist yet. The gate decision is the team's.
+
 ### 3.4 Kernels
 
 Standalone CUDA C++, one benchmark binary each. Every version passes a correctness test against a CPU reference before it is timed.
@@ -192,6 +206,16 @@ Design question to settle in week 1 after reading Eventful Transformers section 
 3. Exact update (novelty unchecked). Cache each row's online-softmax state, which V3 computes anyway: running max m, denominator l, unnormalised output o. When the tokens in set C change, update every unchanged row exactly: remove the old exp(s_ij - m_i) terms and their v_j contributions for j in C, then add the new ones. Old scores come from q_i and a cached copy of the old K rows. Estimated work is k(3 - 2k) of dense attention at keep-rate k (the changed rows, plus about 4d multiply-adds per unchanged row and changed key), so about 3x option 1 at small k and break-even with dense near k = 0.5 before fixed costs; O(N x d) memory and no N x N cache. If a row put most of its weight on changed keys, the subtraction loses precision; recompute that row instead.
 
 Measure before deciding.
+
+**Measured on the ERA token traces** (2026-11-24; status note under the decision gate, section 3.3):
+- **Option 1 (stale rows): loses to dense at a lower frame rate at equal cost on 382 of 412 settings.**
+  - At 24 fps and pixel threshold 1, the group-mean errors of the two clip halves agree within 0.4 points, so there is no drift there.
+  - At higher thresholds the error drifts. Over the first half of each clip, stale rows still lose to hold on 363 of 412 settings (`equal_cost.B_first_half`).
+  - Option 2 (periodic refresh) was not run, and it adds cost.
+- **Tier C (option 3's exact attention under token-delta gates): its attention is exact.** Its error comes from the delta thresholds on the q/k/v and MLP inputs, the layers that hold most of the FLOPs.
+  - An exact attention update alone adds no error.
+  - It caps the saving at attention's share, about 18% of a layer's FLOPs.
+- **Not yet answered:** it depends on the gate decision.
 
 Single head and FP32 first, for correctness. Add multiple heads early, since it is one more grid dimension and timings must use the real shape (12 heads). FP16 only after everything is correct.
 

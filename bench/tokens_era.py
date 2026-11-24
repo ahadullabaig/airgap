@@ -262,6 +262,49 @@ def hold_stream(con_all: torch.Tensor, s: int) -> dict:
     return {**stream_stats(mean, med), "stream_mean": mean}
 
 
+def hold_chord(r: dict, cost: float, field: str = "mean") -> float | None:
+    """One clip's dense-and-hold stream error at this cost (full-frame equivalents per second): linear in cost
+    between the strides run, which dropping a fraction of frames or mixing two strides achieves. None below
+    the first-frame-only cost. field "half1" uses the first half of the clip only."""
+    pts = sorted((NATIVE_FPS / (r["frames"] if s == "first" else int(s)), v[field]) for s, v in r["hold"].items())
+    for (c0, e0), (c1, e1) in zip(pts, pts[1:]):
+        if c0 <= cost <= c1 and c1 > c0:
+            return e0 + (cost - c0) / (c1 - c0) * (e1 - e0)
+    return None
+
+
+def equal_cost(R: list[dict]) -> dict:
+    """Per clip, the gate's stream error minus dense-and-hold's at the gate's cost (hold_chord), for every cell
+    and tier; pooled over the group's clips. Negative means the gate has the lower error."""
+    def pooled(diffs):
+        a = np.array([x for x in diffs if x is not None], dtype=float)
+        if not len(a):
+            return None
+        return {"n": int(len(a)), "gate_lower": int((a < 0).sum()), "median": float(np.median(a)),
+                "p10": float(np.percentile(a, 10)), "p90": float(np.percentile(a, 90)),
+                "min": float(a.min()), "max": float(a.max())}
+
+    def diff(r, err, cost, field="mean"):
+        h = hold_chord(r, cost, field)
+        return None if h is None else err - h
+
+    out = {"A": {}, "B": {}, "C": {}, "B_first_half": {}}
+    for key in R[0]["cells"]:
+        s = int(key.split("/")[0])
+        for t in ("A", "B"):
+            out[t][key] = pooled([diff(r, r["cells"][key]["stream"][t]["mean"], r["cells"][key]["keep"] * NATIVE_FPS / s)
+                                  for r in R])
+        # stale rows over the first half of each clip only, against hold over the same half: the error before
+        # most drift, which a periodic refresh (design option 2) could at best bring the whole clip down to
+        out["B_first_half"][key] = pooled([diff(r, r["cells"][key]["stream"]["B"]["half1"],
+                                                r["cells"][key]["keep"] * NATIVE_FPS / s, "half1") for r in R])
+    for key in R[0]["token_cells"]:
+        s = int(key.split("/")[0])
+        out["C"][key] = pooled([diff(r, r["token_cells"][key]["stream"]["mean"],
+                                     r["token_cells"][key]["cost_fraction"] * NATIVE_FPS / s) for r in R])
+    return out
+
+
 def trace_summary(tr, trc, mad) -> dict:
     out = {}
     for j, s in enumerate(TRACE_STRIDES):
@@ -456,7 +499,7 @@ def aggregate(out: Path) -> dict:
         floors = {f: {k: pool([r["floors"][f][k] for r in R]) for k in ("mean", "median")}
                   for f in ("bf16_vs_fp32", "noise_pm1")}
         summ[g] = {"clips": [r["id"] for r in R], "cells": cells, "token_cells": tcells, "hold": hold,
-                   "trace": trace, "floors": floors}
+                   "equal_cost": equal_cost(R), "trace": trace, "floors": floors}
     all_floors = {f: {k: pool([r["floors"][f][k] for r in recs]) for k in ("mean", "median")}
                   for f in ("bf16_vs_fp32", "noise_pm1")}
     return {"groups": summ,
@@ -501,6 +544,13 @@ def main() -> None:
         "cost_note": "tier A is plotted at the pixel mask's cost, which no kernel achieves (it recomputes every "
                      "token on the reference image)",
         "cost": "full-frame equivalents per second of video (keep x sampling fps); hold baseline costs its fps",
+        "equal_cost": "per clip, gate stream error minus dense-and-hold stream error at the gate's cost, the hold "
+                      "error taken on the chord (linear in cost) between the strides run, which dropping a fraction "
+                      "of frames or mixing two strides achieves; pooled over clips (median, p10, p90, min, max); "
+                      "gate_lower = clips where the gate's error is lower; clips whose gate cost is below the "
+                      "first-frame-only cost are left out (n). B_first_half: stale rows and hold both over the first "
+                      "half of each clip only (cost from the whole clip). The cost axis flatters the gates: tier A's cost is "
+                      "unachievable, tier C's is a FLOP share without fixed costs",
         "trace": "per-token relative change vs the previous sample (understates a gate); layer 0 = embedding, "
                  "1-12 = encoder layers, 13 = post-layernorm; inside/outside = pixel block MAD above/below 8",
         "gate_strides": list(GATE_STRIDES), "trace_strides": list(TRACE_STRIDES), "thresholds_mad": list(THRESHOLDS),

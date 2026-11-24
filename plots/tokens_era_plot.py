@@ -3,7 +3,7 @@
 tokens_era_error.png: error of the connector output (what the language model
 sees, at 24 fps with each method holding its latest output) against cost, per
 footage group. Dense at a lower frame rate with the output held is the
-equal-cost baseline; the gate is shown for stale input (tier A, a floor) and
+equal-cost baseline (drawn as the chord between the strides run, linear in cost); the gate is shown for stale input (tier A, a floor) and
 stale rows (tier B), at 24 and 6 fps, one point per pixel threshold.
 Tier C (token-delta gates with exact attention) is plotted at its estimated FLOP
 cost, one point per token threshold. Horizontal lines: bf16-vs-fp32 and +-1
@@ -57,13 +57,20 @@ def error_figure(r: dict, out: Path) -> None:
                              facecolor=SURFACE, sharey=True, squeeze=False)
     for ax, g in zip(axes[0], groups):
         G = r["groups"][g]
-        hold = sorted(((v["cost"], 100 * v["stream"]["mean"]) for v in G["hold"].values() if v["cost"] < 24))
+        hold = sorted(((v["cost"], 100 * v["stream"]["mean"]) for v in G["hold"].values()))
         first_cost = G["hold"]["first"]["cost"]
-        ax.plot([c for c, _ in hold], [e for _, e in hold], color=MUTED, lw=1.5, ls=(0, (4, 3)), marker="o", ms=5,
-                label="Dense at a lower rate, output held")
-        for c, e in hold:
-            ax.annotate("first frame only" if c == first_cost else f"{c:g} fps", (c, e), xytext=(-5, 4), textcoords="offset points", ha="right", fontsize=7,
-                        color=MUTED)
+        # the chord between the strides run (linear in cost, so curved on this axis): dropping a fraction of
+        # frames or mixing two strides achieves it, and it is what equal_cost in the summary compares against
+        cx, cy = [], []
+        for (c0, e0), (c1, e1) in zip(hold, hold[1:]):
+            for j in range(24):
+                cx.append(c0 + (c1 - c0) * j / 24)
+                cy.append(e0 + (e1 - e0) * j / 24)
+        ax.plot(cx, cy, color=MUTED, lw=1.5, ls=(0, (4, 3)), label="Dense at a lower rate, output held (cost = its fps)")
+        ax.plot([c for c, _ in hold if c < 24], [e for c, e in hold if c < 24], color=MUTED, ls="none", marker="o",
+                ms=5)
+        ax.annotate("first frame only", (first_cost, [e for c, e in hold if c == first_cost][0]), xytext=(-5, 4),
+                    textcoords="offset points", ha="right", fontsize=7, color=MUTED)
         for tier, color in (("A", BLUE), ("B", ORANGE)):
             for s, ls, mk in zip(gates, ("-", (0, (2, 2))), ("o", "s")):
                 cells = [G["cells"][f"{s}/{t:g}"] for t in thr]
@@ -88,10 +95,10 @@ def error_figure(r: dict, out: Path) -> None:
                     for e, x, y in zip(eps, xs, ys):
                         ax.annotate(f"{e:g}", (x, y), xytext=(4, 5), textcoords="offset points", fontsize=7,
                                     color=INK_2)
-        for y, lab, x, dy in ((100 * bf16, "bf16 vs fp32", 28, 3), (100 * noise, "±1 grey level noise", 0.045, 3)):
+        for y in (100 * bf16, 100 * noise):
             ax.axhline(y, color=AXIS, lw=1)
-            ax.annotate(lab, (x, y), xytext=(0, dy), textcoords="offset points", fontsize=7, color=MUTED,
-                        ha="right" if x > 1 else "left")
+        ax.annotate("floors: ±1 grey level noise (upper line), bf16 vs fp32 (lower)", (0.045, 100 * noise),
+                    xytext=(0, 3), textcoords="offset points", fontsize=7, color=MUTED)
         style(ax)
         xt = [0.1, 0.3, 1, 3, 6, 12, 24]
         ax.xaxis.set_major_locator(FixedLocator(xt))
@@ -107,7 +114,17 @@ def error_figure(r: dict, out: Path) -> None:
     fig.suptitle("Gate error against cost on ERA, encoder + connector in fp32. Numbers: pixel threshold (blue), "
                  "token-delta threshold (green).\nStale input is plotted at the mask's cost, which no kernel "
                  "achieves; token-delta cost is a FLOP estimate.", x=0.01, ha="left", fontsize=8.5, color=INK_2)
-    fig.tight_layout(rect=(0, 0, 1, 0.80))
+    parts = []
+    for t, name in (("B", "stale rows"), ("C", "token deltas + exact attention"),
+                    ("A", "stale input (the floor, at a cost no kernel achieves)")):
+        lower = sum(v["gate_lower"] for g in groups for v in r["groups"][g]["equal_cost"][t].values() if v)
+        n = sum(v["n"] for g in groups for v in r["groups"][g]["equal_cost"][t].values() if v)
+        parts.append(f"{name} {lower} of {n}")
+    fig.text(0.01, 0.042, "Per clip, against the dashed chord: settings (clip x threshold x gate rate, three groups "
+             "above) where the gate's error is lower than dense-and-hold at equal cost:", fontsize=7.5, color=INK_2)
+    fig.text(0.01, 0.012, "; ".join(parts) + ". results/tokens/era_tra/summary.json, key equal_cost.",
+             fontsize=7.5, color=INK_2)
+    fig.tight_layout(rect=(0, 0.07, 1, 0.80))
     fig.savefig(out, facecolor=SURFACE)
     print(f"wrote {out}")
 
