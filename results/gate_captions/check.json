@@ -1,0 +1,89 @@
+{
+ "clips": [
+  {
+   "id": "Baseball_044.mp4",
+   "sample_idx": [
+    18,
+    53,
+    88,
+    123
+   ],
+   "frames": 140,
+   "frames_equal_sample_window": true,
+   "e1_stored_match": true,
+   "injected_own_features_match": true,
+   "fp32_vs_bf16_feature_error_in_order": [
+    0.00982,
+    0.00985,
+    0.01007,
+    0.01012
+   ],
+   "fp32_vs_bf16_feature_error_frames_reversed": [
+    0.3782,
+    0.31817,
+    0.3304,
+    0.38346
+   ],
+   "fp32_caption_matches_bf16": true
+  },
+  {
+   "id": "Basketball_009.mp4",
+   "sample_idx": [
+    18,
+    52,
+    86,
+    120
+   ],
+   "frames": 137,
+   "frames_equal_sample_window": true,
+   "e1_stored_match": true,
+   "injected_own_features_match": true,
+   "fp32_vs_bf16_feature_error_in_order": [
+    0.01073,
+    0.01096,
+    0.00996,
+    0.01029
+   ],
+   "fp32_vs_bf16_feature_error_frames_reversed": [
+    0.78079,
+    0.65999,
+    0.6665,
+    0.74224
+   ],
+   "fp32_caption_matches_bf16": true,
+   "same_prompt_tokens_as_previous": true,
+   "previous_features_give_previous_caption": true,
+   "features_change_caption": true
+  },
+  {
+   "id": "Boating_024.mp4",
+   "sample_idx": [
+    18,
+    53,
+    87,
+    122
+   ],
+   "frames": 139,
+   "frames_equal_sample_window": true,
+   "e1_stored_match": true,
+   "injected_own_features_match": true,
+   "fp32_vs_bf16_feature_error_in_order": [
+    0.0113,
+    0.01114,
+    0.01213,
+    0.01158
+   ],
+   "fp32_vs_bf16_feature_error_frames_reversed": [
+    0.74666,
+    0.67352,
+    0.69101,
+    0.7656
+   ],
+   "fp32_caption_matches_bf16": true,
+   "same_prompt_tokens_as_previous": true,
+   "previous_features_give_previous_caption": true,
+   "features_change_caption": true
+  }
+ ],
+ "passed": true
+}

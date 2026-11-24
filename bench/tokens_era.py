@@ -175,8 +175,9 @@ def stream_stats(mean: list, med: list) -> dict:
             "half1": float(a[: n // 2].mean()), "half2": float(a[n // 2:].mean())}
 
 
-def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float) -> dict:
-    """Reference-mode pixel gate at stride s and threshold thr; tiers A and B."""
+def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float, outputs: dict | None = None) -> dict:
+    """Reference-mode pixel gate at stride s and threshold thr; tiers A and B. If outputs is given, it receives
+    each tier's connector output per sampled frame ({"A": {i: (64, 960)}, "B": {...}})."""
     cache: list[torch.Tensor] = []
     keep_counts, per = [], {"A": [], "B": []}
     con_out = {"A": {}, "B": {}}
@@ -221,11 +222,14 @@ def gate_cell(vs, k0, views, enc_all, con_all, s: int, thr: float) -> dict:
         xs = [x[k] for x in v if x[k] is not None]
         return float(np.mean(xs)) if xs else None
     summ = {t: {k: avg(v, k) for k in v[0] if k != "i"} if v else None for t, v in per.items()}
+    if outputs is not None:
+        outputs.update(con_out)
     return {"keep_counts": keep_counts, "samples": summ, "stream": stream, "series": series}
 
 
-def token_gate_cell(vs, views, enc_all, con_all, s: int, eps: float) -> dict:
-    """Tier C: token-delta gates at every layer (VisionStack.layer_gated), on the true frames at stride s."""
+def token_gate_cell(vs, views, enc_all, con_all, s: int, eps: float, outputs: dict | None = None) -> dict:
+    """Tier C: token-delta gates at every layer (VisionStack.layer_gated), on the true frames at stride s. If
+    outputs is given, it receives the connector output per sampled frame ({i: (64, 960)})."""
     states = [dict() for _ in vs.layers]
     per, con_out, k_layers = [], {}, []
     for i in range(0, len(views), s):
@@ -245,6 +249,8 @@ def token_gate_cell(vs, views, enc_all, con_all, s: int, eps: float) -> dict:
                     "enc_mean": float(te_.mean()), "enc_median": float(te_.median()),
                     "con_mean": float(tc.mean()), "con_median": float(tc.median()), "con_p95": float(tc.quantile(0.95))})
     mean, med = stream_errors(con_out, con_all, s)
+    if outputs is not None:
+        outputs.update(con_out)
     kl = np.array(k_layers)  # samples, layers, 2
     return {"cost_fraction": float(np.mean([x["cost"] for x in per])),
             "k1_by_layer": kl[..., 0].mean(axis=0).round(4).tolist(),
