@@ -373,12 +373,32 @@ def score(out: Path) -> None:
                 rows.append({"con_err": [lo, hi], "n": int(m.sum()), "cider_minus_dense": float(d[m].mean()),
                              "identical_to_dense": float(s[m].mean())})
         matched[fam] = rows
+    # added after the run (post hoc, separate generator so the intervals above are unchanged): the scale of a
+    # large effect, and CIDEr without its length penalty (caption length moves CIDEr-D, as in E1's diagnose)
+    rng2 = np.random.default_rng(BOOT_SEED + 1)
+    perm = list(range(1, len(ids))) + [0]  # every clip scored against the next clip's references
+    shuffled, per_sh = e1.coco_scores({i: refs[ids[p]] for i, p in zip(ids, perm)}, cap["dense"])
+    post_hoc = {
+        "shuffled_control": {"what": "dense captions scored against the next clip's references (stratified order, "
+                                     "so a different class)",
+                             "CIDEr": shuffled["CIDEr"],
+                             "cider_minus_dense": interval(np.array([per_sh[i]["CIDEr"] for i in ids]) - cider["dense"],
+                                                           rng2)},
+        "no_length_penalty": {},
+    }
+    npen = {}
+    for k in names:
+        c_np, per_np = e1.coco_scores(refs, cap[k], cider_sigma=1e9)
+        npen[k] = np.array([per_np[i]["CIDEr"] for i in ids])
+        post_hoc["no_length_penalty"][k] = {"CIDEr": c_np["CIDEr"]}
+    for k in names:
+        post_hoc["no_length_penalty"][k]["cider_minus_dense"] = interval(npen[k] - npen["dense"], rng2)
     res = {"experiment": "caption-level gating check (eval/gate_captions.py docstring: conditions, metrics fixed "
                          "before the run)",
            "clips": len(ids), "e1_match": int(sum(bool(r["e1_match"]) for r in recs)),
            "bootstrap": {"resamples": BOOT, "seed": BOOT_SEED, "interval": "95% percentile, clips resampled"},
            "cost": "full-frame equivalents per second of video; tier A's is unachievable, tier C's a FLOP share",
-           "conditions": table, "equal_cost": eq, "matched_error": matched,
+           "conditions": table, "equal_cost": eq, "matched_error": matched, "post_hoc": post_hoc,
            "seconds": round(sum(r["seconds"] for r in recs), 1)}
     (out / "scores.json").write_text(json.dumps(res, indent=1) + "\n")
     print(f"{'condition':10s} {'cost':>6s} {'conerr':>7s} {'CIDEr':>6s} {'d vs dense [95%]':>22s} {'same':>5s}")

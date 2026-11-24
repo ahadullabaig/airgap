@@ -182,9 +182,24 @@ Otherwise write the floor paper and treat the gated kernel as future work. G1 lo
     - Token deltas with exact attention have it in 3 of 360.
     - Stale input (a floor no kernel reaches) wins 213 of 412, mostly by 1-2 points. That margin is smaller than what ±1 grey level of noise does (2.8%).
   - The cost axis flatters the gates: FLOP shares, whole-layer skipping, no fixed costs. The loss is therefore conservative.
-- **Still open.**
-  - Connector-output distance is not caption change, so the caption-level check decides whether the difference matters.
-  - G1 does not exist yet. The gate decision is the team's.
+- Connector-output distance is not caption change; the caption-level check below tests that.
+
+**Caption-level check, 2026-11-24** (`eval/gate_captions.py`, `results/gate_captions/scores.json`, `plots/gate_captions.png`). 100 CapERA test clips (E1's first 100) through E1's frozen captioner. Each condition replaces only the connector outputs at E1's four frames. Metrics were fixed before the run (commit 1f6d9b0).
+- **No condition changes caption quality detectably.**
+  - Every condition's CIDEr-D is within 0.03 of dense's (0.267), with 95% intervals of ±0.02-0.06.
+  - Resolution: scoring dense captions against another clip's references costs 0.218 [0.142, 0.305]. Losses smaller than about a quarter of that cannot be ruled out.
+  - The informative cases are corrupted outputs with no detected loss:
+    - stale rows at threshold 8: 27% connector error, +0.001 [-0.038, +0.040]
+    - token deltas at 0.2: 21%, -0.000 [-0.041, +0.041]
+  - Held output at 1 fps (36% connector error, +0.003 [-0.039, +0.043]) is close to a null by construction. It still feeds four real frames, each under a second older.
+  - Stale input at threshold 2: -0.029 [-0.059, -0.006]. That is one of 12 unadjusted intervals, and with CIDEr's length penalty off it becomes -0.030 [-0.064, +0.003].
+- **Equal cost: no gate differs from held output** (every interval includes 0). This covers only the costs the gates reached, 9-20 full-frame equivalents per second on average. Held output reaches cost 1 with no detected loss, so on caption quality it dominates every gate tested.
+- **Wording changes even when quality does not.**
+  - bf16 rounding alone (1% connector error) changes 35% of captions.
+  - The identical-caption rate falls with connector error for every method; see the matched-error table in `scores.json`.
+- **The trace ordering holds on test clips.** At the caption frames, connector error over held output at equal cost is +4.4 and +11.5 points for stale rows, and +2.2 and +12.2 for token deltas.
+- **Scope.** Clip-level CapERA captions from four frames per clip. A task that needs sub-second detail could behave differently; nothing here tests that.
+- **Still open.** G1 does not exist yet, and the gate decision is the team's.
 
 ### 3.4 Kernels
 
