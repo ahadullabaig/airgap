@@ -96,13 +96,62 @@ Report latency and peak VRAM next to the quality numbers. The CapERA paper's ben
 
 *The quantisation, frame-budget and token-budget experiments stay in the Later column of 2.2.*
 
+### 2.6 Checklist
+
+Items marked (team) need a person; the rest is code and GPU runs. Order matters: E3's event lists must exist
+before any report is generated, and E2-E4 run on the frozen demo.
+
+**Done**
+- [x] Model captions a clip with the network off (`demo/caption_clip.py`); frames decoded with PyAV (`demo/sampling.py`)
+- [x] E1 on the whole test split: 1,391 clips, CIDEr 0.210, BLEU-4 0.059, METEOR 0.168, median 0.66 s per clip
+  (`results/e1/scores_test.json`; prompt P1 chosen on 100 training clips, `eval/e1_config.json`)
+
+**Demo inputs (before building the report)**
+- [ ] (team) Choose three 2-3 minute aerial videos that we may show in class. ERA clips last about 5.75 s, too short
+  for this; record each video's source and terms in DATA.md
+- [ ] (team) For each video, write down the main events (type, rough time) and commit the list before running the
+  demo on it. This is E3's reference; two people writing separately is better
+- [ ] (team) Name E3's scorers (two, if possible, for agreement)
+
+**Demo build (2.3, 2.4)**
+- [ ] Windowing: window length, frames per window and prompt. Start from E1's frozen settings (P1, 4 frames, no
+  image splitting, greedy, 48 new tokens)
+- [ ] "Uncertain items": choose the source (low mean token log-probability, or disagreement between neighbouring
+  windows) and its threshold
+- [ ] Report: fixed Markdown template (timeline table, notable events, uncertain items); the language model writes
+  only the summary paragraph
+- [ ] `run_mission.py --video X --offline`: one command; logs latency per window and peak VRAM
+- [ ] First full run on one video; set the time budget for a live run
+- [ ] Runs on all three videos
+- [ ] Acceptance test (2.4): fresh terminal, `unshare -rn`, `HF_HUB_OFFLINE=1`; each report names its video's main
+  events
+- [ ] Freeze the demo (tag the commit)
+- [ ] (team) Screen recording of a successful run, as the demo-day fallback
+
+**Evaluation (2.5), on the frozen demo**
+- [ ] E2 script: the 25 class names in the prompt, answer matched to a class name, unparseable answers counted wrong
+  and reported. Parsing rule and metrics committed before the run
+- [ ] E2 run on the test split (about 15-20 min at E1's rate): accuracy, macro-F1, confusion matrix
+- [ ] (team) E3: score the three reports against the event lists: events found, events claimed that are not in the
+  video, timestamps in the right window; agreement if two scorers
+- [ ] E4: pick about 50 clips across classes (E2's misclassifications plus E1's lowest-CIDEr captions)
+- [ ] (team) E4: tag each by failure type (small objects, counting, viewpoint, invented objects, wrong event); counts;
+  five good and five bad examples
+- [ ] Latency and peak VRAM reported next to the quality numbers
+
+**Write-up and demo day**
+- [ ] Evaluation write-up, E1-E4. Results are zero-shot: never in the same table as CapERA's trained models without
+  saying so. The references are one human caption plus four paraphrases
+- [ ] (team) Slides. CapERA has no stated licence: confirm before showing its reference captions outside the course
+- [ ] (team) Demo rehearsal
+
 ---
 
 ## 3. Part B - Parallel Programming paper
 
 ### 3.1 Research question
 
-Frozen 2026-11-25 (the user's choice, after the gate decision and the literature search):
+Frozen 2026-11-25 (the authors' choice, after the gate decision and the literature search):
 
 > Is skipping unchanged tokens ever worth more than skipping whole frames, and where does attention's time go
 > on a laptop GPU?
@@ -114,7 +163,7 @@ The original question, written for the gated kernel:
 > that theoretical saving does a fused CUDA kernel actually deliver, and which
 > overheads consume the rest?
 
-Paper title (the user's choice): "Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on
+Paper title (the authors' choice): "Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on
 a Laptop GPU".
 
 Hypotheses:
@@ -209,7 +258,7 @@ Not found in the sources searched (DBLP, OpenReview and MDPI blocked automated a
 
 Otherwise write the floor paper and treat the gated kernel as future work. G1 losing to the baselines does not fail the gate: a measured and explained loss is a result (section 6).
 
-**Gate decided, 2026-11-25 (the user's decision, after the token traces, the caption-level check and X2):** write the floor paper, with a measured section on why temporal gating does not pay for this captioning pipeline. G1 and the rest of the ceiling become future work. Paper: IEEE conference format (IEEEtran), 8 pages, in `paper/`.
+**Gate decided, 2026-11-25 (the authors' decision, after the token traces, the caption-level check and X2):** write the floor paper, with a measured section on why temporal gating does not pay for this captioning pipeline. G1 and the rest of the ceiling become future work. Paper: IEEE conference format (IEEEtran), 8 pages, in `paper/`.
 
 **Token traces, 2026-11-24** (`bench/tokens_era.py`, `results/tokens/era_tra/summary.json`, `plots/tokens_era_error.png`, `plots/tokens_era_spread.png`). 36 ERA training clips, 12 each with the camera still, moving and untrackable, plus 3 clips that look still but the hover rule rejected. Error is measured on the connector output, i.e. what the language model sees, at 24 fps.
 - **Written criterion: met by every group once the threshold is high enough, so on its own it does not discriminate.** Keep-rate says nothing about the error at that threshold. Against the predicted break-evens (0.8-0.9 for rows-only G1, 0.42 for the exact update):
@@ -238,7 +287,7 @@ Otherwise write the floor paper and treat the gated kernel as future work. G1 lo
   - The identical-caption rate falls with connector error for every method; see the matched-error table in `scores.json`.
 - **The trace ordering holds on test clips.** At the caption frames, connector error over held output at equal cost is +4.4 and +11.5 points for stale rows, and +2.2 and +12.2 for token deltas.
 - **Scope.** Clip-level CapERA captions from four frames per clip. A task that needs sub-second detail could behave differently; nothing here tests that.
-- **Still open.** G1 does not exist yet, and the gate decision is the team's.
+- **Still open at the time.** G1 did not exist, and the gate was undecided. It was decided on 2026-11-25 (above).
 
 ### 3.4 Kernels
 
@@ -269,7 +318,7 @@ Measure before deciding.
 - **Tier C (option 3's exact attention under token-delta gates): its attention is exact.** Its error comes from the delta thresholds on the q/k/v and MLP inputs, the layers that hold most of the FLOPs.
   - An exact attention update alone adds no error.
   - It caps the saving at attention's share, about 18% of a layer's FLOPs.
-- **Not yet answered:** it depends on the gate decision.
+- **Settled by the gate decision (2026-11-25):** G1 is future work, so the choice between the options goes with it.
 
 Single head and FP32 first, for correctness. Add multiple heads early, since it is one more grid dimension and timings must use the real shape (12 heads). FP16 only after everything is correct.
 
@@ -394,7 +443,7 @@ paper/         source for the paper
 - [x] Predicted time per kernel written down (section 3.1; `results/cuda/predicted_times.json`)
 - [ ] Everyone on Part B has read the papers in section 3.2
 - [x] Literature search done; novelty table updated; research question frozen (2026-11-25; section 3.1, section 3.2, `docs/related_work.md`)
-- [ ] Stale, refresh or exact-update design question (section 3.4) answered
+- [x] Stale, refresh or exact-update design question (section 3.4): settled by the gate decision, G1 is future work
 
 ## 9. References
 

@@ -1,5 +1,5 @@
 """Paper figures at IEEE widths (3.5 in for one column, 7.16 in for two), as vector PDFs in paper/figures/, from
-the committed result files. Explanatory notes live in the captions in main.tex, not in the figures. Do not edit
+the committed result files, each with a PNG copy for the repository README. Explanatory notes live in the captions in main.tex, not in the figures. Do not edit
 paper/figures/ by hand.
 
   fig_x1.pdf        time and device memory against N, one head (X1)
@@ -48,6 +48,12 @@ plt.rcParams.update({
     "axes.linewidth": 0.6, "lines.linewidth": 1.2, "lines.markersize": 3.5, "pdf.fonttype": 42,
     "savefig.bbox": "tight", "savefig.pad_inches": 0.02,
 })
+
+
+def save(fig, name: str) -> None:
+    """The vector PDF for the paper, and a PNG copy for the repository README (GitHub does not inline PDFs)."""
+    fig.savefig(OUT / f"{name}.pdf", metadata={"CreationDate": None})  # no timestamp: unchanged data, same file
+    fig.savefig(OUT / f"{name}.png", dpi=220, facecolor="white")
 
 
 def load(rel: str) -> dict:
@@ -109,7 +115,7 @@ def fig_x1() -> None:
     fig.legend(h, lab, loc="upper center", ncol=5, frameon=False, bbox_to_anchor=(0.5, 1.06), handlelength=1.6,
                columnspacing=1.2)
     fig.tight_layout(w_pad=1.5)
-    fig.savefig(OUT / "fig_x1.pdf")
+    save(fig, "fig_x1")
     plt.close(fig)
 
 
@@ -185,7 +191,7 @@ def fig_x2() -> None:
     handles = [plt.Rectangle((0, 0), 1, 1, color=g[2]) for g in STALL_GROUPS] + [plt.Rectangle((0, 0), 1, 1, color=AXIS)]
     a3.legend(handles, [g[0] for g in STALL_GROUPS] + ["other"], loc="upper center", bbox_to_anchor=(0.45, -0.28),
               ncol=3, frameon=False, handlelength=1.0, columnspacing=0.8, fontsize=6.5)
-    fig.savefig(OUT / "fig_x2.pdf")
+    save(fig, "fig_x2")
     plt.close(fig)
 
 
@@ -232,7 +238,7 @@ def fig_tokens() -> None:
     fig.legend(h, lab, loc="upper center", ncol=4, frameon=False, bbox_to_anchor=(0.5, 1.13), handlelength=1.8,
                columnspacing=1.0)
     fig.tight_layout(w_pad=0.6)
-    fig.savefig(OUT / "fig_tokens.pdf")
+    save(fig, "fig_tokens")
     plt.close(fig)
 
 
@@ -277,7 +283,7 @@ def fig_captions() -> None:
     axes[1].set_xlabel("Connector error at the four caption frames (%)")
     axes[0].legend(loc="lower right", frameon=False, fontsize=6, handlelength=1.4, ncol=1, bbox_to_anchor=(1.0, 0.13))
     fig.tight_layout(h_pad=0.6)
-    fig.savefig(OUT / "fig_captions.pdf")
+    save(fig, "fig_captions")
     plt.close(fig)
 
 
@@ -287,7 +293,7 @@ def main() -> None:
     fig_x2()
     fig_tokens()
     fig_captions()
-    print("wrote", ", ".join(sorted(p.name for p in OUT.glob("*.pdf"))))
+    print("wrote", ", ".join(sorted(p.name for p in OUT.glob("*.p[dn][fg]"))))
 
 
 if __name__ == "__main__":

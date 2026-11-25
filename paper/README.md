@@ -1,17 +1,18 @@
 # Part B paper (Parallel Programming)
 
-IEEE conference format (`IEEEtran.cls` v1.8b, conference mode, US Letter), 8 pages. Scope, decided
-2026-11-25: the floor paper (kernel ladder, where the time goes, memory wall) plus a measured section on why
-temporal gating does not pay for this captioning pipeline (PLAN.md section 3.3).
+*Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on a Laptop GPU.* IEEE conference
+format (`IEEEtran.cls` v1.8b, conference mode, US Letter), 8-page limit. Scope, decided 2026-11-25: the floor
+paper (kernel ladder, where the time goes, memory wall) plus a measured section on why temporal gating does not
+pay for this captioning pipeline (PLAN.md section 3.3).
 
-Status: **outline**. The red `[pending: ...]` notes in `main.tex` are the outline; prose waits on the
-literature search (PLAN.md section 3.2 and the week-1 checklist).
+Status: **full draft**, six pages. Before submission, the authors check every citation and their author details.
+`main.tex` marks anything still needing an author's decision with a red `[pending: ...]` note; none are left.
 
 ## Build
 
 ```bash
 .venv/bin/python -I paper/make_numbers.py          # generated/numbers.tex and generated/table_ladder.tex
-.venv/bin/python paper/figures.py                  # figures/*.pdf
+.venv/bin/python paper/figures.py                  # figures/*.pdf, and *.png for the repository README
 cd paper && latexmk -pdf -outdir=build main.tex
 ```
 
@@ -21,7 +22,7 @@ holds. `figures.py` draws the figures at paper width (3.5 in for one column, 7.1
 `figures/`, in Liberation Serif (TrueType, Times metrics; OpenType Times clones embed with a CFF mismatch that PDF
 checkers flag). Do not edit `figures/` by hand.
 
-Format decisions carried over from the ICEE 2026 paper (neuroflux): `microtype` with `protrusion=false`
+Format decisions: `microtype` with `protrusion=false`
 (protrusion pushed punctuation into the column gutter, which EDAS measures), and the IEEEtran "et al." control
 entry for more than six authors.
 
@@ -49,7 +50,7 @@ Every macro in `generated/numbers.tex` names its source file in a comment. By se
 | V1's profile (L1 saturation) | `results/attention/v1_ncu.txt` |
 | Repeat runs | `results/attention/{v1,v2,v3,b1}_repeat.json` |
 | X2 at the pinned clock (Fig. 2, floors and fixed shares) | `paper/derived.py` from `clock1395/`, `x2.json`, `x2_breakdown.json` |
-| Figures | `paper/figures.py` writes `figures/*.pdf` from the files above |
+| Figures | `paper/figures.py` writes `figures/*.pdf` (and PNG copies for the README) from the files above |
 
 ## References
 
