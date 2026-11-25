@@ -1,0 +1,527 @@
+{
+ "experiment": "X2: where the time goes at 12 heads, N = 1024, D = 64 (definitions: bench/x2_breakdown.py)",
+ "peak": {
+  "fma_tflops": 7.46,
+  "fma_mhz": 1899.5,
+  "dram_gb_per_s": 188.16,
+  "launch_b2b_us": 1.7730000000000001,
+  "launch_sync_us": 4.575
+ },
+ "empty_1block_us": {
+  "back_to_back": 1.65926002,
+  "with_sync": 4.71004267
+ },
+ "versions": {
+  "V1": {
+   "time_ms": 18.958849,
+   "median_sm_mhz": 1950,
+   "megacycles": 36.96975555,
+   "phase_sum_ms": 18.96908759,
+   "phase_sum_minus_time_ms": 0.010238590000000158,
+   "fixed_ms": 0.09924655824999999,
+   "fixed_share": 0.005234840904635086,
+   "fixed_ms_back_to_back_whole": 0.086068742,
+   "fixed_ms_with_sync": 0.0909900909,
+   "dram_mb": 310.14,
+   "floor_ms": 1.6482780612244898,
+   "phases": [
+    {
+     "phase": "scores",
+     "time_ms": 14.6657276,
+     "fixed_ms": 0.0831403182,
+     "work_ms": 14.5825872818,
+     "gflop": 1.610612736,
+     "compute_floor_ms_at_1900mhz": 0.2158998305630027,
+     "compute_floor_ms_at_own_clock": 0.21030857854073004,
+     "dram_floor_ms": 0.30670705782312924,
+     "floor_ms": 0.30670705782312924,
+     "floor_kind": "DRAM",
+     "time_over_floor": 47.816726827516895,
+     "kernel": "v1_scores",
+     "dram_mb": 57.709999999999994,
+     "fma_pipe_pct": 1.68,
+     "warps_active_pct": 86.95,
+     "theoretical_occupancy_pct": 100.0,
+     "registers": 38.0,
+     "blocks_per_sm_limit": {
+      "registers": 6.0,
+      "shared_mem": 8.0,
+      "warps": 6.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 512.0,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 0.0,
+     "stalls": {
+      "cycles_per_issue": 188.48,
+      "sum_of_reasons": 188.32,
+      "shares": {
+       "lg_throttle": 0.8968776550552252,
+       "long_scoreboard": 0.02734706881903144,
+       "not_selected": 0.025329226847918437,
+       "mio_throttle": 0.021293542905692436,
+       "wait": 0.011469838572642312,
+       "drain": 0.006372132540356839,
+       "selected": 0.005310110450297366,
+       "short_scoreboard": 0.005097706032285472,
+       "branch_resolving": 0.0003717077315208157,
+       "no_instruction": 0.0002655055225148683,
+       "dispatch_stall": 0.00021240441801189465,
+       "math_pipe_throttle": 5.310110450297366e-05
+      }
+     }
+    },
+    {
+     "phase": "softmax",
+     "time_ms": 1.05011201,
+     "fixed_ms": 0.00533439995,
+     "work_ms": 1.0447776100500001,
+     "gflop": 0.0,
+     "compute_floor_ms_at_1900mhz": 0.0,
+     "compute_floor_ms_at_own_clock": 0.0,
+     "dram_floor_ms": 1.0352891156462585,
+     "floor_ms": 1.0352891156462585,
+     "floor_kind": "DRAM",
+     "time_over_floor": 1.0143176375852156,
+     "kernel": "v1_softmax",
+     "dram_mb": 194.8,
+     "fma_pipe_pct": 5.54,
+     "warps_active_pct": 90.74,
+     "theoretical_occupancy_pct": 100.0,
+     "registers": 39.0,
+     "blocks_per_sm_limit": {
+      "registers": 6.0,
+      "shared_mem": 8.0,
+      "warps": 6.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 16.0,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 0.0,
+     "stalls": {
+      "cycles_per_issue": 110.65,
+      "sum_of_reasons": 109.92999999999999,
+      "shares": {
+       "long_scoreboard": 0.9063040116437733,
+       "lg_throttle": 0.046029291367233695,
+       "wait": 0.012462476121168018,
+       "short_scoreboard": 0.009278631856636042,
+       "mio_throttle": 0.009096697898662786,
+       "selected": 0.009096697898662786,
+       "not_selected": 0.0027290093695988356,
+       "drain": 0.0021832074956790685,
+       "branch_resolving": 0.0011825707268261622,
+       "no_instruction": 0.000636768852906395,
+       "imc_miss": 0.00036386791594651143,
+       "math_pipe_throttle": 0.00036386791594651143,
+       "dispatch_stall": 0.00027290093695988356
+      }
+     }
+    },
+    {
+     "phase": "output",
+     "time_ms": 3.25324798,
+     "fixed_ms": 0.0107718401,
+     "work_ms": 3.2424761399,
+     "gflop": 1.610612736,
+     "compute_floor_ms_at_1900mhz": 0.2158998305630027,
+     "compute_floor_ms_at_own_clock": 0.21030857854073004,
+     "dram_floor_ms": 0.306281887755102,
+     "floor_ms": 0.306281887755102,
+     "floor_kind": "DRAM",
+     "time_over_floor": 10.621744576033317,
+     "kernel": "v1_output",
+     "dram_mb": 57.629999999999995,
+     "fma_pipe_pct": 7.1,
+     "warps_active_pct": 98.04,
+     "theoretical_occupancy_pct": 100.0,
+     "registers": 38.0,
+     "blocks_per_sm_limit": {
+      "registers": 6.0,
+      "shared_mem": 8.0,
+      "warps": 6.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 32.0,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 0.0,
+     "stalls": {
+      "cycles_per_issue": 53.17,
+      "sum_of_reasons": 53.15,
+      "shares": {
+       "lg_throttle": 0.6428974600188148,
+       "long_scoreboard": 0.2011288805268109,
+       "not_selected": 0.09143932267168392,
+       "wait": 0.04026340545625588,
+       "selected": 0.018814675446848544,
+       "mio_throttle": 0.0020696142991533397,
+       "branch_resolving": 0.0011288805268109125,
+       "dispatch_stall": 0.0009407337723424271,
+       "no_instruction": 0.0007525870178739417,
+       "short_scoreboard": 0.00037629350893697084,
+       "drain": 0.00018814675446848542
+      }
+     }
+    }
+   ]
+  },
+  "V2": {
+   "time_ms": 1.81927562,
+   "median_sm_mhz": 1507,
+   "megacycles": 2.74164835934,
+   "phase_sum_ms": 1.8323578070000002,
+   "phase_sum_minus_time_ms": 0.01308218700000019,
+   "fixed_ms": 0.01488352003,
+   "fixed_share": 0.00818101439187098,
+   "fixed_ms_back_to_back_whole": 0.0102299917,
+   "fixed_ms_with_sync": 0.0140647831,
+   "dram_mb": 213.82,
+   "floor_ms": 1.1363732993197277,
+   "phases": [
+    {
+     "phase": "scores",
+     "time_ms": 0.647415264,
+     "fixed_ms": 0.00720752006,
+     "work_ms": 0.64020774394,
+     "gflop": 1.610612736,
+     "compute_floor_ms_at_1900mhz": 0.2158998305630027,
+     "compute_floor_ms_at_own_clock": 0.2721312064727429,
+     "dram_floor_ms": 0.30064838435374147,
+     "floor_ms": 0.30064838435374147,
+     "floor_kind": "DRAM = compute",
+     "time_over_floor": 2.153396784059396,
+     "kernel": "v2_gemm<64, 64, 16, 8, 4, 1>",
+     "dram_mb": 56.57,
+     "fma_pipe_pct": 50.98,
+     "warps_active_pct": 49.11,
+     "theoretical_occupancy_pct": 50.0,
+     "registers": 80.0,
+     "blocks_per_sm_limit": {
+      "registers": 6.0,
+      "shared_mem": 6.0,
+      "warps": 12.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 32.0,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 786432.0,
+     "stalls": {
+      "cycles_per_issue": 8.01,
+      "sum_of_reasons": 7.97,
+      "shares": {
+       "not_selected": 0.35508155583437895,
+       "selected": 0.12547051442910917,
+       "dispatch_stall": 0.12045169385194479,
+       "math_pipe_throttle": 0.1028858218318695,
+       "wait": 0.10163111668757843,
+       "short_scoreboard": 0.07026348808030114,
+       "long_scoreboard": 0.06273525721455459,
+       "barrier": 0.04642409033877039,
+       "mio_throttle": 0.005018820577164367,
+       "branch_resolving": 0.0037641154328732747,
+       "no_instruction": 0.0037641154328732747,
+       "drain": 0.0012547051442910917,
+       "imc_miss": 0.0012547051442910917
+      }
+     }
+    },
+    {
+     "phase": "softmax",
+     "time_ms": 0.553146167,
+     "fixed_ms": 0.0049209599,
+     "work_ms": 0.5482252071,
+     "gflop": 0.0,
+     "compute_floor_ms_at_1900mhz": 0.0,
+     "compute_floor_ms_at_own_clock": 0.0,
+     "dram_floor_ms": 0.5345982142857142,
+     "floor_ms": 0.5345982142857142,
+     "floor_kind": "DRAM",
+     "time_over_floor": 1.0346951265803759,
+     "kernel": "v2_softmax_reg<32>",
+     "dram_mb": 100.59,
+     "fma_pipe_pct": 5.37,
+     "warps_active_pct": 68.03,
+     "theoretical_occupancy_pct": 83.33,
+     "registers": 48.0,
+     "blocks_per_sm_limit": {
+      "registers": 5.0,
+      "shared_mem": 8.0,
+      "warps": 6.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 19.2,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 0.0,
+     "stalls": {
+      "cycles_per_issue": 69.17,
+      "sum_of_reasons": 69.3,
+      "shares": {
+       "lg_throttle": 0.3603174603174603,
+       "mio_throttle": 0.2816738816738817,
+       "long_scoreboard": 0.15873015873015875,
+       "short_scoreboard": 0.1344877344877345,
+       "not_selected": 0.016305916305916306,
+       "wait": 0.01471861471861472,
+       "selected": 0.01443001443001443,
+       "drain": 0.013131313131313133,
+       "math_pipe_throttle": 0.0025974025974025974,
+       "dispatch_stall": 0.0020202020202020206,
+       "imc_miss": 0.0007215007215007216,
+       "branch_resolving": 0.0004329004329004329,
+       "no_instruction": 0.0004329004329004329
+      }
+     }
+    },
+    {
+     "phase": "output",
+     "time_ms": 0.631796376,
+     "fixed_ms": 0.00275504007,
+     "work_ms": 0.62904133593,
+     "gflop": 1.610612736,
+     "compute_floor_ms_at_1900mhz": 0.2158998305630027,
+     "compute_floor_ms_at_own_clock": 0.2721312064727429,
+     "dram_floor_ms": 0.30112670068027214,
+     "floor_ms": 0.30112670068027214,
+     "floor_kind": "DRAM = compute",
+     "time_over_floor": 2.0981081205111187,
+     "kernel": "v2_gemm<64, 64, 16, 8, 4, 0>",
+     "dram_mb": 56.66,
+     "fma_pipe_pct": 46.38,
+     "warps_active_pct": 24.77,
+     "theoretical_occupancy_pct": 25.0,
+     "registers": 147.0,
+     "blocks_per_sm_limit": {
+      "registers": 3.0,
+      "shared_mem": 6.0,
+      "warps": 12.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 4.0,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 393216.0,
+     "stalls": {
+      "cycles_per_issue": 4.7,
+      "sum_of_reasons": 4.91,
+      "shares": {
+       "long_scoreboard": 0.21181262729124237,
+       "selected": 0.20366598778004072,
+       "not_selected": 0.17922606924643583,
+       "short_scoreboard": 0.13441955193482688,
+       "wait": 0.1120162932790224,
+       "dispatch_stall": 0.06720977596741344,
+       "barrier": 0.048879837067209775,
+       "math_pipe_throttle": 0.032586558044806514,
+       "mio_throttle": 0.006109979633401222,
+       "branch_resolving": 0.002036659877800407,
+       "no_instruction": 0.002036659877800407
+      }
+     }
+    }
+   ]
+  },
+  "V3": {
+   "time_ms": 1.41632855,
+   "median_sm_mhz": 1785,
+   "megacycles": 2.52814646175,
+   "phase_sum_ms": 1.41632855,
+   "phase_sum_minus_time_ms": 0.0,
+   "fixed_ms": 0.00162038603,
+   "fixed_share": 0.001144074960573237,
+   "fixed_ms_back_to_back_whole": 0.00162038603,
+   "fixed_ms_with_sync": 0.00530827011,
+   "dram_mb": 12.819999999999999,
+   "floor_ms": 0.45949773462680515,
+   "phases": [
+    {
+     "phase": "fused",
+     "time_ms": 1.41632855,
+     "fixed_ms": 0.00162038603,
+     "work_ms": 1.41470816397,
+     "gflop": 3.221225472,
+     "compute_floor_ms_at_1900mhz": 0.4317996611260054,
+     "compute_floor_ms_at_own_clock": 0.45949773462680515,
+     "dram_floor_ms": 0.06813350340136054,
+     "floor_ms": 0.45949773462680515,
+     "floor_kind": "compute",
+     "time_over_floor": 3.082340658654854,
+     "kernel": "v3_fused<128, 32, 256>",
+     "dram_mb": 12.819999999999999,
+     "fma_pipe_pct": 36.27,
+     "warps_active_pct": 16.66,
+     "theoretical_occupancy_pct": 16.67,
+     "registers": 79.0,
+     "blocks_per_sm_limit": {
+      "registers": 3.0,
+      "shared_mem": 1.0,
+      "warps": 6.0,
+      "blocks": 16.0
+     },
+     "waves_per_sm": 6.0,
+     "shared_conflicts_load": 0.0,
+     "shared_conflicts_store": 1843200.0,
+     "stalls": {
+      "cycles_per_issue": 4.28,
+      "sum_of_reasons": 4.2700000000000005,
+      "shares": {
+       "short_scoreboard": 0.3676814988290398,
+       "selected": 0.23419203747072598,
+       "wait": 0.0983606557377049,
+       "long_scoreboard": 0.09601873536299764,
+       "not_selected": 0.07728337236533957,
+       "barrier": 0.04215456674473067,
+       "dispatch_stall": 0.039812646370023415,
+       "math_pipe_throttle": 0.01639344262295082,
+       "mio_throttle": 0.011709601873536299,
+       "branch_resolving": 0.00936768149882904,
+       "no_instruction": 0.00468384074941452,
+       "lg_throttle": 0.00234192037470726
+      }
+     }
+    }
+   ]
+  }
+ },
+ "b1_reference": {
+  "math": {
+   "time_ms": 2.8350720405578613,
+   "host_ms": 2.9088987498653296
+  },
+  "efficient_attention": {
+   "time_ms": 1.9040815179998225,
+   "host_ms": 1.9130939999740804
+  }
+ },
+ "transfers": {
+  "h2d_qkv_pinned": {
+   "event_ms": 1.41549659,
+   "host_ms": 1.4207735,
+   "mb": 9.437184,
+   "gb_per_s": 6.642286050521072
+  },
+  "d2h_o_pinned": {
+   "event_ms": 0.466338217,
+   "host_ms": 0.471290364,
+   "mb": 3.145728,
+   "gb_per_s": 6.67471317109297
+  },
+  "h2d_qkv_pageable": {
+   "event_ms": 1.42852569,
+   "host_ms": 1.46155629,
+   "mb": 9.437184,
+   "gb_per_s": 6.45694186708334
+  },
+  "d2h_o_pageable": {
+   "event_ms": 0.549049079,
+   "host_ms": 0.549276211,
+   "mb": 3.145728,
+   "gb_per_s": 5.727042127444328
+  }
+ },
+ "interventions": [
+  {
+   "cause": "shared-memory store conflicts (V2 scores)",
+   "default": {
+    "config": "64x64x16/8x4",
+    "time_ms": 0.642284274,
+    "shared_conflicts_store": 786432.0,
+    "warps_active_pct": 49.11,
+    "fma_pipe_pct": 50.98
+   },
+   "alternative": {
+    "config": "64x64x8/4x4",
+    "time_ms": 0.754919231,
+    "shared_conflicts_store": 0.0,
+    "warps_active_pct": 65.44,
+    "fma_pipe_pct": 36.42
+   },
+   "tested": false,
+   "bound": {
+    "store_conflicts": 786432.0,
+    "shared_wavefronts": 7902660.0,
+    "conflicts_share_of_wavefronts": 0.09951484689965151,
+    "mio_share_of_warp_cycles": 0.0752823086574655
+   },
+   "reading": "bounded rather than tested: the conflicts are 10% of the kernel's shared-memory wavefronts, and all waiting on MIO is 7.5% of its warp cycles, so they cost at most a few percent. The conflict-free alternative was slower, but it also changes the register tile (4x4 instead of 8x4), so that comparison is confounded"
+  },
+  {
+   "cause": "occupancy (V2 output)",
+   "default": {
+    "config": "64x64x16/8x4",
+    "time_ms": 0.605920017,
+    "warps_active_pct": 24.77,
+    "theoretical_occupancy_pct": 25.0,
+    "registers": 147.0,
+    "fma_pipe_pct": 46.38
+   },
+   "alternative": {
+    "config": "64x64x16/4x4",
+    "time_ms": 0.622230589,
+    "warps_active_pct": 47.05,
+    "theoretical_occupancy_pct": 50.0,
+    "registers": 80.0,
+    "fma_pipe_pct": 46.08
+   },
+   "tested": false,
+   "reading": "confounded: the alternative has twice the occupancy and is no faster, but it also halves each thread's register tile, and the two effects could cancel; occupancy is not isolated"
+  },
+  {
+   "cause": "rows per block at equal occupancy (V3)",
+   "default": {
+    "config": "128x32/256",
+    "time_ms": 1.41093552,
+    "warps_active_pct": 16.66,
+    "theoretical_occupancy_pct": 16.67,
+    "fma_pipe_pct": 36.27,
+    "short_scoreboard_share": 0.3676814988290398
+   },
+   "alternative": {
+    "config": "64x32/128",
+    "time_ms": 1.45627427,
+    "warps_active_pct": 16.65,
+    "theoretical_occupancy_pct": 16.67,
+    "fma_pipe_pct": 35.2,
+    "short_scoreboard_share": 0.32458233890214794
+   },
+   "tested": false,
+   "reading": "not an occupancy test: both shapes hold 8 warps per SM (one 256-thread block or two 128-thread blocks). No swept V3 shape raises occupancy, because shared memory limits every one, so occupancy is untested for V3; its leading stall (waiting on MIO results: shared-memory loads, which dominate its inner loops, plus shuffles and exp) is consistent with too few warps to hide that latency"
+  },
+  {
+   "cause": "clock (software power cap)",
+   "tested": false,
+   "reading": "no intervention: pinning the clock needs root. V1 ran at about 1.95 GHz (reliability-voltage limit), V2 at about 1.5 GHz and V3 at about 1.78 GHz, both under the power cap"
+  }
+ ],
+ "stall_sum_over_reported_total": {
+  "V1/scores": 0.9991511035653651,
+  "V1/softmax": 0.9934929959331223,
+  "V1/output": 0.9996238480346059,
+  "V2/scores": 0.9950062421972534,
+  "V2/softmax": 1.0018794274974698,
+  "V2/output": 1.0446808510638297,
+  "V3/fused": 0.9976635514018692
+ },
+ "h1": {
+  "clause1": {
+   "criterion": "every version's fixed cost below 5% of its time",
+   "fixed_share": {
+    "V1": 0.005234840904635086,
+    "V2": 0.00818101439187098,
+    "V3": 0.001144074960573237
+   },
+   "holds": true
+  },
+  "clause2": {
+   "criterion": "V3's saving over V2 at least 50% of V2's N x N DRAM floor, in time and in clock cycles",
+   "v2_nxn_mb": 201.0,
+   "v2_nxn_dram_floor_ms": 1.0682397959183674,
+   "saving_ms": 0.40294706999999996,
+   "saving_share_of_nxn_floor": 0.377206570602985,
+   "saving_at_v3_clock_ms": [
+    0.1416734556005309,
+    0.21680189794117655
+   ],
+   "saving_at_v3_clock_note": "V2 brought to V3's clock: all of V2 scaled (a lower bound), or only its matmuls scaled",
+   "holds": false
+  }
+ }
+}

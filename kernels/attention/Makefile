@@ -57,7 +57,36 @@ profile: $(BUILD)/attn_profile
 	  > $(RESULTS)/$(VERSION)_ncu.txt
 	cat $(RESULTS)/$(VERSION)_ncu.txt
 
+# X2: fixed costs (empty kernels with each version's launch configuration) and host-device copies at
+# 12 heads, N = 1024 (x2_bench.cu), then warp-stall profiles of every kernel, including the sweeps'
+# alternative tile shapes as interventions: V2 scores 64x64x8/4x4 (conflict-free shared stores) with
+# output 64x64x16/4x4 (twice the occupancy), and V3 64x32/128 (two blocks per SM instead of one).
+$(BUILD)/x2_bench: x2_bench.cu attn.h ../harness/harness.h | $(BUILD)
+	$(NVCC) $(NVCCFLAGS) -I../harness x2_bench.cu -o $@ -lnvidia-ml
+
+x2: $(BUILD)/x2_bench
+	mkdir -p $(RESULTS)
+	./$(BUILD)/x2_bench $(RESULTS)/x2.json
+
+comma := ,
+empty :=
+space := $(empty) $(empty)
+X2_STALLS := barrier branch_resolving dispatch_stall drain imc_miss lg_throttle long_scoreboard math_pipe_throttle membar mio_throttle misc no_instruction not_selected selected short_scoreboard sleeping tex_throttle wait
+X2_METRICS := gpu__time_duration.sum,smsp__average_warp_latency_per_inst_issued.ratio,$(subst $(space),$(comma),$(foreach r,$(X2_STALLS),smsp__average_warps_issue_stalled_$(r)_per_issue_active.ratio)),sm__warps_active.avg.pct_of_peak_sustained_active,sm__maximum_warps_per_active_cycle_pct,launch__occupancy_limit_registers,launch__occupancy_limit_shared_mem,launch__occupancy_limit_warps,launch__occupancy_limit_blocks,launch__waves_per_multiprocessor,launch__registers_per_thread,sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum,l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum,dram__bytes_read.sum,dram__bytes_write.sum
+# name | attn_profile arguments | launches to skip | launches to profile
+X2_PROFILES := v1:v1:9:3 v2:v2:9:3 v2alt:v2_1_2:9:3 v3:v3:3:1 v3alt:v3_1:3:1
+x2-profile: $(BUILD)/attn_profile
+	mkdir -p $(RESULTS)
+	for spec in $(X2_PROFILES); do \
+	  name=$${spec%%:*}; rest=$${spec#*:}; args=$${rest%%:*}; rest=$${rest#*:}; skip=$${rest%%:*}; count=$${rest#*:}; \
+	  $(CUDA_HOME)/bin/ncu --launch-skip $$skip --launch-count $$count --cache-control none --clock-control none \
+	    --metrics $(X2_METRICS) ./$(BUILD)/attn_profile $$(echo $$args | tr _ ' ') 2>&1 \
+	    | grep -E "::v[0-9]_|Section|Metric|----|duration|pct|bytes|conflicts|stalled|latency|occupancy|warps|registers|waves" \
+	    > $(RESULTS)/x2_ncu_$$name.txt; \
+	done
+	ls -l $(RESULTS)/x2_ncu_*.txt
+
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: all test bench tune profile clean
+.PHONY: all test bench tune profile x2 x2-profile clean

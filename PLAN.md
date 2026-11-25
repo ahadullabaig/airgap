@@ -136,6 +136,21 @@ Gated, at keep-rate k = M / N (G1 against our V3, B2 against B1):
 The decision gate compares measured keep-rates on real footage with these break-evens; the measured kernel times replace the predictions as they arrive.
 
 Notes on the hypotheses:
+- **H1 measured (X2, 2026-11-25;** `bench/x2_breakdown.py`, `results/attention/x2_breakdown.json`, `plots/x2_time.png`, `plots/x2_stalls.png`). The criteria were written after V1-V3 were timed, so they are not blind.
+  - **First clause holds.** Empty kernels with each version's own launches cost 0.11-0.82% of its time. Each phase's launch is timed alone; timed back to back as one call they cost a little less.
+  - **Second clause fails.** V3 saves 0.40 ms over V2, and 0.14-0.22 ms with V2 brought to V3's clock. V2's N x N traffic is worth 1.07 ms at full DRAM bandwidth.
+  - **Where the time goes:**
+    - V2's softmax sits on its DRAM floor.
+    - V2's matmuls take 2.1-2.2x their floors, where the DRAM and compute floors nearly tie; their warps mostly wait on the issue side.
+    - V3 takes 3.1x its compute floor; its warps wait on MIO results (shared memory, shuffles, exp) and the issue side.
+    - Floors use the bytes each kernel actually moved, so V1's softmax floor includes its two avoidable extra reads.
+    - V1 waits on global memory.
+  - **Causes:**
+    - V2's shared-memory store conflicts are bounded, not tested. They are 10% of the scores kernel's shared-memory wavefronts, and all MIO waiting is 7.5% of its warp cycles.
+    - Doubling V2's output-kernel occupancy was no faster, but that shape also halves the register tile, so occupancy is confounded.
+    - V3's occupancy is untested, because no swept shape raises it.
+    - The clock is untested, because pinning it needs root.
+  - **For reference:** copying Q, K and V to the GPU and O back costs more than V3 itself (1.42 + 0.47 ms).
 - H1 replaces an earlier version that said fixed per-launch costs dominate at ViT lengths. That result (Dispatch-Aware Ragged Attention) was measured at 197 tokens or fewer on a much faster GPU (RTX 4000 Ada), with about 50 µs of host-side dispatch per call.
 - Estimate, unmeasured: dense attention at N = 1024 with 12 heads is about 3.2 GFLOP, on the order of 1 ms on this GPU, against a few µs per raw kernel launch. Write predicted times for every kernel before the first benchmark; a large miss means a broken kernel or a wrong model.
 - The memory wall (where V1 and V2 run out of memory) sits near N = 30,000 for one head, a separate regime from the gating tests. It belongs to the kernel ladder (X1), not to H1.

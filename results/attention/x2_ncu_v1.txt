@@ -1,0 +1,117 @@
+  <unnamed>::v1_scores(const float *, const float *, float *, int, float) (64, 64, 12)x(16, 16, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    --------------------------------------------------------------------------- --------------- ------------
+    Metric Name                                                                     Metric Unit Metric Value
+    --------------------------------------------------------------------------- --------------- ------------
+    dram__bytes_read.sum                                                                  Mbyte         7.34
+    dram__bytes_write.sum                                                                 Mbyte        50.37
+    gpu__time_duration.sum                                                                   ms        19.03
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum                                               0
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum                                               0
+    launch__occupancy_limit_blocks                                                        block           16
+    launch__occupancy_limit_registers                                                     block            6
+    launch__occupancy_limit_shared_mem                                                    block            8
+    launch__occupancy_limit_warps                                                         block            6
+    launch__registers_per_thread                                                register/thread           38
+    launch__waves_per_multiprocessor                                                                     512
+    sm__maximum_warps_per_active_cycle_pct                                                    %          100
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active                               %         1.68
+    sm__warps_active.avg.pct_of_peak_sustained_active                                         %        86.95
+    smsp__average_warp_latency_per_inst_issued.ratio                                      cycle       188.48
+    smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio                       inst            0
+    smsp__average_warps_issue_stalled_branch_resolving_per_issue_active.ratio              inst         0.07
+    smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio                inst         0.04
+    smsp__average_warps_issue_stalled_drain_per_issue_active.ratio                         inst         1.20
+    smsp__average_warps_issue_stalled_imc_miss_per_issue_active.ratio                      inst         0.00
+    smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio                   inst       168.90
+    smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio               inst         5.15
+    smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio            inst         0.01
+    smsp__average_warps_issue_stalled_membar_per_issue_active.ratio                        inst            0
+    smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio                  inst         4.01
+    smsp__average_warps_issue_stalled_misc_per_issue_active.ratio                          inst         0.00
+    smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio                inst         0.05
+    smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio                  inst         4.77
+    smsp__average_warps_issue_stalled_selected_per_issue_active.ratio                      inst            1
+    smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio              inst         0.96
+    smsp__average_warps_issue_stalled_sleeping_per_issue_active.ratio                      inst            0
+    smsp__average_warps_issue_stalled_tex_throttle_per_issue_active.ratio                  inst            0
+    smsp__average_warps_issue_stalled_wait_per_issue_active.ratio                          inst         2.16
+    --------------------------------------------------------------------------- --------------- ------------
+  <unnamed>::v1_softmax(float *, int, int) (1536, 1, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    --------------------------------------------------------------------------- --------------- ------------
+    Metric Name                                                                     Metric Unit Metric Value
+    --------------------------------------------------------------------------- --------------- ------------
+    dram__bytes_read.sum                                                                  Mbyte       144.56
+    dram__bytes_write.sum                                                                 Mbyte        50.24
+    gpu__time_duration.sum                                                                   ms         1.05
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum                                               0
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum                                               0
+    launch__occupancy_limit_blocks                                                        block           16
+    launch__occupancy_limit_registers                                                     block            6
+    launch__occupancy_limit_shared_mem                                                    block            8
+    launch__occupancy_limit_warps                                                         block            6
+    launch__registers_per_thread                                                register/thread           39
+    launch__waves_per_multiprocessor                                                                      16
+    sm__maximum_warps_per_active_cycle_pct                                                    %          100
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active                               %         5.54
+    sm__warps_active.avg.pct_of_peak_sustained_active                                         %        90.74
+    smsp__average_warp_latency_per_inst_issued.ratio                                      cycle       110.65
+    smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio                       inst            0
+    smsp__average_warps_issue_stalled_branch_resolving_per_issue_active.ratio              inst         0.13
+    smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio                inst         0.03
+    smsp__average_warps_issue_stalled_drain_per_issue_active.ratio                         inst         0.24
+    smsp__average_warps_issue_stalled_imc_miss_per_issue_active.ratio                      inst         0.04
+    smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio                   inst         5.06
+    smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio               inst        99.63
+    smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio            inst         0.04
+    smsp__average_warps_issue_stalled_membar_per_issue_active.ratio                        inst            0
+    smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio                  inst         1.00
+    smsp__average_warps_issue_stalled_misc_per_issue_active.ratio                          inst         0.00
+    smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio                inst         0.07
+    smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio                  inst         0.30
+    smsp__average_warps_issue_stalled_selected_per_issue_active.ratio                      inst            1
+    smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio              inst         1.02
+    smsp__average_warps_issue_stalled_sleeping_per_issue_active.ratio                      inst            0
+    smsp__average_warps_issue_stalled_tex_throttle_per_issue_active.ratio                  inst            0
+    smsp__average_warps_issue_stalled_wait_per_issue_active.ratio                          inst         1.37
+    --------------------------------------------------------------------------- --------------- ------------
+  <unnamed>::v1_output(const float *, const float *, float *, int) (256, 12, 1)x(64, 4, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    --------------------------------------------------------------------------- --------------- ------------
+    Metric Name                                                                     Metric Unit Metric Value
+    --------------------------------------------------------------------------- --------------- ------------
+    dram__bytes_read.sum                                                                  Mbyte        53.83
+    dram__bytes_write.sum                                                                 Mbyte         3.80
+    gpu__time_duration.sum                                                                   ms         3.24
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum                                               0
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum                                               0
+    launch__occupancy_limit_blocks                                                        block           16
+    launch__occupancy_limit_registers                                                     block            6
+    launch__occupancy_limit_shared_mem                                                    block            8
+    launch__occupancy_limit_warps                                                         block            6
+    launch__registers_per_thread                                                register/thread           38
+    launch__waves_per_multiprocessor                                                                      32
+    sm__maximum_warps_per_active_cycle_pct                                                    %          100
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active                               %         7.10
+    sm__warps_active.avg.pct_of_peak_sustained_active                                         %        98.04
+    smsp__average_warp_latency_per_inst_issued.ratio                                      cycle        53.17
+    smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio                       inst            0
+    smsp__average_warps_issue_stalled_branch_resolving_per_issue_active.ratio              inst         0.06
+    smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio                inst         0.05
+    smsp__average_warps_issue_stalled_drain_per_issue_active.ratio                         inst         0.01
+    smsp__average_warps_issue_stalled_imc_miss_per_issue_active.ratio                      inst         0.00
+    smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio                   inst        34.17
+    smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio               inst        10.69
+    smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio            inst         0.00
+    smsp__average_warps_issue_stalled_membar_per_issue_active.ratio                        inst            0
+    smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio                  inst         0.11
+    smsp__average_warps_issue_stalled_misc_per_issue_active.ratio                          inst         0.00
+    smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio                inst         0.04
+    smsp__average_warps_issue_stalled_not_selected_per_issue_active.ratio                  inst         4.86
+    smsp__average_warps_issue_stalled_selected_per_issue_active.ratio                      inst            1
+    smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio              inst         0.02
+    smsp__average_warps_issue_stalled_sleeping_per_issue_active.ratio                      inst            0
+    smsp__average_warps_issue_stalled_tex_throttle_per_issue_active.ratio                  inst            0
+    smsp__average_warps_issue_stalled_wait_per_issue_active.ratio                          inst         2.14
+    --------------------------------------------------------------------------- --------------- ------------
