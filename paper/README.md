@@ -41,10 +41,11 @@ Every macro in `generated/numbers.tex` names its source file in a comment. By se
 
 ## References
 
-`refs.bib` entries were fetched from the arXiv API or Crossref, not typed from memory. Entries tagged
-`[fetched, preprint]` have only their arXiv record; the literature search must replace each with its published
-version where one exists. Before submission an author must open every cited work and confirm the statement it
-supports.
+`refs.bib` was built on 2026-11-25 from fetched records (Crossref by DOI, the arXiv API by id), not typed from
+memory. Each entry's comment names its record. Entries cited as arXiv preprints had no published version in the
+sources searched; recheck them before submission. `docs/related_work.md` describes the search and gives each
+cited statement's evidence level. Before submission an author must open every cited work and confirm the
+statement it supports.
 
 ## Data
 

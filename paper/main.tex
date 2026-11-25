@@ -79,12 +79,23 @@ measurements against an equal-cost baseline (dense at a lower frame rate).
 }
 
 \section{Background and Related Work}
-\pending{after the literature search (PLAN.md section 3.2 leads). Attention kernels and fusion
-\cite{dao2022flashattention,dao2023flashattention2,bikshandi2023case}; temporal redundancy in video models
-\cite{dutson2023eventful,parger2022deltacnn,parger2022motiondeltacnn,habibian2021skip,choudhury2024rlt};
-dispatch and latency non-linearity at ViT scale \cite{abdellatif2026dispatch,eliopoulos2024pruning}; on-device
-VLMs \cite{yang2026ondevice}. Check whether Eventful Transformers already compares against a reduced-frame-rate
-baseline before calling our equal-cost comparison new.}
+\pending{docs/related\_work.md and PLAN.md section 3.2 hold the evidence levels.
+(a) Fused attention: FlashAttention \cite{dao2022flashattention,dao2024flashattention2} with the online softmax
+of \cite{milakov2018online}; its Fig.~2 already shows traffic savings stop paying once arithmetic dominates at
+N = 1024, d = 64 (A100). Full-precision ladders: fused barely beats unfused \cite{hassani2024faster}; an FP32
+CUDA-core kernel beats PyTorch's FP32 SDPA \cite{hsu2026elsa}. Data movement as the usual bottleneck
+\cite{ivanov2021data,liu2023efficientvit}.
+(b) Fixed costs and measurement: dispatch dominates at 197 tokens or fewer \cite{abdellatif2026dispatch};
+latency non-linear in tokens, clocks locked \cite{eliopoulos2025pruning}; power-management variability
+\cite{sinha2022notall}; fixed-frequency versus fixed-power measurement \cite{nvidiacutlassmethodology}.
+(c) Temporal redundancy: Eventful Transformers \cite{dutson2023eventful} (no reduced-frame-rate baseline);
+equal-cost comparisons against running less often, all won by the gate on per-frame tasks
+\cite{dutson2022evnets,habibian2021skip,soldan2025residualvit,li2020reducto}; camera motion defeats frame-difference
+sparsity \cite{parger2022deltacnn,parger2023motiondeltacnn,choudhury2024rlt}; reuse inside VLM encoders, where
+attention-layer reuse gave no speedup \cite{hwang2025dejavu}.
+(d) Few frames suffice for clip-level tasks \cite{zohar2025apollo,lei2023singularity,buch2022atp}; frame rate as
+a cost knob in video analytics \cite{jiang2018chameleon,kang2017noscope}; our model on edge NPUs
+\cite{yang2026ondevice}.}
 
 \section{Setup and Method}
 \pending{
@@ -142,9 +153,12 @@ width; stall shares beside or below}
 \end{figure*}
 
 \subsection{Against library attention}
-\pending{FP32 only: at the pinned clock V3 \PinVthreeMs\,ms, PyTorch memory-efficient \PinBeffMs\,ms, math
-\PinBmathMs\,ms. The demo runs bf16 and PyTorch's flash and cuDNN backends have no FP32 kernel: either add a
-half-precision B1 or state the limitation here.}
+\pending{at the pinned clock V3 \PinVthreeMs\,ms, PyTorch memory-efficient \PinBeffMs\,ms, math
+\PinBmathMs\,ms. Say what each is: on this GPU PyTorch's FP32 memory-efficient backend \cite{pytorchsdpa} is a
+CUTLASS tensor-core kernel emulating FP32 with TF32 parts (our profile: tensor pipe 38\% active,
+results/attention/b1\_efficient\_ncu.txt); the math backend is CUDA-core SGEMM; our kernels use CUDA cores only.
+Not new that an FP32 CUDA-core kernel can beat PyTorch FP32 \cite{hsu2026elsa}. The demo runs bf16 and the flash
+and cuDNN backends have no FP32 kernel: add a half-precision B1 or state the limitation.}
 
 \section{Does Temporal Gating Pay?}
 \pending{
@@ -157,7 +171,14 @@ detectably; e.g.\ stale rows at threshold 8 (\CapBeightErr\% connector error)
 \CapBeightDelta{} [\CapBeightLo, \CapBeightHi]. Resolution: another clip's references cost
 \CapShuffledDelta. Held output at 1\,fps is near null by construction.
 D. What it means for the kernel: the pipeline does not need high-rate encoding, so a gated kernel has no
-application case here.}
+application case here.
+E. Against prior work: published equal-cost comparisons all favour the gate on per-frame tasks
+\cite{dutson2022evnets,habibian2021skip,soldan2025residualvit,li2020reducto}; ours favours frame-rate reduction on
+clip-level captions from a moving camera. Reasons to discuss: task granularity (ERA's single middle frame reaches
+62.3\% against 64.3\% for its best video model \cite{mou2020era}), camera motion
+\cite{parger2022deltacnn,choudhury2024rlt}, attention's small share of encoder cost \cite{hwang2025dejavu}.
+Caveat: CIDEr can be flat between 1 and 64 frames \cite{cai2024temporalbench}; add an embedding-similarity
+metric or state it. State the encoder's share of end-to-end captioning latency (E1 timings).}
 
 \begin{figure*}[t]
 \centering

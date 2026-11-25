@@ -1,0 +1,10 @@
+  fmha_cutlassF_f32_aligned_64x64_rf_sm80(AttentionKernel<float, Sm80, 1, 64, 64, 64, 1, 1>::Params) (16, 12, 1)x(32, 4, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    -------------------------------------------------------------- ----------- ------------
+    Metric Name                                                    Metric Unit Metric Value
+    -------------------------------------------------------------- ----------- ------------
+    gpu__time_duration.sum                                                  ms         2.06
+    sm__inst_executed_pipe_tensor.sum                                     inst    4,718,592
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active              %         7.44
+    sm__pipe_tensor_cycles_active.avg.pct_of_peak_sustained_active           %        38.46
+    -------------------------------------------------------------- ----------- ------------

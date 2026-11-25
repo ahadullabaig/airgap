@@ -162,18 +162,24 @@ Notes on the hypotheses:
 
 ### 3.2 Position against prior work
 
-| Work | What it established | What it leaves open for us |
-|---|---|---|
-| FlashAttention (2022) and successors | Tiling plus kernel fusion avoids storing the N x N matrix; tuned for long sequences on data-centre GPUs | Behaviour at short sequences on a 4 GB consumer GPU |
-| Eventful Transformers (ICCV 2023) | Re-processing only changed tokens in video saves compute, built from standard operators | A purpose-built fused kernel for the gated case; behaviour under tight memory |
-| Dispatch-Aware Ragged Attention (2026) | At ViT-scale lengths (197 tokens or fewer), host-side dispatch overhead (about 50 µs per call) hides token-pruning savings; a custom kernel helps | Temporal gating (subset of queries against all keys) rather than pruned single images; N = 1024 on a slower GPU, where compute is large next to fixed costs |
-| Pruning One More Token is Enough (2024) | Latency does not fall smoothly with workload size on edge GPUs | The same effect for gated attention kernels |
-| DeltaCNN (2022) | Custom CUDA kernels that process only frame differences make video CNNs faster | The same for attention, where every output depends on every key |
-| MotionDeltaCNN (2022) | Frame-difference sparsity extended to moving-camera video | Whether aerial footage with camera motion leaves any saving for attention gating |
-| Skip-Convolutions (2021) | Gated computation on frame residuals in video CNNs | Attention |
-| Run-Length Tokenization (2024) | Dropping patches that repeat across frames, before the transformer, speeds up video transformers | A competing approach: compare against it, or explain why gating inside the layers differs |
+Literature search done 2026-11-25. The annotated list is `docs/related_work.md`; it records each statement's evidence level, and which statements were checked against the papers' text.
 
-**This table is a starting point, not a novelty guarantee.** A quick search did not turn up a fused gated-attention kernel evaluated on a memory-limited GPU, but week 1 must include a proper literature search before the question is frozen. The last four rows were added as leads on 2026-11-21 and still need reading.
+| Work | What it established | Where we stand |
+|---|---|---|
+| FlashAttention (NeurIPS 2022), FlashAttention-2 (ICLR 2024); online softmax (Milakov & Gimelshein 2018) | Tiling plus an online softmax avoids N x N storage. At N = 1024, d = 64 on A100, cutting traffic stops paying once arithmetic dominates (Fig. 2). | V3 is this algorithm in FP32 on CUDA cores. Our "fusion recovers 13% of the removed N x N traffic" is a measured instance on a small GPU, not a new phenomenon. |
+| Faster Neighborhood Attention (NeurIPS 2024); ELSA (CVPR 2026 Findings) | Naive/GEMM/fused ladder in full precision: fused kernels have "a very minimal edge over unfused". An FP32 CUDA-core kernel beats PyTorch's FP32 SDPA, including on Jetson. | Neither is dense attention on a small consumer GPU at equal clocks with a launch/compute/memory breakdown. "Our kernel beats PyTorch FP32" is not new. |
+| PyTorch SDPA source; our profile (`results/attention/b1_kernels.json`, `b1_efficient_ncu.txt`) | On compute capability 8.0+ the FP32 "memory-efficient" backend is a CUTLASS tensor-core kernel emulating FP32 with TF32 parts. | Describe B1 accordingly: memory-efficient is tensor-core FP32 emulation; math is CUDA-core SGEMM. |
+| Dispatch-Aware Ragged Attention (2026 preprint); Pruning One More Token (WACV 2025) | Host dispatch (about 50 µs) hides savings at 197 tokens or fewer. Latency is non-linear in token count. Clocks were locked on Jetson. | Our launch cost under 1% is specific to N = 1024 and 12 heads. Clock locking is established methodology (also the CUTLASS measurement guide). |
+| Eventful Transformers (ICCV 2023) | Token gates including inside attention: 2-4x fewer FLOPs, up to 1.74x GPU speedup. No reduced-frame-rate or held-output baseline (checked). | The direct ancestor of our token-delta design. Its missing baseline is the gap our equal-cost comparison fills for this design family. |
+| Event Neural Networks (ECCV 2022), Skip-Convolutions (CVPR 2021), ResidualViT (ICCV 2025), Reducto (SIGCOMM 2020) | Equal-cost comparisons against running less often, interpolating or holding output, or frame-rate adaptation. The gate won in every case, on per-frame tasks. | Our comparison is not new; our result is the opposite. The reasons to test in the paper are task granularity (clip-level captioning) and camera motion. |
+| DeltaCNN (CVPR 2022), MotionDeltaCNN (ICCV 2023), Run-Length Tokenization (NeurIPS 2024) | Frame-difference sparsity works on fixed cameras; moving cameras need alignment; with constant camera motion few tokens repeat. | Consistent with our token traces on drone footage. Our gates do no motion alignment, so say so. |
+| Déjà Vu (PVLDB 2025), STC-Cacher (CVPR 2026), VLA-Cache (NeurIPS 2025), Temporal Token Reuse on UAV (JSTARS 2026) | Inter-frame reuse inside VLM encoders and on UAV video, all at fixed sampling rates with no rate baseline. Attention-layer reuse kernels gave no speedup, because attention is a small share of cost. | Token caching in a VLM encoder and gating on UAV video are not new. Caption-level evaluation against a rate baseline was not found. |
+| Apollo (CVPR 2025), Singularity (ACL 2023), ATP (CVPR 2022); ERA (GRSM 2020); TemporalBench (preprint); SwinBERT (CVPR 2022) | Few frames often suffice for clip-level tasks. On ERA one frame reaches 62.3% against 64.3% for the best video model (checked). CIDEr can be flat between 1 and 64 frames (checked). More frames help captioning on dynamic data. | Supports our caption result. It also obliges a metric caveat, or an embedding-similarity metric, and a discussion of when frames matter. |
+
+Not found in the sources searched (DBLP, OpenReview and MDPI blocked automated access; Google Scholar, IEEE Xplore and the ACM DL were not searched):
+- an equal-cost comparison in which gating loses to frame-rate reduction;
+- caption quality measured with each sampled frame replaced by an older one;
+- a naive, tiled and fused FP32 dense-attention ladder on a small consumer GPU compared at equal clocks, with a launch, compute and memory breakdown and the effect of the software power cap.
 
 ### 3.3 Contributions: a floor and a ceiling
 
@@ -377,7 +383,7 @@ paper/         source for the paper
 - [x] A trivial CUDA kernel compiles, runs and is timed (`kernels/smoke`, `results/cuda/smoke.json`)
 - [x] Predicted time per kernel written down (section 3.1; `results/cuda/predicted_times.json`)
 - [ ] Everyone on Part B has read the papers in section 3.2
-- [ ] Literature search done; novelty table updated; research question frozen
+- [ ] Literature search done; novelty table updated; research question frozen. The search and the table are done (2026-11-25, `docs/related_work.md`, section 3.2). The research question waits on the user: proposed rewording in the paper outline.
 - [ ] Stale, refresh or exact-update design question (section 3.4) answered
 
 ## 9. References
