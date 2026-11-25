@@ -98,3 +98,115 @@
 \newcommand{\CapHoldoneHi}{\ensuremath{+0.043}}  % results/gate_captions/scores.json
 \newcommand{\CapHoldoneErr}{36}  % results/gate_captions/scores.json
 \newcommand{\CapBfloatSame}{65}  % results/gate_captions/scores.json
+\newcommand{\ProtoSamples}{21}  % results/attention/v3.json (protocol)
+\newcommand{\ProtoSampleMs}{20}  % results/attention/v3.json (protocol)
+\newcommand{\ProtoClockTolPct}{1}  % results/attention/v3.json (protocol)
+\newcommand{\ProtoThrottlePct}{3}  % results/attention/v3.json (protocol)
+\newcommand{\TestChecks}{182}  % results/attention/attn_test.txt
+\newcommand{\TestCases}{10}  % results/attention/attn_test.txt
+\newcommand{\TestWorstErr}{3.8}  % results/attention/attn_test.txt
+\newcommand{\TestWorstExp}{-5}  % results/attention/attn_test.txt
+\newcommand{\VtwoTile}{64$\times$64$\times$16}  % results/attention/v2.json
+\newcommand{\VtwoThreadTile}{8$\times$4}  % results/attention/v2.json
+\newcommand{\VthreeRows}{128}  % results/attention/v3.json
+\newcommand{\VthreeKeys}{32}  % results/attention/v3.json
+\newcommand{\VthreeThreads}{256}  % results/attention/v3.json
+\newcommand{\VthreeSmemKB}{68.6}  % results/attention/x2.json (empty_v3 launch)
+\newcommand{\VoneOomLo}{24k}  % results/attention/v1.json
+\newcommand{\VoneOomHi}{32k}  % results/attention/v1.json
+\newcommand{\VtwoOomLo}{24k}  % results/attention/v2.json
+\newcommand{\VtwoOomHi}{32k}  % results/attention/v2.json
+\newcommand{\BmathOomLo}{16k}  % results/attention/b1.json
+\newcommand{\BmathOomHi}{24k}  % results/attention/b1.json
+\newcommand{\SmallMemMiB}{2}  % results/attention/v1.json
+\newcommand{\BeffTensorPct}{38}  % results/attention/b1_efficient_ncu.txt
+\newcommand{\BeffFmaPct}{7}  % results/attention/b1_efficient_ncu.txt
+\newcommand{\BeffErr}{3.1}  % results/attention/b1.json
+\newcommand{\BeffErrExp}{-6}  % results/attention/b1.json
+\newcommand{\BfFlashMs}{0.27}  % results/attention/b1_bf16.json
+\newcommand{\BfCudnnMs}{0.27}  % results/attention/b1_bf16.json
+\newcommand{\BfEffbfMs}{0.32}  % results/attention/b1_bf16.json
+\newcommand{\BfMathbfMs}{3.32}  % results/attention/b1_bf16.json
+\newcommand{\BfGhz}{1.78}  % results/attention/b1_bf16.json
+\newcommand{\BfFlashTflops}{12}  % results/attention/b1_bf16.json
+\newcommand{\VthreeOverFlash}{5.3}  % results/attention/v3.json / b1_bf16.json (as deployed, both unpinned)
+\newcommand{\EncGpuMs}{80}  % results/e1/encoder_profile.json
+\newcommand{\EncAttnPct}{15}  % results/e1/encoder_profile.json
+\newcommand{\EncMatmulPct}{65}  % results/e1/encoder_profile.json
+\newcommand{\EncOtherPct}{19}  % results/e1/encoder_profile.json
+\newcommand{\EncConvPct}{2}  % results/e1/encoder_profile.json
+\newcommand{\AttnCaptionMeasPct}{2}  % results/e1/encoder_profile.json x results/e1/encoder_share.json
+\newcommand{\XzeroClips}{1{,}473}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroGrouped}{1{,}460}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroRejected}{13}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroStillClips}{166}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroStillKeep}{13}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroStillCost}{3.1}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroMovingClips}{824}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroMovingKeep}{37}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroMovingCost}{9.0}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroUntrackClips}{470}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroUntrackKeep}{43}  % results/x0/era_tra/summary.json
+\newcommand{\XzeroUntrackCost}{10.4}  % results/x0/era_tra/summary.json
+\newcommand{\VoneGlobalLo}{84}  % results/attention/x2_ncu_v1.txt via x2_breakdown.json
+\newcommand{\VoneGlobalHi}{95}  % results/attention/x2_ncu_v1.txt via x2_breakdown.json
+\newcommand{\VtwoConflictPct}{10}  % results/attention/x2_breakdown.json
+\newcommand{\VtwoMioPct}{7.5}  % results/attention/x2_breakdown.json
+\newcommand{\RepeatMaxPct}{2}  % results/attention/{v1,v2,v3,b1}{,_repeat}.json
+\newcommand{\VoneLonePct}{99.8}  % results/attention/v1_ncu.txt
+\newcommand{\VoneLtwoPct}{1.4}  % results/attention/v1_ncu.txt
+\newcommand{\VoneFmaPct}{1.7}  % results/attention/v1_ncu.txt
+\newcommand{\PinBeffPredHiNoNxN}{1.68}  % bench/predict_times.py B1 high end without the N x N term, at the pin
+\newcommand{\VthreeSmallLo}{1.6}  % results/attention/v2.json, v3.json
+\newcommand{\VthreeSmallHi}{2.0}  % results/attention/v2.json, v3.json
+\newcommand{\TierAMaxMargin}{2.3}  % results/tokens/era_tra/summary.json
+\newcommand{\NoiseFloorPct}{2.8}  % results/tokens/era_tra/summary.json
+\newcommand{\TokGrouped}{36}  % results/tokens/era_tra/summary.json
+\newcommand{\CapAtwoDelta}{\ensuremath{-0.029}}  % results/gate_captions/scores.json
+\newcommand{\CapAtwoLo}{\ensuremath{-0.059}}  % results/gate_captions/scores.json
+\newcommand{\CapAtwoHi}{\ensuremath{-0.006}}  % results/gate_captions/scores.json
+\newcommand{\CapAtwoNlLo}{\ensuremath{-0.064}}  % results/gate_captions/scores.json (post hoc)
+\newcommand{\CapAtwoNlHi}{\ensuremath{+0.003}}  % results/gate_captions/scores.json (post hoc)
+\newcommand{\CapGateConds}{6}  % results/gate_captions/scores.json
+\newcommand{\CapUnadjusted}{12}  % results/gate_captions/scores.json (every condition but dense)
+\newcommand{\PredVoneEffLo}{10}  % results/cuda/predicted_times.json
+\newcommand{\PredVoneEffHi}{30}  % results/cuda/predicted_times.json
+\newcommand{\EmbDense}{0.478}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbBeightDelta}{\ensuremath{-0.001}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbBeightLo}{\ensuremath{-0.021}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbBeightHi}{\ensuremath{+0.020}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbCtwoDelta}{\ensuremath{-0.002}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbCtwoLo}{\ensuremath{-0.022}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbCtwoHi}{\ensuremath{+0.019}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbHoldoneDelta}{\ensuremath{-0.010}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbHoldoneLo}{\ensuremath{-0.028}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbHoldoneHi}{\ensuremath{+0.009}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbAtwoDelta}{\ensuremath{-0.007}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbAtwoLo}{\ensuremath{-0.020}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbAtwoHi}{\ensuremath{+0.005}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbShuffledDelta}{0.30}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbExcludeZero}{0}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbHalfWidth}{0.020}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbResolutionPct}{7}  % results/gate_captions/embed_scores.json
+\newcommand{\CapResolutionPct}{25}  % results/gate_captions/scores.json
+\newcommand{\EmbEqAtwoDelta}{\ensuremath{-0.016}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbEqAtwoLo}{\ensuremath{-0.031}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbEqAtwoHi}{\ensuremath{-0.003}}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbEqBetter}{0}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbEqWorse}{1}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbBfloatCos}{0.93}  % results/gate_captions/embed_scores.json
+\newcommand{\EmbHoldoneCos}{0.81}  % results/gate_captions/embed_scores.json
+\newcommand{\EraClips}{2{,}864}  % results/era/scan.json
+\newcommand{\AttnGflop}{3.2}  % 4 H N^2 d at the encoder's shape
+\newcommand{\TrStillOutEmb}{5}  % results/tokens/era_tra/summary.json
+\newcommand{\TrStillOutDeep}{19}  % results/tokens/era_tra/summary.json (largest over encoder layers)
+\newcommand{\TrStillIn}{49}  % results/tokens/era_tra/summary.json
+\newcommand{\TrMovingOutEmb}{11}  % results/tokens/era_tra/summary.json
+\newcommand{\TrMovingOutDeep}{26}  % results/tokens/era_tra/summary.json (largest over encoder layers)
+\newcommand{\TrMovingIn}{59}  % results/tokens/era_tra/summary.json
+\newcommand{\TrUntrackOutEmb}{10}  % results/tokens/era_tra/summary.json
+\newcommand{\TrUntrackOutDeep}{39}  % results/tokens/era_tra/summary.json (largest over encoder layers)
+\newcommand{\TrUntrackIn}{65}  % results/tokens/era_tra/summary.json
+\newcommand{\TokClips}{39}  % results/tokens/era_tra/summary.json
+\newcommand{\TokPerGroup}{12}  % results/tokens/era_tra/summary.json
+\newcommand{\CapConditions}{13}  % results/gate_captions/scores.json

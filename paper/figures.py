@@ -5,7 +5,7 @@ paper/figures/ by hand.
   fig_x1.pdf        time and device memory against N, one head (X1)
   fig_x2.pdf        where the time goes at the pinned clock, and what each kernel's warps wait on (X2)
   fig_tokens.pdf    gate error against cost on ERA, per footage group (token traces)
-  fig_captions.pdf  caption quality against connector error (caption-level check)
+  fig_captions.pdf  caption quality against connector error: CIDEr-D and sentence-embedding similarity
 
 Example:
     .venv/bin/python paper/figures.py
@@ -74,7 +74,7 @@ def fig_x1() -> None:
               ("b1.json", "b1_efficient_attention_h1_", "PyTorch mem.-eff.", SLOTS[2], "^")]
     docs = {f: load(f"attention/{f}") for f in {s[0] for s in series}}
     device = docs["v1.json"]["env"]["memory_mib"]
-    fig, (at, am) = plt.subplots(1, 2, figsize=(TWO, 2.35))
+    fig, (at, am) = plt.subplots(1, 2, figsize=(TWO, 2.1))
     ns_all = set()
     for i, (f, prefix, label, c, mk) in enumerate(series):
         ops = sorted((o for o in docs[f]["ops"] if o["name"].startswith(prefix)), key=lambda o: int(o["params"]["n"]))
@@ -137,7 +137,7 @@ def fig_x2() -> None:
     d = pinned_breakdown()
     V = d["versions"]
     pin = load("attention/clock1395/summary.json")
-    fig = plt.figure(figsize=(TWO, 2.3))
+    fig = plt.figure(figsize=(TWO, 2.15))
     gs = fig.add_gridspec(2, 2, width_ratios=[1.0, 1.15], height_ratios=[1, 3.2], hspace=0.65, wspace=0.55)
     a1 = fig.add_subplot(gs[0, 0])
     a2 = fig.add_subplot(gs[1, 0])
@@ -193,7 +193,7 @@ def fig_x2() -> None:
 def fig_tokens() -> None:
     r = load("tokens/era_tra/summary.json")
     titles = {"hover": "(a) Camera still", "moving": "(b) Camera moving", "unreliable": "(c) Untrackable"}
-    fig, axes = plt.subplots(1, 3, figsize=(TWO, 2.15), sharey=True)
+    fig, axes = plt.subplots(1, 3, figsize=(TWO, 1.95), sharey=True)
     for ax, g in zip(axes, ("hover", "moving", "unreliable")):
         G = r["groups"][g]
         hold = sorted((v["cost"], 100 * v["stream"]["mean"]) for v in G["hold"].values())
@@ -239,6 +239,7 @@ def fig_tokens() -> None:
 # ---------------------------------------------------------------- caption check
 def fig_captions() -> None:
     s = load("gate_captions/scores.json")
+    em = load("gate_captions/embed_scores.json")
     C = s["conditions"]
     fam = lambda k: "floor" if k in ("e1_bf16", "noise_pm1") else k.split("_")[0]  # noqa: E731
     groups = [("floor", "floors (bf16, ±1 noise)", INK_2, "D"), ("hold", "dense at a lower rate, held", MUTED, "o"),
@@ -248,30 +249,34 @@ def fig_captions() -> None:
              "C_0.05": "0.05", "C_0.2": "0.2", "A_2": "2", "A_8": "8", "e1_bf16": "", "noise_pm1": ""}
     OFFSET = {"hold_2": (3, -8), "hold_4": (-3, -8), "hold_8": (-3, -8), "hold_24": (-3, -8),  # label placement,
               "A_2": (2.5, -8), "A_8": (-3, 2), "C_0.05": (-2, -10)}                        # checked by eye
-    fig, ax = plt.subplots(figsize=(ONE, 2.3))
-    for f, name, c, mk in groups:
-        ks = sorted((k for k in C if fam(k) == f), key=lambda k: C[k]["con_err_mean"])
-        xs = [100 * C[k]["con_err_mean"] for k in ks]
-        ys = [C[k]["cider_minus_dense"]["mean"] for k in ks]
-        ax.vlines(xs, [C[k]["cider_minus_dense"]["lo95"] for k in ks], [C[k]["cider_minus_dense"]["hi95"] for k in ks],
-                  color=c, lw=0.9, alpha=0.75)
-        ax.plot(xs, ys, color=c, ls=(0, (3, 2)) if f == "hold" else "none", lw=0.8, marker=mk, ms=3.5,
-                markeredgecolor="white", markeredgewidth=0.4, label=name)
-        for x, y, k in zip(xs, ys, ks):
-            if label[k]:
-                dx, dy = OFFSET.get(k, (2.5, 2.5))
-                ax.annotate(label[k], (x, y), xytext=(dx, dy), textcoords="offset points",
-                            ha="right" if dx < 0 else "left", fontsize=6, color=INK_2)
-    sh = s["post_hoc"]["shuffled_control"]["cider_minus_dense"]["mean"]
-    ax.axhline(0, color=AXIS, lw=0.7)
-    ax.axhline(sh, color=MUTED, lw=0.7, ls=(0, (2, 2)))
-    ax.text(0.5, sh + 0.006, "another clip's references", fontsize=6, color=INK_2)
-    style(ax)
-    ax.set_xlim(0, None)
-    ax.set_xlabel("Connector error at the four caption frames (%)")
-    ax.set_ylabel("CIDEr-D minus dense")
-    ax.legend(loc="lower right", frameon=False, fontsize=6, handlelength=1.4, ncol=1, bbox_to_anchor=(1.0, 0.13))
-    fig.tight_layout()
+    panels = [("CIDEr-D minus dense", lambda k: C[k]["cider_minus_dense"],
+               s["post_hoc"]["shuffled_control"]["cider_minus_dense"]["mean"], "(a) CIDEr-D"),
+              ("Embedding similarity minus dense", lambda k: em["conditions"][k]["minus_dense"],
+               em["shuffled_control"]["minus_dense"]["mean"], "(b) Sentence-embedding similarity (post hoc)")]
+    fig, axes = plt.subplots(2, 1, figsize=(ONE, 3.6), sharex=True)
+    for ax, (ylab, get, sh, title) in zip(axes, panels):
+        for f, name, c, mk in groups:
+            ks = sorted((k for k in C if fam(k) == f), key=lambda k: C[k]["con_err_mean"])
+            xs = [100 * C[k]["con_err_mean"] for k in ks]
+            ys = [get(k)["mean"] for k in ks]
+            ax.vlines(xs, [get(k)["lo95"] for k in ks], [get(k)["hi95"] for k in ks], color=c, lw=0.9, alpha=0.75)
+            ax.plot(xs, ys, color=c, ls=(0, (3, 2)) if f == "hold" else "none", lw=0.8, marker=mk, ms=3.5,
+                    markeredgecolor="white", markeredgewidth=0.4, label=name)
+            for x, y, k in zip(xs, ys, ks):
+                if label[k]:
+                    dx, dy = OFFSET.get(k, (2.5, 2.5))
+                    ax.annotate(label[k], (x, y), xytext=(dx, dy), textcoords="offset points",
+                                ha="right" if dx < 0 else "left", fontsize=6, color=INK_2)
+        ax.axhline(0, color=AXIS, lw=0.7)
+        ax.axhline(sh, color=MUTED, lw=0.7, ls=(0, (2, 2)))
+        ax.text(0.5, sh * 0.93, "another clip's references", fontsize=6, color=INK_2, va="bottom")
+        style(ax)
+        ax.set_xlim(0, None)
+        ax.set_ylabel(ylab)
+        ax.set_title(title, loc="left")
+    axes[1].set_xlabel("Connector error at the four caption frames (%)")
+    axes[0].legend(loc="lower right", frameon=False, fontsize=6, handlelength=1.4, ncol=1, bbox_to_anchor=(1.0, 0.13))
+    fig.tight_layout(h_pad=0.6)
     fig.savefig(OUT / "fig_captions.pdf")
     plt.close(fig)
 

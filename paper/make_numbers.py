@@ -9,6 +9,7 @@ Example:
 """
 
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -38,16 +39,19 @@ def group_mhz(rel: str, op_name: str) -> float:
 
 
 MACROS: dict[str, str] = {}
+MACRO_VAL: dict[str, float] = {}
 SOURCES: dict[str, str] = {}
 
 
 def put(name: str, value, src: str, fmt: str = "{}") -> None:
     assert name.isalpha(), name  # TeX control words: letters only
+    if isinstance(value, (int, float)):
+        MACRO_VAL[name] = value
     if fmt.startswith("{:+"):  # signed: no "-0.000", and a real minus sign in text
         digits = int(fmt.split(".")[1][0])
         MACROS[name] = "\\ensuremath{" + fmt.format(round(value, digits) + 0.0) + "}"
     else:
-        MACROS[name] = fmt.format(value)
+        MACROS[name] = fmt.format(value).replace(",", "{,}")
     SOURCES[name] = src
 
 
@@ -153,6 +157,199 @@ def main() -> None:
         put(f"{name}Hi", ci["hi95"], "results/gate_captions/scores.json", "{:+.3f}")
         put(f"{name}Err", 100 * cs["conditions"][k]["con_err_mean"], "results/gate_captions/scores.json", "{:.0f}")
     put("CapBfloatSame", 100 * cs["conditions"]["e1_bf16"]["identical_to_dense"], "results/gate_captions/scores.json", "{:.0f}")
+
+    # benchmark protocol (as recorded in every result file)
+    proto = load("attention/v3.json")["protocol"]
+    src = "results/attention/v3.json (protocol)"
+    put("ProtoSamples", proto["samples"], src)
+    put("ProtoSampleMs", proto["target_sample_ms"], src, "{:.0f}")
+    put("ProtoClockTolPct", 100 * proto["clock_tol"], src, "{:.0f}")
+    put("ProtoThrottlePct", 100 * proto["throttle_drop"], src, "{:.0f}")
+
+    # correctness suite (kernels/attention/attn_test.cu output)
+    tests = (RES / "attention" / "attn_test.txt").read_text().splitlines()
+    rows = [ln for ln in tests if "max rel error" in ln]
+    src = "results/attention/attn_test.txt"
+    put("TestChecks", len(rows), src)
+    put("TestCases", len({ln.split()[1] for ln in rows}), src)
+    worst = max(float(ln.split("max rel error")[1].split()[0]) for ln in rows)
+    put("TestWorstErr", "{:.1f}".format(worst / 10 ** math.floor(math.log10(worst))), src)
+    put("TestWorstExp", math.floor(math.log10(worst)), src)
+    assert tests[-1].startswith("all checks passed"), tests[-1]
+
+    # tile shapes chosen by the sweeps
+    v2op = ops("attention/v2.json")["v2_h12_n1024"]["params"]
+    tile, thread = v2op["scores_config"].split("/")
+    put("VtwoTile", tile.replace("x", "$\\times$"), "results/attention/v2.json")
+    put("VtwoThreadTile", thread.replace("x", "$\\times$"), "results/attention/v2.json")
+    v3op = ops("attention/v3.json")["v3_h12_n1024"]["params"]
+    br, rest = v3op["config"].split("x")
+    bc, nt = rest.split("/")
+    put("VthreeRows", br, "results/attention/v3.json")
+    put("VthreeKeys", bc, "results/attention/v3.json")
+    put("VthreeThreads", nt, "results/attention/v3.json")
+    smem = ops("attention/x2.json")["empty_v3"]["params"]["config"].split(", ")[1].split()[0]
+    put("VthreeSmemKB", int(smem) / 1e3, "results/attention/x2.json (empty_v3 launch)", "{:.1f}")
+
+    # out of memory: largest N that ran and smallest that failed, one head
+    def oom(rel, prefix):
+        o = sorted((x for x in load(rel)["ops"] if x["name"].startswith(prefix)), key=lambda x: int(x["params"]["n"]))
+        ok = [int(x["params"]["n"]) for x in o if x["status"] == "ok"]
+        bad = [int(x["params"]["n"]) for x in o if x["status"] == "failed"]
+        return max(ok), min(bad)
+    for rel, prefix, name in (("attention/v1.json", "v1_h1_", "Vone"), ("attention/v2.json", "v2_h1_", "Vtwo"),
+                              ("attention/b1.json", "b1_math_h1_", "Bmath")):
+        lo, hi = oom(rel, prefix)
+        put(f"{name}OomLo", f"{lo // 1024}k", f"results/{rel}")
+        put(f"{name}OomHi", f"{hi // 1024}k", f"results/{rel}")
+    put("SmallMemMiB", ops("attention/v1.json")["v1_h1_n128"]["mem_mib"], "results/attention/v1.json", "{:.0f}")
+
+    # PyTorch's FP32 memory-efficient kernel: tensor cores, FP32-level accuracy
+    ncu = {ln.split()[0]: float(ln.split()[-1].replace(",", "")) for ln in
+           (RES / "attention" / "b1_efficient_ncu.txt").read_text().splitlines() if ln.strip().startswith("sm__")}
+    src = "results/attention/b1_efficient_ncu.txt"
+    put("BeffTensorPct", ncu["sm__pipe_tensor_cycles_active.avg.pct_of_peak_sustained_active"], src, "{:.0f}")
+    put("BeffFmaPct", ncu["sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active"], src, "{:.0f}")
+    err = ops("attention/b1.json")["b1_efficient_attention_h12_n1024"]["check"]["max_rel_err"]
+    put("BeffErr", "{:.1f}".format(err / 10 ** math.floor(math.log10(err))), "results/attention/b1.json")
+    put("BeffErrExp", math.floor(math.log10(err)), "results/attention/b1.json")
+
+    # half precision, as the captioner runs (unpinned)
+    bf = ops("attention/b1_bf16.json")
+    for be, name in (("flash_attention", "Flash"), ("cudnn_attention", "Cudnn"), ("efficient_attention", "Effbf"),
+                     ("math", "Mathbf")):
+        put(f"Bf{name}Ms", med(bf[f"b1_{be}_bf16_h12_n1024"]), "results/attention/b1_bf16.json", "{:.2f}")
+    put("BfGhz", group_mhz("attention/b1_bf16.json", "b1_flash_attention_bf16_h12_n1024") / 1e3,
+        "results/attention/b1_bf16.json", "{:.2f}")
+    put("BfFlashTflops", 4 * 12 * 1024 * 1024 * 64 / (med(bf["b1_flash_attention_bf16_h12_n1024"]) * 1e-3) / 1e12,
+        "results/attention/b1_bf16.json", "{:.0f}")
+    put("VthreeOverFlash", MACRO_VAL["DepVthreeMs"] / med(bf["b1_flash_attention_bf16_h12_n1024"]),
+        "results/attention/v3.json / b1_bf16.json (as deployed, both unpinned)", "{:.1f}")
+
+    # the encoder's GPU time by kernel kind (bf16, four frames) and attention's share of a caption
+    ep = load("e1/encoder_profile.json")
+    src = "results/e1/encoder_profile.json"
+    put("EncGpuMs", ep["gpu_ms_per_call"], src, "{:.0f}")
+    for k, name in (("attention", "Attn"), ("matmul", "Matmul"), ("other", "Other"), ("convolution", "Conv")):
+        put(f"Enc{name}Pct", 100 * ep["share_by_kind"][k], src, "{:.0f}")
+    put("AttnCaptionMeasPct", 100 * ep["share_by_kind"]["attention"] * es["median_share_of_total"]["encoder_s"],
+        "results/e1/encoder_profile.json x results/e1/encoder_share.json", "{:.0f}")
+
+    # pixel-level redundancy (X0, ERA training split)
+    x0 = load("x0/era_tra/summary.json")
+    src = "results/x0/era_tra/summary.json"
+    put("XzeroClips", x0["clips_processed"], src, "{:,}")
+    put("XzeroGrouped", sum(x0["slice_sizes"][g] for g in ("hover", "moving", "unreliable")), src, "{:,}")
+    put("XzeroRejected", x0["clips_processed"] - sum(x0["slice_sizes"][g] for g in ("hover", "moving", "unreliable")), src)
+    for g, name in (("hover", "Still"), ("moving", "Moving"), ("unreliable", "Untrack")):
+        put(f"Xzero{name}Clips", x0["slice_sizes"][g], src)
+        put(f"Xzero{name}Keep", 100 * x0["slices"][g]["1/8"]["steady_mean"], src, "{:.0f}")
+        put(f"Xzero{name}Cost", x0["slices"][g]["1/8"]["cost_steady"], src, "{:.1f}")
+
+    # stall shares and repeat runs quoted in the text
+    pb_st = {v: pb["versions"][v]["phases"] for v in ("V1", "V2")}
+    glob = [sum(r["stalls"].get(k, 0.0) for k in ("long_scoreboard", "lg_throttle")) for r in pb_st["V1"]]
+    put("VoneGlobalLo", 100 * min(glob), "results/attention/x2_ncu_v1.txt via x2_breakdown.json", "{:.0f}")
+    put("VoneGlobalHi", 100 * max(glob), "results/attention/x2_ncu_v1.txt via x2_breakdown.json", "{:.0f}")
+    ivs = {i["cause"]: i for i in load("attention/x2_breakdown.json")["interventions"]}
+    bnd = ivs["shared-memory store conflicts (V2 scores)"]["bound"]
+    put("VtwoConflictPct", 100 * bnd["conflicts_share_of_wavefronts"], "results/attention/x2_breakdown.json", "{:.0f}")
+    put("VtwoMioPct", 100 * bnd["mio_share_of_warp_cycles"], "results/attention/x2_breakdown.json", "{:.1f}")
+    rep = []
+    for name in ("v1", "v2", "v3", "b1"):
+        a = {o["name"]: o for o in load(f"attention/{name}.json")["ops"] if o["status"] == "ok"}
+        b = {o["name"]: o for o in load(f"attention/{name}_repeat.json")["ops"] if o["status"] == "ok"}
+        rep += [abs(med(b[k]) / med(a[k]) - 1) for k in a if k in b]
+    put("RepeatMaxPct", 100 * max(rep), "results/attention/{v1,v2,v3,b1}{,_repeat}.json", "{:.0f}")
+
+    # V1's score kernel: the L1 load path saturates (results/attention/v1_ncu.txt, first kernel)
+    v1n = (RES / "attention" / "v1_ncu.txt").read_text().split("v1_softmax")[0]
+    grab = lambda key: float([ln for ln in v1n.splitlines() if key in ln][0].split()[-1].replace(",", ""))  # noqa: E731
+    put("VoneLonePct", grab("l1tex__throughput"), "results/attention/v1_ncu.txt", "{:.1f}")
+    put("VoneLtwoPct", grab("lts__throughput"), "results/attention/v1_ncu.txt", "{:.1f}")
+    put("VoneFmaPct", grab("sm__pipe_fma_cycles_active"), "results/attention/v1_ncu.txt", "{:.1f}")
+
+    # B1's rescaled range without the math backend's N x N round trip (which the memory-efficient kernel avoids)
+    put("PinBeffPredHiNoNxN", (4 * 12 * 1024 * 1024 * 64) / (0.35 * pk["fma_sustained"]["tflops_settled"] * 1e12
+                                                            * pin["pinned_mhz"] / 1900.0) * 1e3
+        + pk["launch_b2b"]["ms_median"], "bench/predict_times.py B1 high end without the N x N term, at the pin",
+        "{:.2f}")
+
+    # V3 against V2 at one head and small N (Fig. 1)
+    v2o = ops("attention/v2.json")
+    v3o = ops("attention/v3.json")
+    small = [med(v3o[f"v3_h1_n{n}"]) / med(v2o[f"v2_h1_n{n}"]) for n in (128, 256, 512)]
+    put("VthreeSmallLo", min(small), "results/attention/v2.json, v3.json", "{:.1f}")
+    put("VthreeSmallHi", max(small), "results/attention/v2.json, v3.json", "{:.1f}")
+
+    # stale input in the token traces: its largest median margin over the baseline, against the noise floor
+    eqA = [v for g in ("hover", "moving", "unreliable")
+           for v in load("tokens/era_tra/summary.json")["groups"][g]["equal_cost"]["A"].values() if v]
+    put("TierAMaxMargin", -100 * min(v["median"] for v in eqA), "results/tokens/era_tra/summary.json", "{:.1f}")
+    put("NoiseFloorPct", 100 * load("tokens/era_tra/summary.json")["floors_per_clip"]["noise_pm1"]["mean"]["mean"],
+        "results/tokens/era_tra/summary.json", "{:.1f}")
+    put("TokGrouped", sum(len(load("tokens/era_tra/summary.json")["groups"][g]["clips"])
+                          for g in ("hover", "moving", "unreliable")), "results/tokens/era_tra/summary.json")
+
+    # caption check: stale input at threshold 2, with and without CIDEr's length penalty
+    ca = cs["conditions"]["A_2"]["cider_minus_dense"]
+    put("CapAtwoDelta", ca["mean"], "results/gate_captions/scores.json", "{:+.3f}")
+    put("CapAtwoLo", ca["lo95"], "results/gate_captions/scores.json", "{:+.3f}")
+    put("CapAtwoHi", ca["hi95"], "results/gate_captions/scores.json", "{:+.3f}")
+    nl = cs["post_hoc"]["no_length_penalty"]["A_2"]["cider_minus_dense"]
+    put("CapAtwoNlLo", nl["lo95"], "results/gate_captions/scores.json (post hoc)", "{:+.3f}")
+    put("CapAtwoNlHi", nl["hi95"], "results/gate_captions/scores.json (post hoc)", "{:+.3f}")
+    put("CapGateConds", sum(1 for k in cs["conditions"] if k.split("_")[0] in ("A", "B", "C")),
+        "results/gate_captions/scores.json")
+    put("CapUnadjusted", len(cs["conditions"]) - 1, "results/gate_captions/scores.json (every condition but dense)")
+    eff = load("cuda/predicted_times.json")["assumptions"]["efficiency_share_of_peak"]["naive_matmul"]
+    put("PredVoneEffLo", 100 * eff[0], "results/cuda/predicted_times.json", "{:.0f}")
+    put("PredVoneEffHi", 100 * eff[1], "results/cuda/predicted_times.json", "{:.0f}")
+
+    # embedding similarity for the caption check (post hoc; eval/caption_embed.py)
+    em = load("gate_captions/embed_scores.json")
+    src = "results/gate_captions/embed_scores.json"
+    put("EmbDense", em["conditions"]["dense"]["score_mean"], src, "{:.3f}")
+    for k, name in (("B_8", "Beight"), ("C_0.2", "Ctwo"), ("hold_24", "Holdone"), ("A_2", "Atwo")):
+        ci = em["conditions"][k]["minus_dense"]
+        put(f"Emb{name}Delta", ci["mean"], src, "{:+.3f}")
+        put(f"Emb{name}Lo", ci["lo95"], src, "{:+.3f}")
+        put(f"Emb{name}Hi", ci["hi95"], src, "{:+.3f}")
+    sh = em["shuffled_control"]["minus_dense"]
+    put("EmbShuffledDelta", -sh["mean"], src, "{:.2f}")
+    others = [v["minus_dense"] for k, v in em["conditions"].items() if k != "dense"]
+    put("EmbExcludeZero", sum(1 for c in others if c["lo95"] > 0 or c["hi95"] < 0), src)
+    half = max((c["hi95"] - c["lo95"]) / 2 for c in others)
+    put("EmbHalfWidth", half, src, "{:.3f}")
+    put("EmbResolutionPct", 100 * half / -sh["mean"], src, "{:.0f}")
+    capres = max((v["cider_minus_dense"]["hi95"] - v["cider_minus_dense"]["lo95"]) / 2
+                 for k, v in cs["conditions"].items() if k != "dense")
+    put("CapResolutionPct", 100 * capres / -cs["post_hoc"]["shuffled_control"]["cider_minus_dense"]["mean"],
+        "results/gate_captions/scores.json", "{:.0f}")
+    eq = em["equal_cost_vs_hold"]
+    put("EmbEqAtwoDelta", eq["A_2"]["mean"], src, "{:+.3f}")
+    put("EmbEqAtwoLo", eq["A_2"]["lo95"], src, "{:+.3f}")
+    put("EmbEqAtwoHi", eq["A_2"]["hi95"], src, "{:+.3f}")
+    put("EmbEqBetter", sum(1 for v in eq.values() if v and v["lo95"] > 0), src)
+    put("EmbEqWorse", sum(1 for v in eq.values() if v and v["hi95"] < 0), src)
+    put("EmbBfloatCos", em["conditions"]["e1_bf16"]["cos_to_dense_caption"], src, "{:.2f}")
+    put("EmbHoldoneCos", em["conditions"]["hold_24"]["cos_to_dense_caption"], src, "{:.2f}")
+
+    # data and samples
+    scan = load("era/scan.json")["clips"]
+    put("EraClips", len(scan), "results/era/scan.json", "{:,}")
+    put("AttnGflop", 4 * 12 * 1024 * 1024 * 64 / 1e9, "4 H N^2 d at the encoder's shape", "{:.1f}")
+    tr = load("tokens/era_tra/summary.json")["groups"]
+    for g, name in (("hover", "Still"), ("moving", "Moving"), ("unreliable", "Untrack")):
+        L = tr[g]["trace"]["1"]["layers"]
+        put(f"Tr{name}OutEmb", 100 * L["0"]["outside_mean"], "results/tokens/era_tra/summary.json", "{:.0f}")
+        put(f"Tr{name}OutDeep", 100 * max(L[str(i)]["outside_mean"] for i in range(1, 13)),
+            "results/tokens/era_tra/summary.json (largest over encoder layers)", "{:.0f}")
+        put(f"Tr{name}In", 100 * L["0"]["inside_mean"], "results/tokens/era_tra/summary.json", "{:.0f}")
+    tk = load("tokens/era_tra/summary.json")
+    put("TokClips", tk["clips_processed"], "results/tokens/era_tra/summary.json")
+    put("TokPerGroup", len(tk["groups"]["hover"]["clips"]), "results/tokens/era_tra/summary.json")
+    put("CapConditions", len(cs["conditions"]), "results/gate_captions/scores.json")
 
     OUT.mkdir(exist_ok=True)
     lines = ["% Generated by paper/make_numbers.py from committed result files. Do not edit.\n"]

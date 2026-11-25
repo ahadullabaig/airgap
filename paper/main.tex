@@ -1,6 +1,6 @@
 % Part B paper (Parallel Programming): IEEE conference format, 8 pages.
 % Build: see README.md. Numbers come from generated/numbers.tex (paper/make_numbers.py); never type a number
-% that a result file holds. Red [pending: ...] notes are the outline, to be replaced by prose.
+% that a result file holds. Red [pending: ...] notes mark what still needs an author's decision.
 \documentclass[conference]{IEEEtran}
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -12,21 +12,28 @@
 % No character protrusion: it pushes line-end punctuation into the column gutter, which submission
 % checkers measure (as on the ICEE 2026 paper).
 \usepackage[protrusion=false]{microtype}
+% Compact lists: the paper uses many short bullet lists, and IEEEtran's default spacing is generous.
+\usepackage{enumitem}
+\setlist[itemize]{nosep,leftmargin=1.1em,labelsep=0.4em}
 
 \graphicspath{{figures/}}
 \input{generated/numbers.tex}
 
-% Outline notes and figure placeholders, removed as the draft fills in.
+% Let pages carry more float area, so figures sit near their text instead of drifting to the end.
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.8}
+\renewcommand{\dblfloatpagefraction}{0.8}
+
 \newcommand{\pending}[1]{{\color{red}[pending: #1]}}
-\newcommand{\placeholder}[3]{\fbox{\parbox[c][#2][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}%
-  {\centering\footnotesize\color{red}#3}}}
+\newcommand{\NxN}{$N\times N$}
 
 \begin{document}
 % IEEE reference style: more than six authors become "first author et al."
 \bstctlcite{IEEEexample:BSTcontrol}
 
-\title{Where the Time Goes in Attention on a 4\,GB Laptop GPU, and Why Temporal Gating Does Not Pay for an
-Aerial Video Captioner\\{\color{red}\normalsize[working title]}}
+\title{Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on a Laptop GPU}
 
 \author{\IEEEauthorblockN{Ahad Ulla Baig}
 \IEEEauthorblockA{\textit{Dept. of Artificial Intelligence} \\
@@ -53,182 +60,397 @@ charithra754@gmail.com}
 \maketitle
 
 \begin{abstract}
-\pending{written last. One sentence each: the setting (an offline video captioner whose vision encoder runs
-attention at N = 1024, d = 64, 12 heads on an RTX 3050 Laptop GPU); the kernel ladder and its headline times at a
-pinned \PinMhz\,MHz (\PinVoneMs, \PinVtwoMs, \PinVthreeMs\,ms); where the time goes (fixed costs at most
-\FixedVtwoPct\%, fusion recovers \PinSavingPctOfNxN\% of the N$\times$N traffic it removes at equal clock); the
-gating result (no tested gate beats dense at a lower frame rate at equal cost; captions show no detected
-change).}
+An offline captioner for drone video runs a vision transformer whose attention has $N = 1024$ tokens, head
+dimension 64 and 12 heads per frame. We built a ladder of FP32 attention kernels for this shape on a 4\,GB
+RTX~3050 Laptop GPU, from naive to tiled to fused with an online softmax. We wrote down predicted times before
+writing any kernel, and measured the kernels at a pinned SM clock. At \PinMhz\,MHz the three kernels take
+\PinVoneMs, \PinVtwoMs{} and \PinVthreeMs\,ms. Launch costs are at most \PinFixedMaxPct\% of a call. Fusion
+removes \NxNFloorMs\,ms worth of \NxN{} memory traffic but saves only \PinSavingMs\,ms, because the fused kernel
+uses its arithmetic units less well. Unpinned, the power cap holds the tiled and fused kernels at different
+clocks, which made fusion look larger. We then asked whether frame-to-frame redundancy justifies a gated kernel that recomputes only
+changed tokens. Against running the dense encoder at a lower frame rate, at equal cost, gated designs had the
+lower error in \TierBLower{} of \TierBSettings{} settings (stale rows) and \TierCLower{} of \TierCSettings{} (token
+deltas). Caption quality showed no detected change even with each frame encoded up to a second late. Attention is
+about \AttnCaptionMeasPct\% of a caption's time in the deployed half-precision pipeline.
 \end{abstract}
 
 \begin{IEEEkeywords}
-\pending{e.g. attention, CUDA, GPU kernels, kernel fusion, vision transformers, temporal redundancy, video
-captioning}
+attention, CUDA, GPU kernels, kernel fusion, vision transformers, temporal redundancy, video captioning
 \end{IEEEkeywords}
 
 \section{Introduction}
-\pending{
-(1) Setting: an offline captioner for aerial video (SmolVLM2-500M~\cite{marafioti2025smolvlm}) whose vision
-encoder runs dense attention at N = 1024 on a 4\,GB laptop GPU.
-(2) Questions: where does attention's time go at this real shape (launch, compute, memory traffic, clock)?
-Does frame-to-frame redundancy in aerial video justify a gated attention kernel?
-(3) Approach: a from-scratch ladder (naive, tiled, fused) with times predicted before any kernel existed;
-a shared benchmark protocol; Nsight Compute; an equal-clock comparison; token- and caption-level gating
-measurements against an equal-cost baseline (dense at a lower frame rate).
-(4) Contributions as measured results, no novelty claims until the literature search is done.
-}
+Captioning video on the device that recorded it, with no network, needs a small vision-language model. A
+500M-parameter model such as SmolVLM2~\cite{marafioti2025smolvlm} fits on a 4\,GB laptop GPU. Its vision encoder
+cuts each $512\times512$ frame into 1024 patches and runs 12 transformer layers over them. Each layer's attention
+has $N = 1024$ tokens, 12 heads and head dimension $d = 64$: \AttnGflop\,GFLOP per frame and layer in FP32.
 
-\section{Background and Related Work}
-\pending{docs/related\_work.md and PLAN.md section 3.2 hold the evidence levels.
-(a) Fused attention: FlashAttention \cite{dao2022flashattention,dao2024flashattention2} with the online softmax
-of \cite{milakov2018online}; its Fig.~2 already shows traffic savings stop paying once arithmetic dominates at
-N = 1024, d = 64 (A100). Full-precision ladders: fused barely beats unfused \cite{hassani2024faster}; an FP32
-CUDA-core kernel beats PyTorch's FP32 SDPA \cite{hsu2026elsa}. Data movement as the usual bottleneck
-\cite{ivanov2021data,liu2023efficientvit}.
-(b) Fixed costs and measurement: dispatch dominates at 197 tokens or fewer \cite{abdellatif2026dispatch};
-latency non-linear in tokens, clocks locked \cite{eliopoulos2025pruning}; power-management variability
-\cite{sinha2022notall}; fixed-frequency versus fixed-power measurement \cite{nvidiacutlassmethodology}.
-(c) Temporal redundancy: Eventful Transformers \cite{dutson2023eventful} (no reduced-frame-rate baseline);
-equal-cost comparisons against running less often, all won by the gate on per-frame tasks
-\cite{dutson2022evnets,habibian2021skip,soldan2025residualvit,li2020reducto}; camera motion defeats frame-difference
-sparsity \cite{parger2022deltacnn,parger2023motiondeltacnn,choudhury2024rlt}; reuse inside VLM encoders, where
-attention-layer reuse gave no speedup \cite{hwang2025dejavu}.
-(d) Few frames suffice for clip-level tasks \cite{zohar2025apollo,lei2023singularity,buch2022atp}; frame rate as
-a cost knob in video analytics \cite{jiang2018chameleon,kang2017noscope}; our model on edge NPUs
-\cite{yang2026ondevice}.}
+Two questions follow for parallel programming on such a device: is skipping unchanged tokens ever worth more than
+skipping whole frames, and where does attention's time go? Aerial footage is often nearly static from frame to
+frame, which suggests a gated kernel that recomputes only changed tokens~\cite{dutson2023eventful}. The
+alternative needs no new kernel at all: encode fewer frames. Which one wins depends on where the time goes:
+launch overhead, arithmetic, memory traffic or the clock. The best-known results were measured elsewhere. Kernel
+fusion avoids storing the \NxN{} score matrix~\cite{dao2022flashattention}, but its benefits are usually shown on
+data-centre GPUs. At 197 tokens or fewer, host-side dispatch can hide the work~\cite{abdellatif2026dispatch}.
+
+We built three FP32 attention kernels for CUDA cores (naive, tiled, fused), predicted their times before any
+existed, and measured them at a pinned SM clock and as deployed. We then measured three gating designs on aerial
+video against encoding fewer frames, at equal cost. Our results are measurements on one GPU and one model:
+\begin{itemize}
+\item At the encoder's shape, launch costs are at most \PinFixedMaxPct\% of a call. At equal clock, fusing the
+three kernels into one saves \PinSavingMs\,ms, \PinSavingPctOfNxN\% of the time its removed \NxN{} traffic is
+worth: the fused kernel's arithmetic is less efficient.
+\item Unpinned, the kernels run at different clocks, from \DepVtwoGhz{} to \DepVoneGhz\,GHz. The laptop's power
+cap holds the tiled and fused kernels below the naive one, so unpinned comparisons and predictions mix the kernel
+with the clock.
+\item None of the gating designs beats encoding fewer frames at equal cost. Even encoding each sampled frame up
+to a second late changes caption quality by less than our test can detect.
+\end{itemize}
+The kernels are a measurement study at the encoder's shape on CUDA cores, not a faster encoder: the deployed
+encoder runs in bfloat16, where a library flash-attention kernel is \VthreeOverFlash$\times$ faster than our FP32
+fused kernel, and attention is only \EncAttnPct\% of its GPU time.
+
+\section{Related Work}
+\textit{Attention kernels.} FlashAttention~\cite{dao2022flashattention,dao2024flashattention2} tiles attention and
+uses an online softmax~\cite{milakov2018online} so that the \NxN{} matrix is never stored. Its analysis already
+shows, at $N = 1024$ and $d = 64$ on an A100, that reducing memory traffic stops paying once arithmetic
+dominates. In full precision, fused neighbourhood-attention kernels have only a small edge over unfused
+ones~\cite{hassani2024faster}. An exact FP32 attention kernel without tensor cores can beat PyTorch's FP32 scaled
+dot-product attention, including on an embedded GPU~\cite{hsu2026elsa}. Transformer training, in contrast, is
+usually limited by data movement~\cite{ivanov2021data,liu2023efficientvit}.
+
+\textit{Fixed costs and measurement.} For pruned ViTs with 197 tokens or fewer, host dispatch of about 50\,\textmu s
+exceeds the GPU work~\cite{abdellatif2026dispatch}. ViT latency on edge GPUs is non-linear in the token
+count~\cite{eliopoulos2025pruning}. Power management makes GPUs of one model differ in
+speed~\cite{sinha2022notall}. NVIDIA's guidance distinguishes fixed-frequency from fixed-power
+measurement~\cite{nvidiacutlassmethodology}, and we report both.
+
+\textit{Temporal redundancy.} Eventful Transformers re-process only changed tokens, including inside the attention
+products~\cite{dutson2023eventful}. Its baselines do not include running the model less often. Other work has
+compared gating against running less often:
+\begin{itemize}
+\item at matched cost, output interpolation~\cite{dutson2022evnets} and a lower frame
+rate~\cite{soldan2025residualvit};
+\item a keyframe-interleaved detector, compared on a cost plot~\cite{habibian2021skip};
+\item frame-rate adaptation at a matched accuracy target~\cite{li2020reducto}.
+\end{itemize}
+In each case the gate came out ahead, on tasks that need an answer for every frame: pose, detection, grounding
+and counting. Frame-difference sparsity is known to suffer from camera
+motion~\cite{parger2022deltacnn,parger2023motiondeltacnn,choudhury2024rlt}. Inside vision-language models,
+reusing attention-layer work gave no speedup, because attention is a small share of the
+cost~\cite{hwang2025dejavu}. For clip-level video-language tasks, few frames often
+suffice~\cite{zohar2025apollo,lei2023singularity,buch2022atp}, and frame rate is a standard cost knob in video
+analytics~\cite{jiang2018chameleon,kang2017noscope}.
 
 \section{Setup and Method}
-\pending{
-A. Hardware and measured limits: RTX 3050 Laptop (16 SMs, 4\,GB); FP32 FMA \PeakTflops\,TFLOPS sustained
-(about \PeakGhz\,GHz, at the software power cap), DRAM \DramGBs\,GB/s, launch \LaunchUs\,\textmu s back to back.
-B. Workload: the encoder's attention shape. C. Benchmark protocol (shared harness: interleaved groups,
-per-sample clocks and throttle reasons, repeat runs). D. Predictions written before any attention kernel.
-E. Correctness: every version against a float64 reference on all test cases. F. Clocks: the headline set is
-pinned at \PinMhz\,MHz (one clock, one driver); unpinned times are reported as deployed, with their clocks.}
+\subsection{Hardware and measured limits}
+The GPU is an RTX~3050 Laptop GPU with 16 SMs and 4\,GB (Ampere, compute capability 8.6). Microbenchmarks
+give its limits:
+\begin{itemize}
+\item FP32 FMA: \PeakTflops\,TFLOPS sustained over 10\,s, at about \PeakGhz\,GHz and at the software power cap;
+\item DRAM: \DramGBs\,GB/s for reads;
+\item launch: \LaunchUs\,\textmu s for an empty kernel back to back, \LaunchSyncUs\,\textmu s with a synchronise.
+\end{itemize}
+
+\subsection{Benchmark protocol}
+One harness, in C++ for our kernels and Python for PyTorch's, times every kernel and writes one record format.
+\begin{itemize}
+\item \textit{Sampling.} Each operation gets \ProtoSamples{} samples of about \ProtoSampleMs\,ms, after a warm-up
+that lasts until the SM clock is steady within \ProtoClockTolPct\%. Operations in a group are sampled in a fresh
+seeded order each round.
+\item \textit{Clock records.} Every sample records the SM clock and the throttle reasons. A sample is flagged if
+its clock is more than \ProtoThrottlePct\% below the operation's median for a reason other than the power cap.
+\item \textit{Correctness first.} An operation is timed only after its output passes a correctness check.
+\item \textit{Repeats and limits.} Repeat runs in a second process agree within \RepeatMaxPct\%. Rates above the measured
+limits are rejected as implausible.
+\end{itemize}
+
+\subsection{Clocks}
+Unpinned, each kernel settles at its own SM clock. The naive kernel, with little arithmetic, runs at
+\DepVoneGhz\,GHz (its recorded limit is reliability voltage); the software power cap holds the tiled kernel at
+\DepVtwoGhz\,GHz and the fused one at \DepVthreeGhz\,GHz. Our headline timings are therefore pinned: the graphics
+clock locked at \PinMhz\,MHz, the lowest any version's samples showed unpinned. Every sample held it, and the
+memory clock was unchanged. We also report each kernel as deployed, unpinned, with its median clock.
+
+\subsection{Correctness and predictions}
+Every version is checked against a float64 reference on \TestCases{} cases: the encoder's shape, odd and small
+$N$, rows that are almost one-hot, and sampled rows at large $N$. Every internal path is checked on every case it
+can handle (\TestChecks{} checks). The worst relative error per row is
+$\TestWorstErr\times10^{\TestWorstExp}$.
+
+Before any attention kernel existed, we predicted each version's time at the encoder's shape. The model is a
+roofline with assumed efficiency ranges: the arithmetic at a share of the FMA peak, the \NxN{} traffic at DRAM
+bandwidth, and launches at the measured cost.
 
 \section{The Kernel Ladder}
-\pending{V1 naive (three kernels, N$\times$N in DRAM); V2 tiled (shared-memory tiles, register blocking,
-softmax reading the matrix once); V3 fused (online softmax, no N$\times$N storage). Tile shapes chosen by a
-sweep with the selection rule fixed beforehand.}
+All three versions use the layout [heads][tokens][64], FP32 throughout, CUDA cores only.
+
+\textit{V1, naive.} Three kernels: one thread per score, a softmax with one warp per row and three passes, and
+one thread per output element. The \NxN{} matrix is stored in DRAM.
+
+\textit{V2, tiled.} V2 keeps V1's three phases and \NxN{} storage. Both matrix products become one templated
+shared-memory kernel: \VtwoTile{} tiles, each thread accumulating an \VtwoThreadTile{} block from float4 reads.
+The softmax keeps each row in registers when $N \le 2048$, so it reads and writes the matrix once.
+
+\textit{V3, fused.} One kernel with an online softmax. Each block owns \VthreeRows{} query rows and walks the keys
+in tiles of \VthreeKeys, keeping each row's running maximum, sum and output in registers. Each tile's
+probabilities pass through shared memory, never DRAM (\VthreeSmemKB\,KB per block). Only $Q$, $K$, $V$ and $O$
+touch DRAM.
+
+Tile shapes for V2 and V3 came from timed sweeps at the encoder's shape. The rule was fixed before each sweep:
+the fastest median among shapes that pass the checks.
 
 \section{Results}
 \subsection{Scaling and the memory wall}
-\pending{Fig.~\ref{fig:x1}. V1 and V2 fail between N = 24k and 32k as the N$\times$N model
-predicts; V3 runs at N = 32,768 (\VthreeBigNMs\,ms, one head).}
+Fig.~\ref{fig:x1} shows how each version scales with $N$. V1 and V2 need one \NxN{} matrix ($4N^2$ bytes) and
+run out of the 4\,GB between $N$ = \VoneOomLo{} and \VoneOomHi. PyTorch's FP32 math backend needs two and fails
+between \BmathOomLo{} and \BmathOomHi. V3 runs at $N = 32{,}768$ (\VthreeBigNMs\,ms for one head). These failure
+points follow from the memory model; they are a check of it, not a finding. At one head and $N \le 512$, V3 is
+\VthreeSmallLo--\VthreeSmallHi$\times$ slower than V2: its \VthreeRows-row tiles, chosen at 12 heads, give too few
+blocks for 16 SMs.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_x1}
-\caption{Attention time per call (a) and device memory (b) against the sequence length $N$ for one head ($d = 64$,
-FP32; each version at its own steady clock). A cross above the data marks a size at which a version ran out of
-device memory. V1 and V2 store one $N\times N$ matrix ($4N^2$ bytes) and fail between $N$ = 24k and 32k;
-PyTorch's math backend stores two and fails between 16k and 24k; V3 and PyTorch's memory-efficient backend store
-nothing of size $N\times N$. V1's memory curve lies under V2's. At small $N$ our versions' 2\,MiB is allocation
-granularity.}
+\caption{Attention time per call (a) and device memory (b) against $N$ for one head ($d = 64$, FP32; each version
+at its own steady clock). Crosses mark sizes that ran out of device memory. V1 and V2 store one \NxN{} matrix,
+PyTorch's math backend two, V3 and the memory-efficient backend none; V1's memory curve lies under V2's. At small
+$N$, \SmallMemMiB\,MiB is allocation granularity.}
 \label{fig:x1}
 \end{figure*}
 
 \subsection{Predicted against measured}
+Table~\ref{tab:ladder} compares the predictions with the measurements.
+\begin{itemize}
+\item \textit{Before the kernels.} The ranges assumed the FMA peak's clock of about \PeakGhz\,GHz, and every
+version missed them.
+\item \textit{Rescaled to the pinned clock.} The same formulas, rescaled after the fact to \PinMhz\,MHz, contain
+V2. V3 is just above its range. Both PyTorch backends are above theirs. The memory-efficient one sits at the
+range's edge only because that range includes the math backend's \NxN{} traffic; without it, the range ends at
+\PinBeffPredHiNoNxN\,ms.
+\item \textit{V1.} V1 is far above. Its operands do come from the L1 cache, as the model assumed (L2 only
+\VoneLtwoPct\% busy), but the L1 load path saturates (\VoneLonePct\% busy) with the FMA pipe at
+\VoneFmaPct\%. The model's assumed efficiency of \PredVoneEffLo--\PredVoneEffHi\% of peak was far too high.
+\end{itemize}
+
 \begin{table}[t]
 \centering
-\caption{Attention at 12 heads, N = 1024, D = 64, FP32. Ranges written before any attention kernel existed
-(at the \PeakGhz\,GHz FMA peak), the same formulas rescaled after the fact to the pinned clock, the time at that
-clock, and the time as deployed at each version's own clock.}
+\caption{Attention at 12 heads, $N = 1024$, $d = 64$, FP32. Predicted ranges were written before any attention
+kernel existed (at the \PeakGhz\,GHz FMA peak); the same formulas rescaled after the fact to the pinned clock;
+the time at that clock; and the time as deployed, at each version's own clock.}
 \label{tab:ladder}
 \footnotesize
 \setlength{\tabcolsep}{3pt}
 \input{generated/table_ladder.tex}
 \end{table}
-\pending{V2 lands inside its rescaled range, V3 is above, V1 is far above (it did not reuse operand rows from
-L1 as the model assumed). The rescaled ranges are post hoc; say so.}
 
 \subsection{Where the time goes}
-\pending{X2 (Fig.~\ref{fig:x2}): fixed costs \FixedVoneUs, \FixedVtwoUs, \FixedVthreeUs\,\textmu s, at most
-\PinFixedMaxPct\% of a version's time at the pinned clock: H1's first clause holds. At the pinned clock V2's
-matmuls take \PinVtwoScoresOver$\times$ and \PinVtwoOutputOver$\times$ their floors (DRAM and compute nearly
-tie), its softmax \PinVtwoSoftmaxOver$\times$; V3 \PinVthreeOver$\times$ its compute floor; V1's scores
-\PinVoneScoresOver$\times$. V2's N$\times$N traffic is worth \NxNFloorMs\,ms at full bandwidth;
-V3 saves \PinSavingMs\,ms over V2 at equal clock (\DepSavingMs\,ms as deployed): the second clause fails.
-Stall shares are descriptive; occupancy is untested for V3; the H1 criteria were written after timing.}
+Fig.~\ref{fig:x2}(a) breaks each version's time into phases and marks each phase's floor: the larger of its FLOPs
+at the FMA peak and the DRAM bytes it actually moved at full bandwidth. We timed empty kernels launched exactly
+like each version's, with the same grids, block sizes and shared-memory requests. They cost \FixedVoneUs,
+\FixedVtwoUs{} and \FixedVthreeUs\,\textmu s, at most \PinFixedMaxPct\% of a call. At this shape, launch and
+dispatch do not matter.
+
+The phases are another matter:
+\begin{itemize}
+\item \textit{V1.} Its score phase takes \PinVoneScoresOver$\times$ its floor. Its threads saturate the L1
+load path: \VoneGlobalLo--\VoneGlobalHi\% of warp stalls in its kernels wait on global memory.
+\item \textit{V2.} Its softmax runs at its DRAM floor (\PinVtwoSoftmaxOver$\times$). Its two matrix products
+take \PinVtwoScoresOver$\times$ and \PinVtwoOutputOver$\times$ floors where the DRAM and compute bounds nearly tie;
+their warps wait mostly on instruction issue.
+\item \textit{V3.} It removes the \NxN{} traffic, \NxNMB\,MB of DRAM traffic worth \NxNFloorMs\,ms at full
+bandwidth. At equal clock it saves only \PinSavingMs\,ms over V2 (\PinVthreeOverVtwoPct\%), because it takes
+\PinVthreeOver$\times$ its compute floor. Its warps wait on shared-memory and shuffle results and on instruction
+issue, and only one block of eight warps fits per SM.
+\end{itemize}
+Unpinned, V3 ran at \DepVthreeGhz\,GHz and V2 at \DepVtwoGhz\,GHz. That made V3 look \DepSavingMs\,ms faster;
+most of that gap is clock.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_x2}
-\caption{Where the time goes at 12 heads, $N = 1024$, $d = 64$. (a)~Time per call at a pinned
-\PinMhz\,MHz SM clock, by phase (V1 on its own axis). The black tick inside each phase marks its floor: the
-larger of its FLOPs at the FMA peak scaled to the pinned clock and the DRAM bytes it moved at \DramGBs\,GB/s.
-Fixed launch costs, measured with empty kernels launched exactly like each version's, are at most
-\PinFixedMaxPct\% of a version's time and too thin to show. PyTorch's bars are whole calls: its FP32
-memory-efficient backend runs on tensor cores (emulating FP32), its math backend on CUDA cores, ours on CUDA
-cores only. (b)~What each kernel's warps wait on (Nsight Compute stall reasons per issued instruction, grouped by
-the resource; unpinned profiles). The shares describe the kernels; they do not test a cause.}
+\caption{Where the time goes at 12 heads, $N = 1024$, $d = 64$. (a)~Time per call at a pinned \PinMhz\,MHz SM
+clock, by phase (V1 on its own axis); the black tick in each phase is its floor, the larger of its FLOPs at the
+scaled FMA peak and its DRAM bytes at \DramGBs\,GB/s. Launch costs (at most \PinFixedMaxPct\%) are too thin to
+show; PyTorch's bars are whole calls. (b)~Warp-stall reasons per kernel (Nsight Compute, unpinned), grouped by
+resource. They describe the kernels; they do not test a cause.}
 \label{fig:x2}
 \end{figure*}
-
-\subsection{Against library attention}
-\pending{at the pinned clock V3 \PinVthreeMs\,ms, PyTorch memory-efficient \PinBeffMs\,ms, math
-\PinBmathMs\,ms. Say what each is: on this GPU PyTorch's FP32 memory-efficient backend \cite{pytorchsdpa} is a
-CUTLASS tensor-core kernel emulating FP32 with TF32 parts (our profile: tensor pipe 38\% active,
-results/attention/b1\_efficient\_ncu.txt); the math backend is CUDA-core SGEMM; our kernels use CUDA cores only.
-Not new that an FP32 CUDA-core kernel can beat PyTorch FP32 \cite{hsu2026elsa}. The demo runs bf16 and the flash
-and cuDNN backends have no FP32 kernel: add a half-precision B1 or state the limitation.}
-
-\section{Does Temporal Gating Pay?}
-\pending{
-A. Pixel-level redundancy in ERA aerial video \cite{mou2020era} (X0).
-B. Token traces: against dense at a lower frame rate with the output held, at equal cost, stale rows have the
-lower connector error in \TierBLower{} of \TierBSettings{} settings, token deltas with exact attention in
-\TierCLower{} of \TierCSettings, stale input (a floor no kernel reaches) in \TierALower{} of \TierASettings.
-C. Captions (CapERA \cite{bashmal2023capera}, \CapClips{} test clips): no condition changes CIDEr-D
-detectably; e.g.\ stale rows at threshold 8 (\CapBeightErr\% connector error)
-\CapBeightDelta{} [\CapBeightLo, \CapBeightHi]. Resolution: another clip's references cost
-\CapShuffledDelta. Held output at 1\,fps is near null by construction.
-D. What it means for the kernel: the pipeline does not need high-rate encoding, so a gated kernel has no
-application case here.
-E. Against prior work: published equal-cost comparisons all favour the gate on per-frame tasks
-\cite{dutson2022evnets,habibian2021skip,soldan2025residualvit,li2020reducto}; ours favours frame-rate reduction on
-clip-level captions from a moving camera. Reasons to discuss: task granularity (ERA's single middle frame reaches
-62.3\% against 64.3\% for its best video model \cite{mou2020era}), camera motion
-\cite{parger2022deltacnn,choudhury2024rlt}, attention's small share of encoder cost \cite{hwang2025dejavu}.
-Caveat: CIDEr can be flat between 1 and 64 frames \cite{cai2024temporalbench}; add an embedding-similarity
-metric or state it.
-F. The encoder's share of a caption (E1's configuration, \EsClips{} clips, medians): frame decode \EsDecPct\%,
-preprocessing \EsPrePct\%, vision encoder \EsEncPct\% (\EsEncMs\,ms for four frames), prefill
-\EsPrefillPct\%, generating about \EsTokens{} tokens \EsGenPct\% (of \EsTotalMs\,ms). Attention is about
-\AttnFlopPct\% of an encoder layer's FLOPs, so roughly \AttnCaptionPct\% of a caption: even a perfect attention
-kernel barely moves end-to-end latency, consistent with \cite{hwang2025dejavu}.}
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig_tokens}
-\caption{Gate error against cost on ERA training clips, per footage group: the connector output's error at
-24\,fps, each method holding its latest output (FP32). Cost is full-frame equivalents per second of video. The
-dashed line is dense encoding at a lower frame rate with the output held, drawn as the chord between the rates run
-(dropping a fraction of frames achieves it). Points along each gate's curve are its thresholds: pixel block mean
-absolute difference 1--32 for stale input and stale rows, token change 0.05--0.5 for token deltas. Stale input is
-plotted at the pixel mask's cost, which no kernel achieves; token-delta cost is a FLOP estimate without fixed
-costs, so both are optimistic.}
+\caption{Gate error against cost on ERA training clips, per footage group: the connector output's error at 24\,fps,
+each method holding its latest output (FP32); cost in full-frame equivalents per second. Dashed: dense encoding at a
+lower frame rate, held (the chord between the rates run). Points along a gate's curve are its thresholds (block
+difference 1--32; token change 0.05--0.5). Stale-input and token-delta costs are optimistic: the mask's cost, which
+no kernel achieves, and a FLOP estimate without fixed costs.}
 \label{fig:tokens}
 \end{figure*}
 
+We could test two candidate causes with the sweeps' alternative tile shapes, and neither is clean:
+\begin{itemize}
+\item \textit{Store conflicts in V2.} V2's shared-memory store conflicts account for a small share of its warp
+cycles.
+They are \VtwoConflictPct\% of its shared-memory wavefronts, and all MIO waiting is \VtwoMioPct\% of its warp cycles.
+\item \textit{Occupancy in V2.} Doubling the occupancy of V2's output kernel made it no faster. That shape also
+halves each thread's register tile, so the two effects could cancel.
+\item \textit{Untested.} No swept V3 shape raises V3's occupancy, because shared memory limits all of them, and
+the clock could only be varied with root access.
+\end{itemize}
+These criteria and readings were fixed after the kernels were timed.
+
+\subsection{Against library attention, and half precision}
+At the pinned clock, V3 (\PinVthreeMs\,ms) is faster than PyTorch's FP32 memory-efficient backend
+(\PinBeffMs\,ms) and math backend (\PinBmathMs\,ms). The two library backends are different kinds of kernel:
+\begin{itemize}
+\item \textit{Memory-efficient.} On this GPU it is a CUTLASS kernel on tensor cores~\cite{pytorchsdpa}: its
+tensor pipe is \BeffTensorPct\% active and its FMA pipe \BeffFmaPct\%. Its error is FP32-level
+($\BeffErr\times10^{\BeffErrExp}$), so it splits FP32 operands into TF32 parts rather than rounding to TF32.
+\item \textit{Math.} It runs SGEMM on CUDA cores.
+\end{itemize}
+An FP32 CUDA-core kernel beating PyTorch's FP32 attention is not new~\cite{hsu2026elsa}.
+
+The deployed captioner runs in bfloat16. There, PyTorch's flash-attention kernel takes \BfFlashMs\,ms at the
+encoder's shape, \BfFlashTflops\,TFLOPS on tensor cores at \BfGhz\,GHz: \VthreeOverFlash$\times$ faster than V3.
+Profiled inside the deployed encoder (four frames, \EncGpuMs\,ms of GPU time), attention is \EncAttnPct\% of
+the time and the matrix products \EncMatmulPct\%. The encoder in turn is \EsEncPct\% of a caption's
+\EsTotalMs\,ms:
+\begin{itemize}
+\item generating about \EsTokens{} tokens: \EsGenPct\%;
+\item CPU preprocessing: \EsPrePct\%;
+\item frame decoding: \EsDecPct\%;
+\item the language model reading its input: \EsPrefillPct\%.
+\end{itemize}
+Attention is therefore about \AttnCaptionMeasPct\% of a caption, consistent with~\cite{hwang2025dejavu}.
+
+\section{Does Temporal Gating Pay?}
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{fig_captions}
-\caption{Caption quality against the connector error at the four frames the captioner uses: CIDEr-D against
-the CapERA references minus dense's, mean over \CapClips{} test clips, whiskers 95\% bootstrap intervals.
-Labels give the held output's frame rate or the gate's threshold. The dotted line is the cost of scoring dense
-captions against another clip's references.}
+\caption{Caption quality against the connector error at the four caption frames, as each condition's score
+minus dense's: (a)~CIDEr-D; (b)~sentence-embedding similarity to the references, added after (a) was seen. Means
+over \CapClips{} test clips, 95\% bootstrap intervals; labels give the held frame rate or the gate's threshold.
+Dotted: dense captions scored against another clip's references.}
 \label{fig:captions}
 \end{figure}
 
+\subsection{Designs and the equal-cost baseline}
+We measured three ways to skip work on unchanged content, from loosest to tightest:
+\begin{itemize}
+\item \textit{Stale input.} Blocks of the frame are refreshed only where pixels changed by more than a threshold;
+the encoder runs on this reference image. This is the best case for a pixel-level gate, at a cost no kernel
+achieves.
+\item \textit{Stale rows.} Changed tokens are recomputed through every layer, and the others keep their cached
+outputs.
+\item \textit{Token deltas.} At every layer, the q/k/v and MLP inputs are gated by how much each token changed,
+and attention is computed exactly for every row.
+\end{itemize}
+We emulate each design in PyTorch to measure its error. Its cost is modelled, not timed: the share of blocks
+recomputed, or for token deltas the share of FLOPs.
+Cost is full-frame equivalents per second of video. The baseline needs no kernel at all: run the dense encoder
+at a lower frame rate and hold its output in between. It reaches any intermediate cost by dropping a fraction of
+frames.
+
+The data are ERA~\cite{mou2020era} (\EraClips{} five-second aerial clips at 24\,fps) and the CapERA captions
+of them~\cite{bashmal2023capera}. We sorted training clips into three groups by the camera motion that frame
+registration estimates: still, moving, and untrackable. The untrackable group is where registration fails.
+
+\subsection{Pixel-level redundancy}
+At 24\,fps and a block threshold of 8 (out of 255), a gate would recompute \XzeroStillKeep\% of the
+$16\times16$-pixel blocks (the encoder's patches) with a still camera (\XzeroStillClips{} clips),
+\XzeroMovingKeep\% with a moving one (\XzeroMovingClips) and \XzeroUntrackKeep\% when untrackable
+(\XzeroUntrackClips). These figures cover \XzeroGrouped{} of \XzeroClips{} training clips. The other \XzeroRejected{} have a still camera but were
+rejected by the rule that defines the still group. In full frames per second, these shares cost
+\XzeroStillCost, \XzeroMovingCost{} and \XzeroUntrackCost. For the moving and untrackable groups, that is more
+than dense encoding at 6\,fps.
+
+\subsection{Token traces}
+We ran the encoder and connector in FP32 on \TokClips{} clips: \TokPerGroup{} per group, plus three still clips
+the rule rejected. The counts below cover the \TokGrouped{} clips in the three groups. We measured each gate's error in the connector output, which is what the language model sees,
+at 24\,fps (Fig.~\ref{fig:tokens}). At equal cost, per clip and per setting, the gated design had lower error
+than dense encoding at a lower rate in:
+\begin{itemize}
+\item \TierBLower{} of \TierBSettings{} settings for stale rows;
+\item \TierCLower{} of \TierCSettings{} for token deltas;
+\item \TierALower{} of \TierASettings{} for stale input, at a cost no kernel achieves. Its largest median
+margin, \TierAMaxMargin{} points, is below the \NoiseFloorPct\% error that $\pm1$ grey level of noise causes.
+\end{itemize}
+
+The pixel mask fails because change spreads through attention. Tokens outside the mask, whose pixel blocks
+changed by less than the threshold, already differ by \TrStillOutEmb\% at the embedding on the still clips, and by up to \TrStillOutDeep\%
+in the deeper layers. On the untrackable clips the figures are \TrUntrackOutEmb\% and up to
+\TrUntrackOutDeep\%. Cached rows are therefore stale as soon as anything changes.
+
+
+\subsection{Caption quality}
+Connector error is not caption quality, so we fed each design's outputs to the frozen captioner. The captioner
+encodes four frames spread over each clip and decodes greedily. We used \CapClips{} CapERA test clips and
+\CapConditions{} conditions (Fig.~\ref{fig:captions}).
+\begin{itemize}
+\item Of the \CapGateConds{} gated conditions, only stale input at threshold 2 moved CIDEr-D detectably:
+\CapAtwoDelta{} [\CapAtwoLo, \CapAtwoHi]. It is one of \CapUnadjusted{} unadjusted intervals, and with CIDEr's length penalty
+off its interval [\CapAtwoNlLo, \CapAtwoNlHi] includes zero.
+\item No other condition changed CIDEr-D detectably, including stale rows at threshold 8 (\CapBeightErr\% connector error):
+\CapBeightDelta{} [\CapBeightLo, \CapBeightHi].
+\item It includes token deltas at 0.2 (\CapCtwoErr\%): \CapCtwoDelta{} [\CapCtwoLo, \CapCtwoHi].
+\end{itemize}
+The test's resolution comes from a control. Scoring dense captions against another clip's references costs
+\CapShuffledDelta, so losses below about \CapResolutionPct\% of that cannot be ruled out. Encoding each frame up to a
+second late (dense at 1\,fps, held) changed nothing detectable either. That result is expected, since each held
+output still encodes a real frame. Wording is more sensitive than quality: bfloat16 rounding alone keeps only
+\CapBfloatSame\% of captions word for word.
+
+CIDEr-D can be blind to temporal input~\cite{cai2024temporalbench}. We therefore added a second metric after
+seeing these results: sentence-embedding similarity (all-mpnet-base-v2, mean cosine to the references; dense
+scores \EmbDense). The analysis was fixed before computing it:
+\begin{itemize}
+\item \textit{Against dense.} No condition changes the score detectably: \EmbExcludeZero{} of the
+\CapUnadjusted{} intervals exclude zero. Stale rows at threshold 8 give \EmbBeightDelta{} [\EmbBeightLo, \EmbBeightHi], token deltas at 0.2 \EmbCtwoDelta{} [\EmbCtwoLo,
+\EmbCtwoHi], and stale input at threshold 2 \EmbAtwoDelta{} [\EmbAtwoLo, \EmbAtwoHi].
+\item \textit{Resolution.} This metric resolves much finer differences. Another clip's references cost
+\EmbShuffledDelta, and no interval is wider than $\pm$\EmbHalfWidth: losses above about \EmbResolutionPct\% of a
+wrong-clip effect are ruled out, against about \CapResolutionPct\% for CIDEr-D.
+\item \textit{At equal cost.} No gate beats held output (\EmbEqBetter{} of \CapGateConds). Stale input at
+threshold 2 is detectably worse: \EmbEqAtwoDelta{} [\EmbEqAtwoLo, \EmbEqAtwoHi].
+\item \textit{Wording.} Similarity to dense's own caption falls from \EmbBfloatCos{} under bfloat16 rounding to
+\EmbHoldoneCos{} at 1\,fps, while similarity to the references does not move.
+\end{itemize}
+
+
+\subsection{Why the opposite of prior results}
+Published comparisons against running less often favour the
+gate~\cite{dutson2022evnets,habibian2021skip,soldan2025residualvit,li2020reducto}. Ours favours fewer frames. The
+settings differ in three ways:
+\begin{itemize}
+\item \textit{Task.} Those tasks need an answer for every frame. A clip caption needs a few frames; on ERA, a
+single middle frame already reaches 62.3\% event-classification accuracy, against 64.3\% for the best video
+model~\cite{mou2020era}.
+\item \textit{Camera motion.} Drone footage moves, which defeats frame-difference
+sparsity~\cite{parger2022deltacnn,choudhury2024rlt}. Motion cannot be the whole story, though: the result also
+holds on the still-camera clips (Fig.~\ref{fig:tokens}a).
+\item \textit{Cost share.} Attention is a small share of the encoder, and the encoder a small share of a
+caption.
+\end{itemize}
+
 \section{Discussion and Limitations}
-\pending{one GPU and one power-capped laptop; FP32 only (no tensor cores); one model and one attention shape;
-the clock as a lever (fusion's unpinned advantage is mostly clock headroom, consistent with but not tested as a
-power effect); occupancy untested for V3; H1 criteria not blind; caption metric resolution; copies of Q, K and
-V would cost more than V3 (\CopyInMs\,+\,\CopyOutMs\,ms) if attention were offloaded alone.}
+\begin{itemize}
+\item \textit{Scope.} One GPU, one laptop power configuration, one model and one attention shape, in FP32
+without tensor cores.
+\item \textit{Power cap.} Fusion's unpinned advantage comes mostly from clock headroom. Moving less DRAM
+traffic may leave more power for the SMs; that is consistent with what we saw, but we did not test it.
+\item \textit{Fixed criteria.} The criteria for the breakdown were written after the kernels were timed.
+\item \textit{The caption results.} Both are nulls at their stated resolutions, on clip-level captions from
+four frames. The embedding metric was added after the CIDEr results were seen. Neither metric checks temporal
+detail such as the order of events.
+\item \textit{Offloading.} If attention were offloaded alone, copying $Q$, $K$ and $V$ in and $O$ out would take
+\CopyInMs{} and \CopyOutMs\,ms, more than V3 itself.
+\end{itemize}
 
 \section{Conclusion}
-\pending{written last.}
+At a vision encoder's attention shape on a 4\,GB laptop GPU, launch costs are negligible, and fusion saves far
+less than the \NxN{} traffic it removes is worth; the power cap moved unpinned comparisons more than fusion did.
+For a drone-video captioner, frame-to-frame redundancy does not justify a gated attention kernel: encoding fewer
+frames costs less and loses no measurable caption quality.
 
 \bibliographystyle{IEEEtran}
 \bibliography{refs}

@@ -1,0 +1,69 @@
+{
+ "what": "GPU kernel time of one vision-encoder call (4 frames, bf16), grouped by kind (definitions: eval/encoder_profile.py)",
+ "attn_implementation": "sdpa",
+ "repeats": 5,
+ "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+ "gpu_ms_per_call": 80.49967920000016,
+ "ms_by_kind": {
+  "other": 15.14242260000017,
+  "convolution": 1.4582329999999972,
+  "matmul": 52.14419860000002,
+  "attention": 11.754824999999968
+ },
+ "share_by_kind": {
+  "other": 0.18810537818888776,
+  "convolution": 0.018114767841211403,
+  "matmul": 0.6477566012461813,
+  "attention": 0.1460232527237195
+ },
+ "top_kernels_ms": [
+  [
+   "ampere_bf16_s16816gemm_bf16_256x128_ldg8_relu_f2f_stages_32x3_tn",
+   18.094997000000014
+  ],
+  [
+   "void cutlass::Kernel2<cutlass_80_tensorop_bf16_s16816gemm_relu_bf16_128x128_32x4_tn_align8>(cutlass_80_tensorop_bf16_s16",
+   16.765030800000023
+  ],
+  [
+   "ampere_bf16_s1688gemm_bf16_128x128_ldg8_relu_f2f_tn",
+   16.759372599999978
+  ],
+  [
+   "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<64, 128, 128, 4, false, false, cutlass::bfloat16_t, Flash_k",
+   11.754824999999968
+  ],
+  [
+   "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::CUDAFunctor_add<c10::BFloat16",
+   4.79145420000004
+  ],
+  [
+   "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::T",
+   3.845475199999978
+  ],
+  [
+   "void at::native::vectorized_elementwise_kernel<4, at::native::GeluCUDAKernelImpl(at::TensorIteratorBase&, at::native::Ge",
+   3.2974837999999767
+  ],
+  [
+   "void at::native::(anonymous namespace)::vectorized_layer_norm_kernel<c10::BFloat16, float, false>(int, float, c10::BFloa",
+   2.12770540000005
+  ],
+  [
+   "sm80_xmma_fprop_implicit_gemm_indexed_wo_smem_bf16bf16_bf16f32_f32_nhwckrsc_nhwc_tilesize128x32x16_stage1_warpsize4x1x1_",
+   1.2968274000000009
+  ],
+  [
+   "ampere_bf16_s16816gemm_bf16_256x128_ldg8_f2f_stages_32x3_tn",
+   0.5247982000000018
+  ],
+  [
+   "void cudnn::engines_precompiled::nchwToNhwcKernel<__nv_bfloat16, __nv_bfloat16, float, false, true, (cudnnKernelDataType",
+   0.47366720000000295
+  ],
+  [
+   "void at::native::vectorized_gather_kernel<16, long>(char*, char*, long*, int, long, long, long, long, bool)",
+   0.22801739999999
+  ]
+ ]
+}

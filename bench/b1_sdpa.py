@@ -14,7 +14,7 @@ Checks before timing (same criterion as V1, max over rows of ||o - o_ref|| / ||o
 The CUDA Graphs variant in the plan is deferred.
 
 Example:
-    .venv/bin/python -I bench/b1_sdpa.py [output.json] [--only h12_n1024]
+    .venv/bin/python -I bench/b1_sdpa.py [output.json] [--only h12_n1024] [--dtype fp32|bf16|fp16]
 """
 
 import json
@@ -36,6 +36,7 @@ torch.backends.cudnn.allow_tf32 = False
 torch.set_float32_matmul_precision("highest")
 
 D = 64
+TOL = {"fp32": 1e-4, "bf16": 2e-2, "fp16": 3e-3}  # max ||o - o_ref|| / ||o_ref||; half precision rounds the inputs too
 TESTDATA = ROOT / "kernels" / "attention" / "build" / "testdata"
 SHARED = {(12, 1024): "rand_h12_n1024", (1, 16384): "rand_h1_n16384"}
 
@@ -69,6 +70,13 @@ def main() -> None:
         i = args.index("--only")
         only = args[i + 1]
         del args[i:i + 2]
+    dtype = "fp32"
+    if "--dtype" in args:  # --dtype bf16|fp16: half precision, as the captioner runs (flash and cuDNN then apply)
+        i = args.index("--dtype")
+        dtype = args[i + 1]
+        del args[i:i + 2]
+    torch_dtype = {"fp32": torch.float32, "bf16": torch.bfloat16, "fp16": torch.float16}[dtype]
+    tol = TOL[dtype]
     out = args[0] if args else str(ROOT / "results" / "attention" / "b1.json")
     if not (TESTDATA / "rand_h12_n1024" / "meta.json").exists():
         sys.exit("shared test data missing: run .venv/bin/python -I bench/attn_testdata.py")
@@ -95,6 +103,8 @@ def main() -> None:
                 s = q64[:, rows] @ k64.transpose(-1, -2) / math.sqrt(D)
                 oref = torch.softmax(s, dim=-1) @ v64
                 tensors.update(q=q, k=k, v=v, rows=rows, oref=oref, source="random inputs, float64 reference rows")
+            for t in ("q", "k", "v"):  # the reference stays float64 from the FP32 inputs: rounding is part of the error
+                tensors[t] = tensors[t].to(torch_dtype)
 
         def teardown(tensors=tensors):
             tensors.clear()
@@ -111,11 +121,12 @@ def main() -> None:
                 o = run_once()
                 torch.cuda.synchronize()
                 err = rel_errors(o[0][:, tensors["rows"]], tensors["oref"])
-                return {"ok": err <= 1e-4, "max_rel_err": err, "max_abs_err": None,
+                return {"ok": err <= tol, "max_rel_err": err, "max_abs_err": None,
                         "note": f"{tensors['source']}; max over rows of ||o - o_ref|| / ||o_ref||"}
 
-            run.add(H.Op(name=f"b1_{be.name.lower()}_h{h}_n{n}", run=run_once, group=group,
-                         params={"version": "B1", "backend": be.name, "heads": h, "n": n, "d": D, "dtype": "fp32",
+            name = f"b1_{be.name.lower()}_h{h}_n{n}" if dtype == "fp32" else f"b1_{be.name.lower()}_{dtype}_h{h}_n{n}"
+            run.add(H.Op(name=name, run=run_once, group=group,
+                         params={"version": "B1", "backend": be.name, "heads": h, "n": n, "d": D, "dtype": dtype,
                                  "tf32": "off", "dispatch": "sdpa_kernel context per call (Python overhead included)"},
                          flops=4.0 * h * n * n * D, setup=setup if i == 0 else None,
                          teardown=teardown if i == len(backends) - 1 else None, check=check))

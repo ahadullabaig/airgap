@@ -1,0 +1,1402 @@
+{
+ "schema": "airgap-bench/1",
+ "benchmark": "attention_b1_sdpa",
+ "created": "2026-11-25T22:35:30+0530",
+ "warnings": [],
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "cc": "8.6",
+  "sms": 16,
+  "memory_mib": 3790,
+  "max_sm_mhz": 2100,
+  "driver": "620.73.04",
+  "cuda_runtime": "13.2",
+  "cuda_driver_api": null,
+  "nvcc": null,
+  "host_compiler": null,
+  "python": "3.12.13",
+  "torch": "2.15.0+cu132",
+  "tf32": {
+   "matmul": false,
+   "cudnn": false,
+   "float32_matmul_precision": "highest"
+  },
+  "ac": "on",
+  "platform_profile": "performance",
+  "other_gpu_processes": [
+   "kwin_wayland",
+   "qemu-system-x86_64"
+  ]
+ },
+ "limits": {
+  "tflops": 7.46,
+  "dram_gb_per_s": 188.16,
+  "source": "results/cuda/peak.json"
+ },
+ "protocol": {
+  "samples": 21,
+  "target_sample_ms": 20.0,
+  "warmup_s": [
+   1.0,
+   10.0
+  ],
+  "clock_tol": 0.01,
+  "throttle_drop": 0.03,
+  "rate_slack": 1.05,
+  "interleave": "seeded shuffle per round within a group (Python random.Random)",
+  "shuffle_seed": 20261123,
+  "throttle_rule": "flag a sample on a thermal or hardware-slowdown reason, or an SM clock more than throttle_drop below the op's median that the power cap does not explain; power cap recorded, not flagged; op invalid if more than half its samples are flagged",
+  "python_note": "event_batch_ms is CUDA-event time over a Python loop of calls, so it includes dispatch gaps between short kernels"
+ },
+ "groups": [
+  {
+   "group": "h12_n1024",
+   "device_used_mib_before": 268.9375,
+   "device_used_mib_after_setup": 300.9375,
+   "warmup_s": 1.1524511629995686,
+   "warmup_sm_mhz": [
+    1500,
+    1500,
+    1500,
+    1717,
+    1717,
+    1717,
+    1732
+   ],
+   "median_sm_mhz": 1785,
+   "context_lost": false
+  }
+ ],
+ "ops": [
+  {
+   "name": "b1_math_bf16_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "MATH",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "bf16",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "ok",
+   "check": {
+    "ok": true,
+    "max_abs_err": null,
+    "max_rel_err": 0.00774485592266686,
+    "note": "shared test data rand_h12_n1024; max over rows of ||o - o_ref|| / ||o_ref||"
+   },
+   "mem_mib": 10.5078125,
+   "mem_peak_mib": 130.52001953125,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 7,
+    "host_sync": 3,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 3.322587421962193,
+     "p10": 3.2800183977399553,
+     "p90": 3.373641150338309,
+     "min": 3.277531487601144,
+     "max": 3.3859291076660156
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 3.4103186668896037,
+     "p10": 3.3537536667912113,
+     "p90": 3.4424770001351135,
+     "min": 3.3318649996848158,
+     "max": 3.446561666957374
+    }
+   },
+   "rates": {
+    "tflops": 0.9694930675737246,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": 0.25124089226437557,
+   "plausibility": [],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.316443307059152,
+     "host_sync_ms": 3.4249766661863155,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.322587421962193,
+     "host_sync_ms": 3.4103186668896037,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.3609142303466797,
+     "host_sync_ms": 3.4100516665300042,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.283236639840262,
+     "host_sync_ms": 3.3873379998112796,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.373641150338309,
+     "host_sync_ms": 3.4221546666231006,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.2965485709054128,
+     "host_sync_ms": 3.345494333188981,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "",
+     "event_batch_ms": 3.3859291076660156,
+     "host_sync_ms": 3.439638000296933,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.2931840079171315,
+     "host_sync_ms": 3.3859786666046907,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.3673509870256697,
+     "host_sync_ms": 3.421576666975549,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.278994151524135,
+     "host_sync_ms": 3.3622600003582193,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.324342727661133,
+     "host_sync_ms": 3.4079406662688903,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "",
+     "event_batch_ms": 3.3834421975272044,
+     "host_sync_ms": 3.4457033331515654,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.2887954711914062,
+     "host_sync_ms": 3.373945666680811,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "",
+     "event_batch_ms": 3.300205775669643,
+     "host_sync_ms": 3.3318649996848158,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.277531487601144,
+     "host_sync_ms": 3.381764000247737,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.3215634482247487,
+     "host_sync_ms": 3.419198999836226,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.3547703879220143,
+     "host_sync_ms": 3.446561666957374,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "",
+     "event_batch_ms": 3.3256593431745256,
+     "host_sync_ms": 3.4136949998355703,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.2800183977399553,
+     "host_sync_ms": 3.3537536667912113,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.360621588570731,
+     "host_sync_ms": 3.4424770001351135,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 3.3502355303083147,
+     "host_sync_ms": 3.4400756667309906,
+     "sm_mhz": 1815,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "b1_efficient_attention_bf16_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "EFFICIENT_ATTENTION",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "bf16",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "ok",
+   "check": {
+    "ok": true,
+    "max_abs_err": null,
+    "max_rel_err": 0.00795878723442882,
+    "note": "shared test data rand_h12_n1024; max over rows of ||o - o_ref|| / ||o_ref||"
+   },
+   "mem_mib": 0.0,
+   "mem_peak_mib": 1.5009765625,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 63,
+    "host_sync": 30,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 0.3221536363874163,
+     "p10": 0.3113447522360181,
+     "p90": 0.3442427922808935,
+     "min": 0.30680989462231834,
+     "max": 0.3453805711534288
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 0.35416570002174314,
+     "p10": 0.34137553332887666,
+     "p90": 0.37253256668918766,
+     "min": 0.33572869997442467,
+     "max": 0.37394929998602794
+    }
+   },
+   "rates": {
+    "tflops": 9.999034957737404,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": 0.2697189803890712,
+   "plausibility": [
+    "FLOP rate above the measured FMA peak"
+   ],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "",
+     "event_batch_ms": 0.3219098287915427,
+     "host_sync_ms": 0.36364253331460833,
+     "sm_mhz": 1732,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.30680989462231834,
+     "host_sync_ms": 0.33824383329677704,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "",
+     "event_batch_ms": 0.340309324718657,
+     "host_sync_ms": 0.3678158666540791,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "",
+     "event_batch_ms": 0.3113447522360181,
+     "host_sync_ms": 0.3493047000423151,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.31464431399390813,
+     "host_sync_ms": 0.3417946666862311,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "",
+     "event_batch_ms": 0.3442427922808935,
+     "host_sync_ms": 0.36959793336185004,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.32124343750968815,
+     "host_sync_ms": 0.3454824000073131,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "",
+     "event_batch_ms": 0.3218773433140346,
+     "host_sync_ms": 0.35099996663727023,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.31199491591680617,
+     "host_sync_ms": 0.33572869997442467,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.3453805711534288,
+     "host_sync_ms": 0.3695238000242777,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.3194229792034815,
+     "host_sync_ms": 0.34865479998795007,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.3272411406986297,
+     "host_sync_ms": 0.35416570002174314,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.3437551770891462,
+     "host_sync_ms": 0.372575666672977,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.3221536363874163,
+     "host_sync_ms": 0.3455525333265541,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.3410732632591611,
+     "host_sync_ms": 0.37028726662053185,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.343722661336263,
+     "host_sync_ms": 0.37394929998602794,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.3081264798603361,
+     "host_sync_ms": 0.3540899000048133,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.33938286796448724,
+     "host_sync_ms": 0.3693688333441969,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.34471414959619917,
+     "host_sync_ms": 0.37253256668918766,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "",
+     "event_batch_ms": 0.3396591610378689,
+     "host_sync_ms": 0.36661956661797984,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "",
+     "event_batch_ms": 0.31324646964905756,
+     "host_sync_ms": 0.34137553332887666,
+     "sm_mhz": 1815,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "b1_flash_attention_bf16_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "FLASH_ATTENTION",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "bf16",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "ok",
+   "check": {
+    "ok": true,
+    "max_abs_err": null,
+    "max_rel_err": 0.007708484302537532,
+    "note": "shared test data rand_h12_n1024; max over rows of ||o - o_ref|| / ||o_ref||"
+   },
+   "mem_mib": 0.0,
+   "mem_peak_mib": 1.5478515625,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 80,
+    "host_sync": 36,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 0.2686592102050781,
+     "p10": 0.2534656047821045,
+     "p90": 0.2753535985946655,
+     "min": 0.24929280281066896,
+     "max": 0.27714560031890867
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 0.29583108334918506,
+     "p10": 0.28179975000360474,
+     "p90": 0.30194363888666786,
+     "min": 0.2795156388957467,
+     "max": 0.30316233334007037
+    }
+   },
+   "rates": {
+    "tflops": 11.990005738277548,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": 0.10232840829095842,
+   "plausibility": [
+    "FLOP rate above the measured FMA peak"
+   ],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26584320068359374,
+     "host_sync_ms": 0.2951561666830255,
+     "sm_mhz": 1732,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2686592102050781,
+     "host_sync_ms": 0.29923147222790347,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.27714560031890867,
+     "host_sync_ms": 0.2981608333559254,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2534143924713135,
+     "host_sync_ms": 0.2800126944243352,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2557440042495728,
+     "host_sync_ms": 0.28308944446406614,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "b1_cudnn_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2534656047821045,
+     "host_sync_ms": 0.28179975000360474,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26777598857879636,
+     "host_sync_ms": 0.29320772222894853,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.2707200050354004,
+     "host_sync_ms": 0.301605749983638,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.2753535985946655,
+     "host_sync_ms": 0.29725491665683673,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "",
+     "event_batch_ms": 0.26039040088653564,
+     "host_sync_ms": 0.28668633336160887,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26795520782470705,
+     "host_sync_ms": 0.29627750003176817,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.27640318870544434,
+     "host_sync_ms": 0.298287722216628,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "",
+     "event_batch_ms": 0.25395200252532957,
+     "host_sync_ms": 0.28395413892212673,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26944000720977784,
+     "host_sync_ms": 0.29337830553938854,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "",
+     "event_batch_ms": 0.2577663898468018,
+     "host_sync_ms": 0.2873843333569918,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "",
+     "event_batch_ms": 0.2707456111907959,
+     "host_sync_ms": 0.29839516668693655,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.2740607976913452,
+     "host_sync_ms": 0.30275044446170796,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2690943956375122,
+     "host_sync_ms": 0.29583108334918506,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "",
+     "event_batch_ms": 0.24929280281066896,
+     "host_sync_ms": 0.2795156388957467,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.2745856046676636,
+     "host_sync_ms": 0.30316233334007037,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.27476480007171633,
+     "host_sync_ms": 0.30194363888666786,
+     "sm_mhz": 1815,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "b1_cudnn_attention_bf16_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "CUDNN_ATTENTION",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "bf16",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "ok",
+   "check": {
+    "ok": true,
+    "max_abs_err": null,
+    "max_rel_err": 0.00795878723442882,
+    "note": "shared test data rand_h12_n1024; max over rows of ||o - o_ref|| / ||o_ref||"
+   },
+   "mem_mib": 0.0,
+   "mem_peak_mib": 1.5009765625,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 77,
+    "host_sync": 34,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 0.26935188491623124,
+     "p10": 0.26094711600960074,
+     "p90": 0.2817196784081397,
+     "min": 0.25868633815220426,
+     "max": 0.28602847805270903
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 0.3087849705908037,
+     "p10": 0.29744911765138726,
+     "p90": 0.3133699411752305,
+     "min": 0.29600373529640767,
+     "max": 0.3224402646939031
+    }
+   },
+   "rates": {
+    "tflops": 11.95917182091302,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": -0.09256195939019786,
+   "plausibility": [
+    "FLOP rate above the measured FMA peak"
+   ],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.27671937818651077,
+     "host_sync_ms": 0.3121234117583406,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "",
+     "event_batch_ms": 0.26094711600960074,
+     "host_sync_ms": 0.29600373529640767,
+     "sm_mhz": 1710,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26867366146731686,
+     "host_sync_ms": 0.30322991177158926,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26931200399027244,
+     "host_sync_ms": 0.30942502941316513,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "",
+     "event_batch_ms": 0.28201227064256545,
+     "host_sync_ms": 0.3224402646939031,
+     "sm_mhz": 1620,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.27895355224609375,
+     "host_sync_ms": 0.31295767648236295,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.28602847805270903,
+     "host_sync_ms": 0.3125990588159766,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2759746452430626,
+     "host_sync_ms": 0.3114766176462153,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "",
+     "event_batch_ms": 0.26767626675692474,
+     "host_sync_ms": 0.30104691177257337,
+     "sm_mhz": 1740,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26122638157435824,
+     "host_sync_ms": 0.29950544119535205,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "",
+     "event_batch_ms": 0.2802967220157772,
+     "host_sync_ms": 0.31359302936513866,
+     "sm_mhz": 1680,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2763204203023539,
+     "host_sync_ms": 0.3133699411752305,
+     "sm_mhz": 1800,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.27794285563679483,
+     "host_sync_ms": 0.3108386176523602,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "b1_math_bf16_h12_n1024",
+     "event_batch_ms": 0.2817196784081397,
+     "host_sync_ms": 0.31235417651152925,
+     "sm_mhz": 1777,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2607210332697088,
+     "host_sync_ms": 0.29744911765138726,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "b1_efficient_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2784349020425375,
+     "host_sync_ms": 0.3087849705908037,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "",
+     "event_batch_ms": 0.2610003236052278,
+     "host_sync_ms": 0.2972714411739349,
+     "sm_mhz": 1785,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.2670911070588347,
+     "host_sync_ms": 0.3011794999966857,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 52,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.25868633815220426,
+     "host_sync_ms": 0.29895758822984886,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26909922314928725,
+     "host_sync_ms": 0.3083718528989052,
+     "sm_mhz": 1845,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "b1_flash_attention_bf16_h12_n1024",
+     "event_batch_ms": 0.26935188491623124,
+     "host_sync_ms": 0.3019610293824157,
+     "sm_mhz": 1815,
+     "mem_mhz": 6001,
+     "temp_c": 53,
+     "clock_events": [
+      "sw_power_cap"
+     ],
+     "flagged": false
+    }
+   ]
+  }
+ ]
+}

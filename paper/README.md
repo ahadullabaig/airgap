@@ -39,8 +39,15 @@ Every macro in `generated/numbers.tex` names its source file in a comment. By se
 | Where the time goes (X2) | `results/attention/x2_breakdown.json` (`bench/x2_breakdown.py`), `x2.json`, `x2_ncu_*.txt` |
 | Token traces | `results/tokens/era_tra/summary.json` (`bench/tokens_era.py`) |
 | Caption-level check | `results/gate_captions/scores.json` (`eval/gate_captions.py`) |
+| Caption check, embedding similarity (post hoc) | `results/gate_captions/embed_scores.json` (`eval/caption_embed.py`) |
 | Pixel-level redundancy (X0) | `results/x0/era_tra/summary.json` (`bench/x0_era.py`) |
 | Where a caption's time goes | `results/e1/encoder_share.json` (`eval/encoder_share.py`) |
+| The encoder's GPU time by kernel kind (bf16) | `results/e1/encoder_profile.json` (`eval/encoder_profile.py`) |
+| PyTorch attention in bf16 | `results/attention/b1_bf16.json` (`bench/b1_sdpa.py --dtype bf16`) |
+| PyTorch's FP32 kernels (tensor cores, accuracy) | `results/attention/b1_kernels.json`, `b1_efficient_ncu.txt` (`bench/b1_kernels.py`), `b1.json` |
+| Correctness suite | `results/attention/attn_test.txt` (`kernels/attention/attn_test.cu`) |
+| V1's profile (L1 saturation) | `results/attention/v1_ncu.txt` |
+| Repeat runs | `results/attention/{v1,v2,v3,b1}_repeat.json` |
 | X2 at the pinned clock (Fig. 2, floors and fixed shares) | `paper/derived.py` from `clock1395/`, `x2.json`, `x2_breakdown.json` |
 | Figures | `paper/figures.py` writes `figures/*.pdf` from the files above |
 

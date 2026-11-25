@@ -102,10 +102,20 @@ Report latency and peak VRAM next to the quality numbers. The CapERA paper's ben
 
 ### 3.1 Research question
 
+Frozen 2026-11-25 (the user's choice, after the gate decision and the literature search):
+
+> Is skipping unchanged tokens ever worth more than skipping whole frames, and where does attention's time go
+> on a laptop GPU?
+
+The original question, written for the gated kernel:
+
 > Consecutive video frames barely differ, so in principle only the tokens that
 > changed need new attention outputs. On a small, memory-limited GPU, how much of
 > that theoretical saving does a fused CUDA kernel actually deliver, and which
 > overheads consume the rest?
+
+Paper title (the user's choice): "Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on
+a Laptop GPU".
 
 Hypotheses:
 
@@ -383,7 +393,7 @@ paper/         source for the paper
 - [x] A trivial CUDA kernel compiles, runs and is timed (`kernels/smoke`, `results/cuda/smoke.json`)
 - [x] Predicted time per kernel written down (section 3.1; `results/cuda/predicted_times.json`)
 - [ ] Everyone on Part B has read the papers in section 3.2
-- [ ] Literature search done; novelty table updated; research question frozen. The search and the table are done (2026-11-25, `docs/related_work.md`, section 3.2). The research question waits on the user: proposed rewording in the paper outline.
+- [x] Literature search done; novelty table updated; research question frozen (2026-11-25; section 3.1, section 3.2, `docs/related_work.md`)
 - [ ] Stale, refresh or exact-update design question (section 3.4) answered
 
 ## 9. References
