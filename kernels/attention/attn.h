@@ -16,6 +16,22 @@
  *            i = 4 * blockIdx.x + ty, looping over j: P[h][i][j] is the same for the whole row (broadcast),
  *            V[h][j][c] is read coalesced along c.
  *
+ * V2 (tiled, three kernels, N x N stored). Same phases and workspace as V1; the two matrix multiplies are
+ * tiled, and the softmax reads the matrix once instead of three times.
+ *   scores   S = scale * Q K^T per head, a tiled matmul (v2.cu, v2_gemm): each thread block loads a BM x BK
+ *            tile of Q and a BN x BK tile of K into shared memory (transposed, rows padded by 4), and each
+ *            thread accumulates a TM x TN block of S in registers from float4 shared-memory reads, which do
+ *            not conflict on banks. The transposing stores are conflict-free for BK = 8 and conflict 2-way
+ *            for BK = 16, the chosen default (results/attention/v2_ncu.txt). Reduction length D = 64.
+ *   softmax  one warp per row. Up to N = 2048 the row stays in registers (32 or 64 values per lane): one
+ *            read of S and one write. Above that, a two-pass online version: one read for max and sum
+ *            together, then one read and one write (V1 reads three times). This is a change from V1, so
+ *            the phase timings, not the total, attribute V1-to-V2 gains to tiling or to the softmax.
+ *   output   O = P V per head, the same tiled matmul with P as the left operand (reduction length N) and V
+ *            as the right one, read without transposing.
+ *   Tile shapes (BM, BN, BK, TM, TN) per phase were chosen by a timed sweep at 12 heads, N = 1024
+ *   (results/attention/v2_tune.json); the defaults are in v2.cu.
+ *
  * Return value of the launch functions: 0 on success, 1 invalid arguments, 3 launch error.
  */
 #ifndef ATTN_H
@@ -39,6 +55,31 @@ int attn_v1_softmax(float *s, int heads, int n, cudaStream_t stream);
 int attn_v1_output(const float *p, const float *v, float *o, int heads, int n, cudaStream_t stream);
 int attn_v1(const float *q, const float *k, const float *v, float *o, float *workspace, int heads, int n,
             cudaStream_t stream);
+
+/* V2: the same interface as V1 (the workspace is the same N x N matrix). */
+size_t attn_v2_workspace_bytes(int heads, int n);
+int attn_v2_scores(const float *q, const float *k, float *s, int heads, int n, cudaStream_t stream);
+int attn_v2_softmax(float *s, int heads, int n, cudaStream_t stream);
+int attn_v2_output(const float *p, const float *v, float *o, int heads, int n, cudaStream_t stream);
+int attn_v2(const float *q, const float *k, const float *v, float *o, float *workspace, int heads, int n,
+            cudaStream_t stream);
+
+/* V2 internals, exposed for the tests (every softmax path on every shape) and the tile sweep. */
+#define ATTN_V2_SOFTMAX_AUTO 0   /* what attn_v2_softmax does: REG32 up to N = 1024, REG64 up to 2048, ONLINE */
+#define ATTN_V2_SOFTMAX_REG32 1  /* row in registers, 32 values per lane, N <= 1024 */
+#define ATTN_V2_SOFTMAX_REG64 2  /* row in registers, 64 values per lane, N <= 2048 */
+#define ATTN_V2_SOFTMAX_ONLINE 3 /* any N: max and sum in one pass, then normalise */
+int attn_v2_softmax_impl(float *s, int heads, int n, int impl, cudaStream_t stream); /* 1 if impl can't take n */
+int attn_v2_softmax_pick(int n);           /* the path ATTN_V2_SOFTMAX_AUTO takes */
+const char *attn_v2_softmax_name(int impl);
+int attn_v2_softmax_max_n(int impl);       /* largest N the path handles, 0 = any */
+#define ATTN_V2_PHASE_SCORES 0
+#define ATTN_V2_PHASE_OUTPUT 1
+int attn_v2_config_count(int phase);
+int attn_v2_config_default(int phase);
+const char *attn_v2_config_name(int phase, int cfg); /* "BMxBNxBK/TMxTN" */
+int attn_v2_scores_cfg(const float *q, const float *k, float *s, int heads, int n, int cfg, cudaStream_t stream);
+int attn_v2_output_cfg(const float *p, const float *v, float *o, int heads, int n, int cfg, cudaStream_t stream);
 
 #ifdef __cplusplus
 }

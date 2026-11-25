@@ -1,6 +1,6 @@
 """B1: PyTorch scaled_dot_product_attention on all N tokens, FP32, each backend pinned (PLAN.md section 3.5).
 
-Same shapes as V1 (kernels/attention/v1_bench.cu): group "h12_n1024" (12 heads, N = 1024, D = 64) and
+Same shapes as V1 and V2 (kernels/attention/attn_bench.cu): group "h12_n1024" (12 heads, N = 1024, D = 64) and
 groups "x1_n<N>" (one head, N = 128 ... 32,768). Backends: MATH and EFFICIENT_ATTENTION run in FP32 on this
 build; FLASH_ATTENTION and CUDNN_ATTENTION have no FP32 kernel and are attempted once (h12 group) so the
 result file records that. The backend is selected per call with torch.nn.attention.sdpa_kernel, so the

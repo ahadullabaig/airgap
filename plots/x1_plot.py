@@ -1,6 +1,6 @@
 """X1 figure: attention time and memory against sequence length N, one head, D = 64, FP32.
 
-Reads results/attention/v1.json (C++ harness) and results/attention/b1.json (Python harness). Left: median
+Reads results/attention/v1.json and v2.json (C++ harness) and results/attention/b1.json (Python harness). Left: median
 time per call (CUDA events; whiskers 10th-90th percentile of samples); right: device memory the
 operation needs (V1: its setup, which holds the N x N matrix; B1: peak PyTorch allocation during a call).
 A cross marks the N at which a version could not run (out of memory). The 12-head numbers are in a note,
@@ -23,10 +23,12 @@ ROOT = Path(__file__).resolve().parents[1]
 SURFACE = "#fcfcfb"
 INK, INK_2, MUTED = "#0b0b0b", "#52514e", "#898781"
 GRID, AXIS = "#e1e0d9", "#c3c2b7"
-SERIES = [  # (file, op-name prefix, label, colour: categorical slots 1-3)
-    ("v1.json", "v1_h1_", "V1 (ours, naive, N x N stored)", "#2a78d6"),
-    ("b1.json", "b1_math_h1_", "B1 PyTorch math backend", "#eb6834"),
-    ("b1.json", "b1_efficient_attention_h1_", "B1 PyTorch memory-efficient backend", "#1baf7a"),
+SERIES = [  # (file, op-name prefix, label, short label, colour: categorical slots 1-4, marker, end-label offset)
+    ("v1.json", "v1_h1_", "V1 (ours, naive, N x N stored)", "V1", "#2a78d6", "o", (6, -3)),
+    ("b1.json", "b1_math_h1_", "B1 PyTorch math backend", "B1 math", "#eb6834", "s", (6, -14)),
+    ("b1.json", "b1_efficient_attention_h1_", "B1 PyTorch memory-efficient backend", "B1 mem-eff", "#1baf7a", "^",
+     (6, 2)),
+    ("v2.json", "v2_h1_", "V2 (ours, tiled, N x N stored)", "V2", "#f2a600", "D", (6, -12)),
 ]
 
 
@@ -43,7 +45,7 @@ def main() -> None:
     ns_all = []
     t_max = max(o["clocks"]["event_batch_ms"]["median"] for d in docs.values() for o in d["ops"]
                 if o["status"] == "ok" and "_h1_" in o["name"])
-    for idx, (fname, prefix, label, color) in enumerate(SERIES):
+    for idx, (fname, prefix, label, short, color, marker, offset) in enumerate(SERIES):
         ops = [o for o in docs[fname]["ops"] if o["name"].startswith(prefix)]
         ops.sort(key=lambda o: int(o["params"]["n"]))
         ok = [o for o in ops if o["status"] == "ok"]
@@ -54,7 +56,7 @@ def main() -> None:
         lo = [o["clocks"]["event_batch_ms"]["p10"] for o in ok]
         hi = [o["clocks"]["event_batch_ms"]["p90"] for o in ok]
         mem = [o.get("mem_peak_mib") if o.get("mem_peak_mib") is not None else o["mem_mib"] for o in ok]
-        style = dict(color=color, lw=2, marker="o", ms=6, markeredgecolor=SURFACE, markeredgewidth=1.5, label=label)
+        style = dict(color=color, lw=2, marker=marker, ms=6, markeredgecolor=SURFACE, markeredgewidth=1.5, label=label)
         ax_t.plot(ns, t, **style)
         ax_t.vlines(ns, lo, hi, color=color, lw=1.2, alpha=0.6)
         ax_m.plot(ns, [max(m, 0.05) for m in mem], **style)
@@ -62,12 +64,15 @@ def main() -> None:
             n = int(o["params"]["n"])
             for ax, y in ((ax_t, t_max * 2.2 * 1.45 ** idx), (ax_m, device_mib * 1.5 * 1.45 ** idx)):
                 ax.plot([n], [y], marker="x", ms=8, mew=2.5, color=color, ls="none")
-        ax_t.annotate(f"{t[-1]:.0f} ms", (ns[-1], t[-1]), xytext=(6, -8), textcoords="offset points", fontsize=7,
-                      color=INK_2)
+        ax_t.annotate(f"{short} {t[-1]:.0f} ms", (ns[-1], t[-1]), xytext=offset, textcoords="offset points",
+                      fontsize=7, color=INK_2, ha="right" if offset[0] < 0 else "left")  # direct name label:
+        # yellow and aqua sit below 3:1 contrast on the surface, so the name is in text, not only in colour
 
     ax_m.axhline(device_mib, color=MUTED, lw=1.2, ls=(0, (4, 3)))
     ax_m.annotate(f"device memory {device_mib} MiB", (128, device_mib), xytext=(0, 4), textcoords="offset points",
                   fontsize=7, color=MUTED)
+    ax_m.annotate("V1 and V2 need the same memory (one N x N matrix):\nV1's curve lies under V2's", (128, 400),
+                  fontsize=7, color=INK_2, va="top")
     ticks = sorted(set(ns_all))
     for ax in (ax_t, ax_m):
         ax.set_facecolor(SURFACE)
@@ -88,29 +93,46 @@ def main() -> None:
     ax_m.set_title("Memory: N x N storage meets the 4 GB device", loc="left", fontsize=10, color=INK)
 
     v1 = {o["name"]: o for o in docs["v1.json"]["ops"]}["v1_h12_n1024"]
+    v2 = {o["name"]: o for o in docs["v2.json"]["ops"]}["v2_h12_n1024"]
     b1 = {o["name"]: o for o in docs["b1.json"]["ops"]}
     note = (f"Encoder shape (12 heads, N = 1024): V1 {v1['clocks']['event_batch_ms']['median']:.1f} ms "
-            f"(predicted 2.0-4.9); B1 math {b1['b1_math_h12_n1024']['clocks']['event_batch_ms']['median']:.2f} ms "
+            f"(predicted 2.0-4.9); V2 {v2['clocks']['event_batch_ms']['median']:.2f} ms (predicted 1.2-1.6); B1 math {b1['b1_math_h12_n1024']['clocks']['event_batch_ms']['median']:.2f} ms "
             f"(predicted 0.5-1.8), memory-efficient "
             f"{b1['b1_efficient_attention_h12_n1024']['clocks']['event_batch_ms']['median']:.2f} ms (predicted 0.5-1.2)")
     handles, labels = ax_t.get_legend_handles_labels()
-    fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.01, 0.93), ncol=3, frameon=False, fontsize=8)
+    fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.01, 0.93), ncol=4, frameon=False, fontsize=8)
     fig.suptitle("X1: attention on an RTX 3050 Laptop GPU (FP32). Crosses above the curves: the version ran out of "
                  "memory at that N.",
                  x=0.01, ha="left", fontsize=9, color=INK_2)
+    rep = []  # largest median difference between the run plotted and a repeat in a second process
+    for name, label in (("v1", "V1"), ("v2", "V2"), ("b1", "B1")):
+        a = {o["name"]: o for o in load(f"{name}.json")["ops"] if o["status"] == "ok"}
+        b = {o["name"]: o for o in load(f"{name}_repeat.json")["ops"] if o["status"] == "ok"}
+        worst = max(abs(b[k]["clocks"]["event_batch_ms"]["median"] / a[k]["clocks"]["event_batch_ms"]["median"] - 1)
+                    for k in a if k in b)
+        rep.append(f"{label} {100 * worst:.1f}%")
+    v2ops = {o["name"]: o for o in docs["v2.json"]["ops"]}
+    ph = lambda name, phase: v2ops[name]["clocks"][f"phase_{phase}_ms"]["median"]  # noqa: E731
+    v2_note = (f"V2 at one head: above N = 2048 the softmax switches to its two-read path (from 2048 to 4096 its time "
+               f"grows {ph('v2_h1_n4096', 'softmax') / ph('v2_h1_n2048', 'softmax'):.1f}x, not 4x); the output "
+               f"matmul launches N / 64 blocks for 16 SMs, so at N = 1024 it takes "
+               f"{ph('v2_h1_n1024', 'output') / ph('v2_h1_n1024', 'scores'):.1f}x the scores time (at 12 heads "
+               f"{ph('v2_h12_n1024', 'output') / ph('v2_h12_n1024', 'scores'):.2f}x).")
     lines = [
-        note + ". Each version repeats within 1% in a second process.",
+        note + ".",
+        v2_note,
+        "Largest change of a median in a repeat run (second process): " + ", ".join(rep) + ".",
         "Small N: B1's times are mostly Python dispatch (math is flat at 0.14 ms up to N = 512; the memory-efficient "
         "host time is twice its event time at N = 128), so V1 meeting B1 there is not parity.",
         "Memory at small N: V1's 2 MiB is allocation granularity (it needs 0.19 MiB at N = 128); B1 math's 8 MiB is a "
         "cuBLAS workspace allocated on every call.",
-        "Out of memory, bracketed by the sizes run: V1 (one N x N matrix, 4N^2 bytes) between N = 24k and 32k, where "
+        "Out of memory, bracketed by the sizes run: V1 and V2 (one N x N matrix, 4N^2 bytes) between N = 24k and 32k, where "
         "3.69 GB free predicts about 31k; B1 math (scores and probabilities, 8N^2 bytes) between 16k and 24k, "
         "predicted about 22k.",
     ]
     for k, line in enumerate(lines):
         fig.text(0.01, 0.012 + 0.03 * (len(lines) - 1 - k), line, fontsize=7, color=MUTED)
-    fig.tight_layout(rect=(0, 0.13, 1, 0.86))
+    fig.tight_layout(rect=(0, 0.19, 1, 0.86))
     out = ROOT / "plots" / "x1_attention.png"
     fig.savefig(out, facecolor=SURFACE)
     print("wrote", out)

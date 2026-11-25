@@ -1,5 +1,6 @@
-"""Inputs and a float64 reference for the attention kernels' tests (V1 now; B1 and later versions read
-the same files, so every implementation is checked against the same data).
+"""Inputs and a float64 reference for the attention kernels' tests (kernels/attention/attn_test.cu runs
+every version on every case; B1 reads the same files, so every implementation is checked against the same
+data). cases.txt lists the case directories in order.
 
 Each case is a directory under kernels/attention/build/testdata/ (git-ignored, regenerated on demand):
     q.f32, k.f32, v.f32   [H][N][D] float32, little endian
@@ -29,11 +30,21 @@ CASES = [
                                            "(a softmax without max subtraction overflows)"),
     ("rand_h3_n4100", 3, 4100, 1.0, "sampled", "partial tiles at larger N, sampled rows in every head"),
     ("rand_h1_n16384", 1, 16384, 1.0, "sampled", "the largest single-head size V1 fits easily, sampled rows"),
+    # added for V2 (tiles of 32-128 rows and columns, float4 paths, softmax with the row in registers):
+    ("rand_h1_n33", 1, 33, 1.0, "all", "tiny odd N: one partial tile, a row length not a multiple of 4"),
+    ("rand_h2_n1003", 2, 1003, 1.0, "all", "odd N over several tiles: rows of the N x N matrix not 16-byte "
+                                           "aligned, every row"),
+    ("rand_h2_n1500", 2, 1500, 1.0, "all", "N between 1025 and 2048 (the 64-per-lane register softmax), "
+                                           "every row"),
+    ("peaky_h2_n2047", 2, 2047, 40.0, "all", "near one-hot rows at odd N just under 2048, every row"),
+    ("peaky_h1_n5000", 1, 5000, 40.0, "sampled", "near one-hot rows above 2048 (the two-read softmax), "
+                                                 "sampled rows"),
 ]
 
 
 def sampled_rows(n: int, rng) -> np.ndarray:
-    fixed = [0, 1, 15, 16, 17, n // 2 - 1, n // 2, n - 17, n - 16, n - 2, n - 1]
+    fixed = [0, 1, 15, 16, 17, 31, 32, 63, 64, 127, 128, 129, n // 2 - 1, n // 2, n - 129, n - 128, n - 65,
+             n - 64, n - 17, n - 16, n - 2, n - 1]  # V1's 16-wide and V2's 32-128-wide tile edges
     extra = rng.choice(n, size=21, replace=False)
     return np.unique(np.array([r for r in fixed if 0 <= r < n] + list(extra), dtype=np.int32))
 
@@ -70,6 +81,7 @@ def main() -> None:
         (d / "meta.json").write_text(json.dumps({"heads": h, "n": n, "d": D, "seed": 1000 + i, "q_scale": qs,
                                                  "rows": int(len(rows)), "description": desc}, indent=1) + "\n")
         print(f"{name}: H={h} N={n} rows={len(rows)}")
+    (OUT / "cases.txt").write_text("".join(c[0] + "\n" for c in CASES))
 
 
 if __name__ == "__main__":
