@@ -152,7 +152,7 @@ Notes on the hypotheses:
     - The clock is untested, because pinning it needs root.
   - **For reference:** copying Q, K and V to the GPU and O back costs more than V3 itself (1.42 + 0.47 ms).
   - **At a pinned clock (1,395 MHz, `nvidia-smi -lgc`, 2026-11-25;** `bench/clock_pinned.py`, `results/attention/clock1395/summary.json`). Every op held the pin, the memory clock was unchanged, and the definitions were written before the run.
-    - V3 saves 0.14 ms over V2 (1.78 against 1.92 ms), 13% of the N x N floor. The second clause's failure stands, and the unpinned 22% gap was mostly clock.
+    - V3 saves 0.14 ms over V2 (1.77 against 1.92 ms), 13% of the N x N floor. The second clause's failure stands, and the unpinned 22% gap was mostly clock.
     - Against predictions rescaled to 1,395 MHz: V2 lands inside (1.38-2.01 ms), V3 is 6% above (0.91-1.68 ms), V1 is far above.
     - Our kernels' cycle counts barely change with the clock (pinned against unpinned, 0.98).
 - H1 replaces an earlier version that said fixed per-launch costs dominate at ViT lengths. That result (Dispatch-Aware Ragged Attention) was measured at 197 tokens or fewer on a much faster GPU (RTX 4000 Ada), with about 50 µs of host-side dispatch per call.
@@ -192,6 +192,8 @@ Notes on the hypotheses:
 - Real aerial footage reaches keep-rates clearly below the break-even estimated from the predicted times (section 3.1), at some frame rate. X0 (week 2) is a pixel-level proxy and the early warning. The token-level traces (week 5) are the real check, because a pixel mask is exact only at the patch embedding (section 3.4).
 
 Otherwise write the floor paper and treat the gated kernel as future work. G1 losing to the baselines does not fail the gate: a measured and explained loss is a result (section 6).
+
+**Gate decided, 2026-11-25 (the user's decision, after the token traces, the caption-level check and X2):** write the floor paper, with a measured section on why temporal gating does not pay for this captioning pipeline. G1 and the rest of the ceiling become future work. Paper: IEEE conference format (IEEEtran), 8 pages, in `paper/`.
 
 **Token traces, 2026-11-24** (`bench/tokens_era.py`, `results/tokens/era_tra/summary.json`, `plots/tokens_era_error.png`, `plots/tokens_era_spread.png`). 36 ERA training clips, 12 each with the camera still, moving and untrackable, plus 3 clips that look still but the hover rule rejected. Error is measured on the connector output, i.e. what the language model sees, at 24 fps.
 - **Written criterion: met by every group once the threshold is high enough, so on its own it does not discriminate.** Keep-rate says nothing about the error at that threshold. Against the predicted break-evens (0.8-0.9 for rows-only G1, 0.42 for the exact update):
@@ -365,7 +367,7 @@ paper/         source for the paper
 ## 8. Week-1 checklist
 
 - [x] Both instructors approve the plan
-- [ ] Conference template chosen (ask the Parallel Programming instructor which one)
+- [x] Conference template chosen: IEEE conference (IEEEtran), 8 pages (`paper/`)
 - [x] Ask the NLP instructor what form the evaluation should take (section 2.5): no prescribed form; we use E1-E4
 - [ ] Roles written into this file
 - [x] NVIDIA driver, CUDA toolkit and PyTorch working together; versions committed (`results/cuda/toolchain.txt`)

@@ -1,0 +1,190 @@
+% Part B paper (Parallel Programming): IEEE conference format, 8 pages.
+% Build: see README.md. Numbers come from generated/numbers.tex (paper/numbers.py); never type a number
+% that a result file holds. Red [pending: ...] notes are the outline, to be replaced by prose.
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage{xcolor}
+% No character protrusion: it pushes line-end punctuation into the column gutter, which submission
+% checkers measure (as on the ICEE 2026 paper).
+\usepackage[protrusion=false]{microtype}
+
+\graphicspath{{figures/}}
+\input{generated/numbers.tex}
+
+% Outline notes and figure placeholders, removed as the draft fills in.
+\newcommand{\pending}[1]{{\color{red}[pending: #1]}}
+\newcommand{\placeholder}[3]{\fbox{\parbox[c][#2][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}%
+  {\centering\footnotesize\color{red}#3}}}
+
+\begin{document}
+% IEEE reference style: more than six authors become "first author et al."
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\title{Where the Time Goes in Attention on a 4\,GB Laptop GPU, and Why Temporal Gating Does Not Pay for an
+Aerial Video Captioner\\{\color{red}\normalsize[working title]}}
+
+\author{\IEEEauthorblockN{Ahad Ulla Baig}
+\IEEEauthorblockA{\textit{Dept. of Artificial Intelligence} \\
+\textit{and Machine Learning} \\
+\textit{Ramaiah Institute of Technology}\\
+Bengaluru, India \\
+ahadullabaig.16@gmail.com}
+\and
+\IEEEauthorblockN{Divisha Gera}
+\IEEEauthorblockA{\textit{Dept. of Artificial Intelligence} \\
+\textit{and Machine Learning} \\
+\textit{Ramaiah Institute of Technology}\\
+Bengaluru, India \\
+divisha.018@gmail.com}
+\and
+\IEEEauthorblockN{Charithra G}
+\IEEEauthorblockA{\textit{Dept. of Artificial Intelligence} \\
+\textit{and Machine Learning} \\
+\textit{Ramaiah Institute of Technology}\\
+Bengaluru, India \\
+charithra754@gmail.com}
+}
+
+\maketitle
+
+\begin{abstract}
+\pending{written last. One sentence each: the setting (an offline video captioner whose vision encoder runs
+attention at N = 1024, d = 64, 12 heads on an RTX 3050 Laptop GPU); the kernel ladder and its headline times at a
+pinned \PinMhz\,MHz (\PinVoneMs, \PinVtwoMs, \PinVthreeMs\,ms); where the time goes (fixed costs at most
+\FixedVtwoPct\%, fusion recovers \PinSavingPctOfNxN\% of the N$\times$N traffic it removes at equal clock); the
+gating result (no tested gate beats dense at a lower frame rate at equal cost; captions show no detected
+change).}
+\end{abstract}
+
+\begin{IEEEkeywords}
+\pending{e.g. attention, CUDA, GPU kernels, kernel fusion, vision transformers, temporal redundancy, video
+captioning}
+\end{IEEEkeywords}
+
+\section{Introduction}
+\pending{
+(1) Setting: an offline captioner for aerial video (SmolVLM2-500M~\cite{marafioti2025smolvlm}) whose vision
+encoder runs dense attention at N = 1024 on a 4\,GB laptop GPU.
+(2) Questions: where does attention's time go at this real shape (launch, compute, memory traffic, clock)?
+Does frame-to-frame redundancy in aerial video justify a gated attention kernel?
+(3) Approach: a from-scratch ladder (naive, tiled, fused) with times predicted before any kernel existed;
+a shared benchmark protocol; Nsight Compute; an equal-clock comparison; token- and caption-level gating
+measurements against an equal-cost baseline (dense at a lower frame rate).
+(4) Contributions as measured results, no novelty claims until the literature search is done.
+}
+
+\section{Background and Related Work}
+\pending{after the literature search (PLAN.md section 3.2 leads). Attention kernels and fusion
+\cite{dao2022flashattention,dao2023flashattention2,bikshandi2023case}; temporal redundancy in video models
+\cite{dutson2023eventful,parger2022deltacnn,parger2022motiondeltacnn,habibian2021skip,choudhury2024rlt};
+dispatch and latency non-linearity at ViT scale \cite{abdellatif2026dispatch,eliopoulos2024pruning}; on-device
+VLMs \cite{yang2026ondevice}. Check whether Eventful Transformers already compares against a reduced-frame-rate
+baseline before calling our equal-cost comparison new.}
+
+\section{Setup and Method}
+\pending{
+A. Hardware and measured limits: RTX 3050 Laptop (16 SMs, 4\,GB); FP32 FMA \PeakTflops\,TFLOPS sustained
+(about \PeakGhz\,GHz, at the software power cap), DRAM \DramGBs\,GB/s, launch \LaunchUs\,\textmu s back to back.
+B. Workload: the encoder's attention shape. C. Benchmark protocol (shared harness: interleaved groups,
+per-sample clocks and throttle reasons, repeat runs). D. Predictions written before any attention kernel.
+E. Correctness: every version against a float64 reference on all test cases. F. Clocks: the headline set is
+pinned at \PinMhz\,MHz (one clock, one driver); unpinned times are reported as deployed, with their clocks.}
+
+\section{The Kernel Ladder}
+\pending{V1 naive (three kernels, N$\times$N in DRAM); V2 tiled (shared-memory tiles, register blocking,
+softmax reading the matrix once); V3 fused (online softmax, no N$\times$N storage). Tile shapes chosen by a
+sweep with the selection rule fixed beforehand.}
+
+\section{Results}
+\subsection{Scaling and the memory wall}
+\pending{X1 figure, redrawn at paper width. V1 and V2 fail between N = 24k and 32k as the N$\times$N model
+predicts; V3 runs at N = 32,768 (\VthreeBigNMs\,ms, one head).}
+
+\begin{figure*}[t]
+\centering
+\placeholder{\textwidth}{2.4in}{Fig.: X1, time and memory against N (plots/x1\_plot.py, redrawn at 7.16\,in;
+notes move to the caption)}
+\caption{\pending{X1 caption.}}
+\label{fig:x1}
+\end{figure*}
+
+\subsection{Predicted against measured}
+\begin{table}[t]
+\centering
+\caption{Attention at 12 heads, N = 1024, D = 64, FP32. Ranges written before any attention kernel existed
+(at the \PeakGhz\,GHz FMA peak), the same formulas rescaled after the fact to the pinned clock, the time at that
+clock, and the time as deployed at each version's own clock.}
+\label{tab:ladder}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\input{generated/table_ladder.tex}
+\end{table}
+\pending{V2 lands inside its rescaled range, V3 is above, V1 is far above (it did not reuse operand rows from
+L1 as the model assumed). The rescaled ranges are post hoc; say so.}
+
+\subsection{Where the time goes}
+\pending{X2: fixed costs \FixedVoneUs, \FixedVtwoUs, \FixedVthreeUs\,\textmu s (at most \FixedVtwoPct\% of a
+version's time): H1's first clause holds. V2's N$\times$N traffic is worth \NxNFloorMs\,ms at full bandwidth;
+V3 saves \PinSavingMs\,ms over V2 at equal clock (\DepSavingMs\,ms as deployed): the second clause fails.
+Stall shares are descriptive; occupancy is untested for V3; the H1 criteria were written after timing.}
+
+\begin{figure*}[t]
+\centering
+\placeholder{\textwidth}{2.2in}{Fig.: X2, stacked phases with floors (plots/x2\_plot.py), redrawn at paper
+width; stall shares beside or below}
+\caption{\pending{X2 caption.}}
+\label{fig:x2}
+\end{figure*}
+
+\subsection{Against library attention}
+\pending{FP32 only: at the pinned clock V3 \PinVthreeMs\,ms, PyTorch memory-efficient \PinBeffMs\,ms, math
+\PinBmathMs\,ms. The demo runs bf16 and PyTorch's flash and cuDNN backends have no FP32 kernel: either add a
+half-precision B1 or state the limitation here.}
+
+\section{Does Temporal Gating Pay?}
+\pending{
+A. Pixel-level redundancy in ERA aerial video \cite{mou2020era} (X0).
+B. Token traces: against dense at a lower frame rate with the output held, at equal cost, stale rows have the
+lower connector error in \TierBLower{} of \TierBSettings{} settings, token deltas with exact attention in
+\TierCLower{} of \TierCSettings, stale input (a floor no kernel reaches) in \TierALower{} of \TierASettings.
+C. Captions (CapERA \cite{bashmal2023capera}, \CapClips{} test clips): no condition changes CIDEr-D
+detectably; e.g.\ stale rows at threshold 8 (\CapBeightErr\% connector error)
+\CapBeightDelta{} [\CapBeightLo, \CapBeightHi]. Resolution: another clip's references cost
+\CapShuffledDelta. Held output at 1\,fps is near null by construction.
+D. What it means for the kernel: the pipeline does not need high-rate encoding, so a gated kernel has no
+application case here.}
+
+\begin{figure*}[t]
+\centering
+\placeholder{\textwidth}{2.2in}{Fig.: token-trace error against cost per footage group
+(plots/tokens\_era\_plot.py), redrawn at paper width}
+\caption{\pending{Token-trace caption.}}
+\label{fig:tokens}
+\end{figure*}
+
+\begin{figure}[t]
+\centering
+\placeholder{\columnwidth}{2.0in}{Fig.: caption quality against connector error and cost
+(plots/gate\_captions\_plot.py), one panel at column width}
+\caption{\pending{Caption-check caption.}}
+\label{fig:captions}
+\end{figure}
+
+\section{Discussion and Limitations}
+\pending{one GPU and one power-capped laptop; FP32 only (no tensor cores); one model and one attention shape;
+the clock as a lever (fusion's unpinned advantage is mostly clock headroom, consistent with but not tested as a
+power effect); occupancy untested for V3; H1 criteria not blind; caption metric resolution; copies of Q, K and
+V would cost more than V3 (\CopyInMs\,+\,\CopyOutMs\,ms) if attention were offloaded alone.}
+
+\section{Conclusion}
+\pending{written last.}
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}
