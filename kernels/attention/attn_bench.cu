@@ -1,6 +1,6 @@
 // Attention benchmark on the shared harness (kernels/harness), for any version in versions.h.
 //
-// Usage: attn_bench <version> [output.json] [--tune]
+// Usage: attn_bench <version> [output.json] [--tune] [--only <group>]
 //
 // Group "h12_n1024": the encoder's shape, 12 heads, N = 1024, D = 64; for versions with phases, each
 //   phase is timed separately. Predicted times (results/cuda/predicted_times.json, per phase from the
@@ -250,14 +250,15 @@ std::vector<std::pair<std::string, std::string>> predictions(const AttnVersion& 
 
 int main(int argc, char** argv) {
     if (argc < 2 || !attn_version(argv[1])) {
-        fprintf(stderr, "usage: attn_bench <version> [output.json] [--tune]\n");
+        fprintf(stderr, "usage: attn_bench <version> [output.json] [--tune] [--only <group>]\n");
         return 2;
     }
     const AttnVersion& ver = *attn_version(argv[1]);
     bool tune = false;
-    std::string out_path = std::string("../../results/attention/") + ver.name + ".json";
+    std::string out_path = std::string("../../results/attention/") + ver.name + ".json", only;
     for (int i = 2; i < argc; ++i) {
         if (std::strcmp(argv[i], "--tune") == 0) tune = true;
+        else if (std::strcmp(argv[i], "--only") == 0 && i + 1 < argc) only = argv[++i];
         else out_path = argv[i];
     }
     if (tune && std::strcmp(ver.name, "v2") != 0 && std::strcmp(ver.name, "v3") != 0) {
@@ -276,9 +277,11 @@ int main(int argc, char** argv) {
         for (int impl : {ATTN_V2_SOFTMAX_REG32, ATTN_V2_SOFTMAX_REG64, ATTN_V2_SOFTMAX_ONLINE})
             run.add(make_tune_op(ver, -1, 0, impl));
     } else {
-        run.add(make_op(ver, "h12_n1024", 12, 1024, predictions(ver)));
+        // --only <group>: just that group (e.g. h12_n1024 for the clock-pinned comparison)
+        if (only.empty() || only == "h12_n1024") run.add(make_op(ver, "h12_n1024", 12, 1024, predictions(ver)));
         for (int n : {128, 256, 512, 1024, 2048, 4096, 8192, 16384, 24576, 32768})
-            run.add(make_op(ver, "x1_n" + std::to_string(n), 1, n, {}));
+            if (only.empty() || only == "x1_n" + std::to_string(n))
+                run.add(make_op(ver, "x1_n" + std::to_string(n), 1, n, {}));
     }
     run.run_all();
     run.write_json(out_path);

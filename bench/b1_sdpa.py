@@ -14,7 +14,7 @@ Checks before timing (same criterion as V1, max over rows of ||o - o_ref|| / ||o
 The CUDA Graphs variant in the plan is deferred.
 
 Example:
-    .venv/bin/python -I bench/b1_sdpa.py
+    .venv/bin/python -I bench/b1_sdpa.py [output.json] [--only h12_n1024]
 """
 
 import json
@@ -63,12 +63,20 @@ def rel_errors(o: torch.Tensor, ref: torch.Tensor) -> float:
 
 
 def main() -> None:
-    out = sys.argv[1] if len(sys.argv) > 1 else str(ROOT / "results" / "attention" / "b1.json")
+    args = sys.argv[1:]
+    only = None
+    if "--only" in args:  # --only <group>: just that group (e.g. h12_n1024 for the clock-pinned comparison)
+        i = args.index("--only")
+        only = args[i + 1]
+        del args[i:i + 2]
+    out = args[0] if args else str(ROOT / "results" / "attention" / "b1.json")
     if not (TESTDATA / "rand_h12_n1024" / "meta.json").exists():
         sys.exit("shared test data missing: run .venv/bin/python -I bench/attn_testdata.py")
     run = H.Runner("attention_b1_sdpa", H.read_limits(ROOT / "results" / "cuda" / "peak.json"))
     shapes = [("h12_n1024", 12, 1024)] + [(f"x1_n{n}", 1, n) for n in
                                           (128, 256, 512, 1024, 2048, 4096, 8192, 16384, 24576, 32768)]
+    if only:
+        shapes = [s for s in shapes if s[0] == only]
     for group, h, n in shapes:
         tensors = {}
 

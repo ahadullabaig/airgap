@@ -151,6 +151,10 @@ Notes on the hypotheses:
     - V3's occupancy is untested, because no swept shape raises it.
     - The clock is untested, because pinning it needs root.
   - **For reference:** copying Q, K and V to the GPU and O back costs more than V3 itself (1.42 + 0.47 ms).
+  - **At a pinned clock (1,395 MHz, `nvidia-smi -lgc`, 2026-11-25;** `bench/clock_pinned.py`, `results/attention/clock1395/summary.json`). Every op held the pin, the memory clock was unchanged, and the definitions were written before the run.
+    - V3 saves 0.14 ms over V2 (1.78 against 1.92 ms), 13% of the N x N floor. The second clause's failure stands, and the unpinned 22% gap was mostly clock.
+    - Against predictions rescaled to 1,395 MHz: V2 lands inside (1.38-2.01 ms), V3 is 6% above (0.91-1.68 ms), V1 is far above.
+    - Our kernels' cycle counts barely change with the clock (pinned against unpinned, 0.98).
 - H1 replaces an earlier version that said fixed per-launch costs dominate at ViT lengths. That result (Dispatch-Aware Ragged Attention) was measured at 197 tokens or fewer on a much faster GPU (RTX 4000 Ada), with about 50 µs of host-side dispatch per call.
 - Estimate, unmeasured: dense attention at N = 1024 with 12 heads is about 3.2 GFLOP, on the order of 1 ms on this GPU, against a few µs per raw kernel launch. Write predicted times for every kernel before the first benchmark; a large miss means a broken kernel or a wrong model.
 - The memory wall (where V1 and V2 run out of memory) sits near N = 30,000 for one head, a separate regime from the gating tests. It belongs to the kernel ladder (X1), not to H1.

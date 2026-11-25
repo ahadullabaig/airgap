@@ -1,0 +1,726 @@
+{
+ "schema": "airgap-bench/1",
+ "benchmark": "attention_b1_sdpa",
+ "created": "2026-11-25T20:55:28+0530",
+ "warnings": [],
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "cc": "8.6",
+  "sms": 16,
+  "memory_mib": 3790,
+  "max_sm_mhz": 2100,
+  "driver": "620.73.04",
+  "cuda_runtime": "13.2",
+  "cuda_driver_api": null,
+  "nvcc": null,
+  "host_compiler": null,
+  "python": "3.12.13",
+  "torch": "2.15.0+cu132",
+  "tf32": {
+   "matmul": false,
+   "cudnn": false,
+   "float32_matmul_precision": "highest"
+  },
+  "ac": "on",
+  "platform_profile": "performance",
+  "other_gpu_processes": [
+   "kwin_wayland",
+   "qemu-system-x86_64"
+  ]
+ },
+ "limits": {
+  "tflops": 7.46,
+  "dram_gb_per_s": 188.16,
+  "source": "results/cuda/peak.json"
+ },
+ "protocol": {
+  "samples": 21,
+  "target_sample_ms": 20.0,
+  "warmup_s": [
+   1.0,
+   10.0
+  ],
+  "clock_tol": 0.01,
+  "throttle_drop": 0.03,
+  "rate_slack": 1.05,
+  "interleave": "seeded shuffle per round within a group (Python random.Random)",
+  "shuffle_seed": 20261123,
+  "throttle_rule": "flag a sample on a thermal or hardware-slowdown reason, or an SM clock more than throttle_drop below the op's median that the power cap does not explain; power cap recorded, not flagged; op invalid if more than half its samples are flagged",
+  "python_note": "event_batch_ms is CUDA-event time over a Python loop of calls, so it includes dispatch gaps between short kernels"
+ },
+ "groups": [
+  {
+   "group": "h12_n1024",
+   "device_used_mib_before": 274.3125,
+   "device_used_mib_after_setup": 296.3125,
+   "warmup_s": 1.0871589730004416,
+   "warmup_sm_mhz": [
+    1395,
+    1395,
+    1395,
+    1395,
+    1395,
+    1395,
+    1395,
+    1395,
+    1395,
+    1395,
+    1395
+   ],
+   "median_sm_mhz": 1395,
+   "context_lost": false
+  }
+ ],
+ "ops": [
+  {
+   "name": "b1_math_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "MATH",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "fp32",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "ok",
+   "check": {
+    "ok": true,
+    "max_abs_err": null,
+    "max_rel_err": 1.3461520457685328e-06,
+    "note": "shared test data rand_h12_n1024; max over rows of ||o - o_ref|| / ||o_ref||"
+   },
+   "mem_mib": 15.0078125,
+   "mem_peak_mib": 126.02001953125,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 7,
+    "host_sync": 4,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 3.0804846627371654,
+     "p10": 3.0733165740966797,
+     "p90": 3.085458210536412,
+     "min": 3.071999958583287,
+     "max": 3.0875061580113004
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 3.134131000024354,
+     "p10": 3.1182005000118806,
+     "p90": 3.1889057499938644,
+     "min": 3.1173664999641915,
+     "max": 3.226415249855563
+    }
+   },
+   "rates": {
+    "tflops": 1.0456878785878385,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "",
+     "event_batch_ms": 3.0733165740966797,
+     "host_sync_ms": 3.1330215001617034,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 50,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.077266420636858,
+     "host_sync_ms": 3.1208957500439283,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 50,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.085458210536412,
+     "host_sync_ms": 3.1193274999168352,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.073462894984654,
+     "host_sync_ms": 3.147308749930744,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "",
+     "event_batch_ms": 3.0740479060581754,
+     "host_sync_ms": 3.1495607499891776,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "",
+     "event_batch_ms": 3.0736092158726285,
+     "host_sync_ms": 3.1175017500117974,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0851658412388394,
+     "host_sync_ms": 3.134131000024354,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0847268785749162,
+     "host_sync_ms": 3.1200590001390083,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0844342367989674,
+     "host_sync_ms": 3.1889057499938644,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0809233529227122,
+     "host_sync_ms": 3.1202267498429137,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "",
+     "event_batch_ms": 3.0736092158726285,
+     "host_sync_ms": 3.1182005000118806,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "",
+     "event_batch_ms": 3.0829713003976003,
+     "host_sync_ms": 3.1970114998784993,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0875061580113004,
+     "host_sync_ms": 3.1314032498812594,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0755108424595425,
+     "host_sync_ms": 3.1590085000061663,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "",
+     "event_batch_ms": 3.071999958583287,
+     "host_sync_ms": 3.1578365001223574,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "",
+     "event_batch_ms": 3.0804846627371654,
+     "host_sync_ms": 3.226415249855563,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "",
+     "event_batch_ms": 3.0870674678257535,
+     "host_sync_ms": 3.1734035001136363,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "",
+     "event_batch_ms": 3.0779977525983537,
+     "host_sync_ms": 3.145444999972824,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.0809233529227122,
+     "host_sync_ms": 3.135904499913522,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "b1_efficient_attention_h12_n1024",
+     "event_batch_ms": 3.082239968436105,
+     "host_sync_ms": 3.118861749953794,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "",
+     "event_batch_ms": 3.0733165740966797,
+     "host_sync_ms": 3.1173664999641915,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "b1_efficient_attention_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "EFFICIENT_ATTENTION",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "fp32",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "ok",
+   "check": {
+    "ok": true,
+    "max_abs_err": null,
+    "max_rel_err": 3.1394768060798452e-06,
+    "note": "shared test data rand_h12_n1024; max over rows of ||o - o_ref|| / ||o_ref||"
+   },
+   "mem_mib": 0.0,
+   "mem_peak_mib": 3.0009765625,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 9,
+    "host_sync": 5,
+    "phases": 0
+   },
+   "clocks": {
+    "event_batch_ms": {
+     "n": 21,
+     "median": 2.2198043399386935,
+     "p10": 2.2178702884250217,
+     "p90": 2.2254933251274958,
+     "min": 2.2142293718126087,
+     "max": 2.2518897586398654
+    },
+    "host_sync_ms": {
+     "n": 21,
+     "median": 2.261732800070604,
+     "p10": 2.2531083999638213,
+     "p90": 2.2864779999508755,
+     "min": 2.2528016001160722,
+     "max": 2.3169404001237126
+    }
+   },
+   "rates": {
+    "tflops": 1.4511303604753576,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": [
+    {
+     "round": 0,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2177564832899304,
+     "host_sync_ms": 2.2539839999808464,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 50,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 1,
+     "prev": "",
+     "event_batch_ms": 2.2196907467312283,
+     "host_sync_ms": 2.2538596000231337,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 50,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 2,
+     "prev": "",
+     "event_batch_ms": 2.219463136461046,
+     "host_sync_ms": 2.2837430000436143,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 3,
+     "prev": "",
+     "event_batch_ms": 2.218552907307943,
+     "host_sync_ms": 2.2531083999638213,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 4,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2200319502088757,
+     "host_sync_ms": 2.252960000078019,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 5,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.218780517578125,
+     "host_sync_ms": 2.261732800070604,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 6,
+     "prev": "",
+     "event_batch_ms": 2.2206009758843317,
+     "host_sync_ms": 2.255667200006428,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 7,
+     "prev": "",
+     "event_batch_ms": 2.218780517578125,
+     "host_sync_ms": 2.2654259999399073,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 8,
+     "prev": "",
+     "event_batch_ms": 2.2142293718126087,
+     "host_sync_ms": 2.2606888000154868,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 9,
+     "prev": "",
+     "event_batch_ms": 2.2216247982449002,
+     "host_sync_ms": 2.2622598000452854,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 10,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2188943227132163,
+     "host_sync_ms": 2.2579076001420617,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 11,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2254933251274958,
+     "host_sync_ms": 2.278697200017632,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 12,
+     "prev": "",
+     "event_batch_ms": 2.220942179361979,
+     "host_sync_ms": 2.3169404001237126,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 13,
+     "prev": "",
+     "event_batch_ms": 2.219463136461046,
+     "host_sync_ms": 2.2593921999941813,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 14,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.221511205037435,
+     "host_sync_ms": 2.260329999990063,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 15,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.229930665757921,
+     "host_sync_ms": 2.2980663999987883,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 16,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2248107062445746,
+     "host_sync_ms": 2.262009200057946,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 17,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2198043399386935,
+     "host_sync_ms": 2.275909799936926,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 18,
+     "prev": "",
+     "event_batch_ms": 2.2178702884250217,
+     "host_sync_ms": 2.2528016001160722,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 19,
+     "prev": "",
+     "event_batch_ms": 2.2518897586398654,
+     "host_sync_ms": 2.263241600121546,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    },
+    {
+     "round": 20,
+     "prev": "b1_math_h12_n1024",
+     "event_batch_ms": 2.2206009758843317,
+     "host_sync_ms": 2.2864779999508755,
+     "sm_mhz": 1395,
+     "mem_mhz": 6001,
+     "temp_c": 51,
+     "clock_events": [],
+     "flagged": false
+    }
+   ]
+  },
+  {
+   "name": "b1_flash_attention_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "FLASH_ATTENTION",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "fp32",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "failed",
+   "stage": "check",
+   "error": "RuntimeError: No available kernel. Aborting execution.",
+   "mem_mib": 0.0,
+   "mem_peak_mib": null,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 0,
+    "host_sync": 0,
+    "phases": 0
+   },
+   "clocks": {},
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": []
+  },
+  {
+   "name": "b1_cudnn_attention_h12_n1024",
+   "group": "h12_n1024",
+   "params": {
+    "version": "B1",
+    "backend": "CUDNN_ATTENTION",
+    "heads": "12",
+    "n": "1024",
+    "d": "64",
+    "dtype": "fp32",
+    "tf32": "off",
+    "dispatch": "sdpa_kernel context per call (Python overhead included)"
+   },
+   "status": "failed",
+   "stage": "check",
+   "error": "RuntimeError: No available kernel. Aborting execution.",
+   "mem_mib": 0.0,
+   "mem_peak_mib": null,
+   "work": {
+    "flops": 3221225472.0,
+    "dram_bytes": 0.0
+   },
+   "iters": {
+    "event_batch": 0,
+    "host_sync": 0,
+    "phases": 0
+   },
+   "clocks": {},
+   "rates": {
+    "tflops": null,
+    "dram_gb_per_s": null
+   },
+   "clock_time_corr": null,
+   "plausibility": [],
+   "samples": []
+  }
+ ]
+}

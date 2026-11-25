@@ -1,0 +1,163 @@
+{
+ "experiment": "attention at a pinned SM clock (definitions: bench/clock_pinned.py)",
+ "pinned_mhz": 1395.0,
+ "predictions_ms_at_pin": {
+  "V1": [
+   2.500687534407681,
+   6.42144909301896
+  ],
+  "V2": [
+   1.3804699462330292,
+   2.0105923395812706
+  ],
+  "V3": [
+   0.9065641289102954,
+   1.6820993822619772
+  ],
+  "B1": [
+   0.6936720985784611,
+   2.2224061373640183
+  ]
+ },
+ "ops": {
+  "V1": {
+   "time_ms": 26.0567036,
+   "p10_ms": 26.0474873,
+   "p90_ms": 26.0700169,
+   "sm_mhz": {
+    "min": 1395.0,
+    "median": 1395.0,
+    "max": 1395.0
+   },
+   "share_within_1pct_of_pin": 1.0,
+   "pin_held": true,
+   "clock_events": [],
+   "flagged": 0,
+   "phases_ms": {
+    "output": 4.53529596,
+    "scores": 20.4718075,
+    "softmax": 1.05472004
+   },
+   "predicted_ms_at_pin": [
+    2.500687534407681,
+    6.42144909301896
+   ],
+   "versus_prediction": "above",
+   "unpinned": {
+    "time_ms": 18.958849,
+    "median_sm_mhz": 1950
+   },
+   "megacycles_pinned_over_unpinned": 0.9832118438770687
+  },
+  "V2": {
+   "time_ms": 1.91823125,
+   "p10_ms": 1.91264582,
+   "p90_ms": 1.92279279,
+   "sm_mhz": {
+    "min": 1395.0,
+    "median": 1395.0,
+    "max": 1395.0
+   },
+   "share_within_1pct_of_pin": 1.0,
+   "pin_held": true,
+   "clock_events": [],
+   "flagged": 0,
+   "phases_ms": {
+    "output": 0.66941672,
+    "scores": 0.702714172,
+    "softmax": 0.553239253
+   },
+   "predicted_ms_at_pin": [
+    1.3804699462330292,
+    2.0105923395812706
+   ],
+   "versus_prediction": "inside",
+   "unpinned": {
+    "time_ms": 1.81927562,
+    "median_sm_mhz": 1507
+   },
+   "megacycles_pinned_over_unpinned": 0.9760305637423833
+  },
+  "V3": {
+   "time_ms": 1.77467728,
+   "p10_ms": 1.77433598,
+   "p90_ms": 1.77527463,
+   "sm_mhz": {
+    "min": 1395.0,
+    "median": 1395.0,
+    "max": 1395.0
+   },
+   "share_within_1pct_of_pin": 1.0,
+   "pin_held": true,
+   "clock_events": [],
+   "flagged": 0,
+   "phases_ms": {},
+   "predicted_ms_at_pin": [
+    0.9065641289102954,
+    1.6820993822619772
+   ],
+   "versus_prediction": "above",
+   "unpinned": {
+    "time_ms": 1.41632855,
+    "median_sm_mhz": 1785
+   },
+   "megacycles_pinned_over_unpinned": 0.9792450093600672
+  },
+  "B1 math": {
+   "time_ms": 3.0804846627371654,
+   "p10_ms": 3.0733165740966797,
+   "p90_ms": 3.085458210536412,
+   "sm_mhz": {
+    "min": 1395.0,
+    "median": 1395.0,
+    "max": 1395.0
+   },
+   "share_within_1pct_of_pin": 1.0,
+   "pin_held": true,
+   "clock_events": [],
+   "flagged": 0,
+   "phases_ms": {},
+   "predicted_ms_at_pin": [
+    0.6936720985784611,
+    2.2224061373640183
+   ],
+   "versus_prediction": "above",
+   "unpinned": {
+    "time_ms": 2.8350720405578613,
+    "median_sm_mhz": 1687
+   },
+   "megacycles_pinned_over_unpinned": 0.898491715074998
+  },
+  "B1 memory-efficient": {
+   "time_ms": 2.2198043399386935,
+   "p10_ms": 2.2178702884250217,
+   "p90_ms": 2.2254933251274958,
+   "sm_mhz": {
+    "min": 1395.0,
+    "median": 1395.0,
+    "max": 1395.0
+   },
+   "share_within_1pct_of_pin": 1.0,
+   "pin_held": true,
+   "clock_events": [],
+   "flagged": 0,
+   "phases_ms": {},
+   "predicted_ms_at_pin": [
+    0.6936720985784611,
+    2.2224061373640183
+   ],
+   "versus_prediction": "inside",
+   "unpinned": {
+    "time_ms": 1.9040815179998225,
+    "median_sm_mhz": 1687
+   },
+   "megacycles_pinned_over_unpinned": 0.964024971191552
+  }
+ },
+ "v3_vs_v2_equal_clock": {
+  "saving_ms": 0.14355397000000014,
+  "v2_nxn_dram_floor_ms": 1.0682397959183674,
+  "share_of_nxn_floor": 0.13438365669253743,
+  "h1_clause2_holds": false
+ }
+}
