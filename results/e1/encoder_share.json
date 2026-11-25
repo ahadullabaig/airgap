@@ -1,0 +1,225 @@
+{
+ "what": "per-stage time of one caption in E1's configuration (definitions: eval/encoder_share.py)",
+ "clips": 20,
+ "repeats": 3,
+ "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+ "median_s": {
+  "decode_s": 0.04537143199922866,
+  "preprocess_s": 0.13882010099951003,
+  "encoder_s": 0.08218891150045238,
+  "prefill_s": 0.03407417800008261,
+  "decode_lm_s": 0.34542071249961737,
+  "generate_s": 0.461911171999418,
+  "new_tokens": 19.0
+ },
+ "median_share_of_total": {
+  "decode_s": 0.06892339971446423,
+  "preprocess_s": 0.21372085369518967,
+  "encoder_s": 0.12660244799911968,
+  "prefill_s": 0.05259446425865739,
+  "decode_lm_s": 0.5355939408948902
+ },
+ "median_total_s": 0.6500168554994161,
+ "rows": [
+  {
+   "id": "Baseball_044.mp4",
+   "decode_s": 0.0726649099997303,
+   "preprocess_s": 0.18125040700033423,
+   "encoder_s": 0.08225803399909637,
+   "prefill_s": 0.034103003001291654,
+   "decode_lm_s": 0.3225660540010722,
+   "generate_s": 0.4389270910014602,
+   "new_tokens": 18
+  },
+  {
+   "id": "Basketball_009.mp4",
+   "decode_s": 0.05593904799934535,
+   "preprocess_s": 0.1356155840003339,
+   "encoder_s": 0.08219019399984973,
+   "prefill_s": 0.034271655000338797,
+   "decode_lm_s": 0.3425127809987316,
+   "generate_s": 0.45897462999892014,
+   "new_tokens": 19
+  },
+  {
+   "id": "Boating_024.mp4",
+   "decode_s": 0.04117128799953207,
+   "preprocess_s": 0.14171223800076405,
+   "encoder_s": 0.08200554999893939,
+   "prefill_s": 0.03297866800130578,
+   "decode_lm_s": 0.2829768379997404,
+   "generate_s": 0.39796105599998555,
+   "new_tokens": 16
+  },
+  {
+   "id": "CarRacing_014.mp4",
+   "decode_s": 0.03353496399904543,
+   "preprocess_s": 0.14744193799924687,
+   "encoder_s": 0.081460444998811,
+   "prefill_s": 0.03365624700199987,
+   "decode_lm_s": 0.3393125169986888,
+   "generate_s": 0.4544292089994997,
+   "new_tokens": 19
+  },
+  {
+   "id": "Concert_019.mp4",
+   "decode_s": 0.04776412200044433,
+   "preprocess_s": 0.1303161590003583,
+   "encoder_s": 0.08154819300034433,
+   "prefill_s": 0.03428228699885949,
+   "decode_lm_s": 0.5068937290016038,
+   "generate_s": 0.6227242090008076,
+   "new_tokens": 28
+  },
+  {
+   "id": "Conflict_021.mp4",
+   "decode_s": 0.04536851099874184,
+   "preprocess_s": 0.13761212100143894,
+   "encoder_s": 0.08152593100021477,
+   "prefill_s": 0.033809539998401306,
+   "decode_lm_s": 0.6104598060010176,
+   "generate_s": 0.7257952769996336,
+   "new_tokens": 33
+  },
+  {
+   "id": "Constructing_008.mp4",
+   "decode_s": 0.04947350799920969,
+   "preprocess_s": 0.13617731200065464,
+   "encoder_s": 0.08186510100131272,
+   "prefill_s": 0.03384606999861717,
+   "decode_lm_s": 0.3621420359995682,
+   "generate_s": 0.47785320699949807,
+   "new_tokens": 20
+  },
+  {
+   "id": "Cycling_027.mp4",
+   "decode_s": 0.04712499800007208,
+   "preprocess_s": 0.13466965200132108,
+   "encoder_s": 0.08178701100041508,
+   "prefill_s": 0.033726792000379646,
+   "decode_lm_s": 0.26878571399902285,
+   "generate_s": 0.38429951699981757,
+   "new_tokens": 15
+  },
+  {
+   "id": "Fire_039.mp4",
+   "decode_s": 0.047386637999807135,
+   "preprocess_s": 0.13069603800067853,
+   "encoder_s": 0.08182602600027167,
+   "prefill_s": 0.03382162399975641,
+   "decode_lm_s": 0.4032668639993062,
+   "generate_s": 0.5189145139993343,
+   "new_tokens": 22
+  },
+  {
+   "id": "Flood_042.mp4",
+   "decode_s": 0.05186431999936758,
+   "preprocess_s": 0.1432836789990688,
+   "encoder_s": 0.08182793999912974,
+   "prefill_s": 0.03421539800001483,
+   "decode_lm_s": 0.3277268850015389,
+   "generate_s": 0.4437702230006835,
+   "new_tokens": 18
+  },
+  {
+   "id": "Harvesting_047.mp4",
+   "decode_s": 0.042424418999871705,
+   "preprocess_s": 0.1397427140000218,
+   "encoder_s": 0.082011471999067,
+   "prefill_s": 0.03452816699973482,
+   "decode_lm_s": 0.38422931200148014,
+   "generate_s": 0.500768951000282,
+   "new_tokens": 21
+  },
+  {
+   "id": "Landslide_027.mp4",
+   "decode_s": 0.03384087000085856,
+   "preprocess_s": 0.14106559900028515,
+   "encoder_s": 0.08218762900105503,
+   "prefill_s": 0.03399954399719718,
+   "decode_lm_s": 0.3282766190022812,
+   "generate_s": 0.44446379200053343,
+   "new_tokens": 18
+  },
+  {
+   "id": "Mudslide_019.mp4",
+   "decode_s": 0.045374352999715484,
+   "preprocess_s": 0.1387299529997108,
+   "encoder_s": 0.0823969909997686,
+   "prefill_s": 0.03410301199983223,
+   "decode_lm_s": 0.3489001400012057,
+   "generate_s": 0.46540014300080657,
+   "new_tokens": 19
+  },
+  {
+   "id": "NonEvent_063.mp4",
+   "decode_s": 0.04298070499862661,
+   "preprocess_s": 0.14205920300082653,
+   "encoder_s": 0.08224807499937015,
+   "prefill_s": 0.03504417700060003,
+   "decode_lm_s": 0.4900068259994441,
+   "generate_s": 0.6072990779994143,
+   "new_tokens": 26
+  },
+  {
+   "id": "ParadeProtest_015.mp4",
+   "decode_s": 0.05137907899916172,
+   "preprocess_s": 0.13682937100020354,
+   "encoder_s": 0.08257356800095295,
+   "prefill_s": 0.033743543999662506,
+   "decode_lm_s": 0.3353179829991859,
+   "generate_s": 0.45163509499980137,
+   "new_tokens": 18
+  },
+  {
+   "id": "Party_001.mp4",
+   "decode_s": 0.04904256199915835,
+   "preprocess_s": 0.13729765800053428,
+   "encoder_s": 0.08256826900105807,
+   "prefill_s": 0.034000224999545026,
+   "decode_lm_s": 0.5004330279989517,
+   "generate_s": 0.6170015219995548,
+   "new_tokens": 27
+  },
+  {
+   "id": "Ploughing_022.mp4",
+   "decode_s": 0.04133194600035495,
+   "preprocess_s": 0.13846807099980651,
+   "encoder_s": 0.08247371700053918,
+   "prefill_s": 0.03404535299887357,
+   "decode_lm_s": 0.3483286440005031,
+   "generate_s": 0.46484771399991587,
+   "new_tokens": 19
+  },
+  {
+   "id": "PoliceChase_049.mp4",
+   "decode_s": 0.044072266999137355,
+   "preprocess_s": 0.13891024899930926,
+   "encoder_s": 0.08262277299945708,
+   "prefill_s": 0.034215248000691645,
+   "decode_lm_s": 0.2926438840004266,
+   "generate_s": 0.40948190500057535,
+   "new_tokens": 16
+  },
+  {
+   "id": "PostEarthquake_046.mp4",
+   "decode_s": 0.041700723000758444,
+   "preprocess_s": 0.1401783080000314,
+   "encoder_s": 0.08263792199977615,
+   "prefill_s": 0.034393409001495456,
+   "decode_lm_s": 0.25865091199921153,
+   "generate_s": 0.37568224300048314,
+   "new_tokens": 14
+  },
+  {
+   "id": "ReligiousActivity_037.mp4",
+   "decode_s": 0.04317846399862901,
+   "preprocess_s": 0.1402488240000821,
+   "encoder_s": 0.08262968599956366,
+   "prefill_s": 0.03428590299881762,
+   "decode_lm_s": 0.36654374100180576,
+   "generate_s": 0.48345933000018704,
+   "new_tokens": 20
+  }
+ ]
+}

@@ -10,14 +10,16 @@ literature search (PLAN.md section 3.2 and the week-1 checklist).
 ## Build
 
 ```bash
-.venv/bin/python -I paper/numbers.py          # generated/numbers.tex and generated/table_ladder.tex
+.venv/bin/python -I paper/make_numbers.py          # generated/numbers.tex and generated/table_ladder.tex
+.venv/bin/python paper/figures.py                  # figures/*.pdf
 cd paper && latexmk -pdf -outdir=build main.tex
 ```
 
-`build/main.pdf` is the output (`build/` is git-ignored). `generated/` is written by `numbers.py` from the
+`build/main.pdf` is the output (`build/` is git-ignored). `generated/` is written by `make_numbers.py` from the
 committed result files: do not edit it by hand, and never type into `main.tex` a number that a result file
-holds. Figures will be redrawn at paper width (3.5 in for one column, 7.16 in for two) into `figures/`
-by a script; the current figures in `plots/` are 11-12 in wide and are placeholders here.
+holds. `figures.py` draws the figures at paper width (3.5 in for one column, 7.16 in for two) as vector PDFs in
+`figures/`, in Liberation Serif (TrueType, Times metrics; OpenType Times clones embed with a CFF mismatch that PDF
+checkers flag). Do not edit `figures/` by hand.
 
 Format decisions carried over from the ICEE 2026 paper (neuroflux): `microtype` with `protrusion=false`
 (protrusion pushed punctuation into the column gutter, which EDAS measures), and the IEEEtran "et al." control
@@ -38,6 +40,9 @@ Every macro in `generated/numbers.tex` names its source file in a comment. By se
 | Token traces | `results/tokens/era_tra/summary.json` (`bench/tokens_era.py`) |
 | Caption-level check | `results/gate_captions/scores.json` (`eval/gate_captions.py`) |
 | Pixel-level redundancy (X0) | `results/x0/era_tra/summary.json` (`bench/x0_era.py`) |
+| Where a caption's time goes | `results/e1/encoder_share.json` (`eval/encoder_share.py`) |
+| X2 at the pinned clock (Fig. 2, floors and fixed shares) | `paper/derived.py` from `clock1395/`, `x2.json`, `x2_breakdown.json` |
+| Figures | `paper/figures.py` writes `figures/*.pdf` from the files above |
 
 ## References
 

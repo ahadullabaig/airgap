@@ -1,5 +1,5 @@
 % Part B paper (Parallel Programming): IEEE conference format, 8 pages.
-% Build: see README.md. Numbers come from generated/numbers.tex (paper/numbers.py); never type a number
+% Build: see README.md. Numbers come from generated/numbers.tex (paper/make_numbers.py); never type a number
 % that a result file holds. Red [pending: ...] notes are the outline, to be replaced by prose.
 \documentclass[conference]{IEEEtran}
 \usepackage{cite}
@@ -113,14 +113,18 @@ sweep with the selection rule fixed beforehand.}
 
 \section{Results}
 \subsection{Scaling and the memory wall}
-\pending{X1 figure, redrawn at paper width. V1 and V2 fail between N = 24k and 32k as the N$\times$N model
+\pending{Fig.~\ref{fig:x1}. V1 and V2 fail between N = 24k and 32k as the N$\times$N model
 predicts; V3 runs at N = 32,768 (\VthreeBigNMs\,ms, one head).}
 
 \begin{figure*}[t]
 \centering
-\placeholder{\textwidth}{2.4in}{Fig.: X1, time and memory against N (plots/x1\_plot.py, redrawn at 7.16\,in;
-notes move to the caption)}
-\caption{\pending{X1 caption.}}
+\includegraphics[width=\textwidth]{fig_x1}
+\caption{Attention time per call (a) and device memory (b) against the sequence length $N$ for one head ($d = 64$,
+FP32; each version at its own steady clock). A cross above the data marks a size at which a version ran out of
+device memory. V1 and V2 store one $N\times N$ matrix ($4N^2$ bytes) and fail between $N$ = 24k and 32k;
+PyTorch's math backend stores two and fails between 16k and 24k; V3 and PyTorch's memory-efficient backend store
+nothing of size $N\times N$. V1's memory curve lies under V2's. At small $N$ our versions' 2\,MiB is allocation
+granularity.}
 \label{fig:x1}
 \end{figure*}
 
@@ -139,16 +143,25 @@ clock, and the time as deployed at each version's own clock.}
 L1 as the model assumed). The rescaled ranges are post hoc; say so.}
 
 \subsection{Where the time goes}
-\pending{X2: fixed costs \FixedVoneUs, \FixedVtwoUs, \FixedVthreeUs\,\textmu s (at most \FixedVtwoPct\% of a
-version's time): H1's first clause holds. V2's N$\times$N traffic is worth \NxNFloorMs\,ms at full bandwidth;
+\pending{X2 (Fig.~\ref{fig:x2}): fixed costs \FixedVoneUs, \FixedVtwoUs, \FixedVthreeUs\,\textmu s, at most
+\PinFixedMaxPct\% of a version's time at the pinned clock: H1's first clause holds. At the pinned clock V2's
+matmuls take \PinVtwoScoresOver$\times$ and \PinVtwoOutputOver$\times$ their floors (DRAM and compute nearly
+tie), its softmax \PinVtwoSoftmaxOver$\times$; V3 \PinVthreeOver$\times$ its compute floor; V1's scores
+\PinVoneScoresOver$\times$. V2's N$\times$N traffic is worth \NxNFloorMs\,ms at full bandwidth;
 V3 saves \PinSavingMs\,ms over V2 at equal clock (\DepSavingMs\,ms as deployed): the second clause fails.
 Stall shares are descriptive; occupancy is untested for V3; the H1 criteria were written after timing.}
 
 \begin{figure*}[t]
 \centering
-\placeholder{\textwidth}{2.2in}{Fig.: X2, stacked phases with floors (plots/x2\_plot.py), redrawn at paper
-width; stall shares beside or below}
-\caption{\pending{X2 caption.}}
+\includegraphics[width=\textwidth]{fig_x2}
+\caption{Where the time goes at 12 heads, $N = 1024$, $d = 64$. (a)~Time per call at a pinned
+\PinMhz\,MHz SM clock, by phase (V1 on its own axis). The black tick inside each phase marks its floor: the
+larger of its FLOPs at the FMA peak scaled to the pinned clock and the DRAM bytes it moved at \DramGBs\,GB/s.
+Fixed launch costs, measured with empty kernels launched exactly like each version's, are at most
+\PinFixedMaxPct\% of a version's time and too thin to show. PyTorch's bars are whole calls: its FP32
+memory-efficient backend runs on tensor cores (emulating FP32), its math backend on CUDA cores, ours on CUDA
+cores only. (b)~What each kernel's warps wait on (Nsight Compute stall reasons per issued instruction, grouped by
+the resource; unpinned profiles). The shares describe the kernels; they do not test a cause.}
 \label{fig:x2}
 \end{figure*}
 
@@ -178,21 +191,33 @@ clip-level captions from a moving camera. Reasons to discuss: task granularity (
 62.3\% against 64.3\% for its best video model \cite{mou2020era}), camera motion
 \cite{parger2022deltacnn,choudhury2024rlt}, attention's small share of encoder cost \cite{hwang2025dejavu}.
 Caveat: CIDEr can be flat between 1 and 64 frames \cite{cai2024temporalbench}; add an embedding-similarity
-metric or state it. State the encoder's share of end-to-end captioning latency (E1 timings).}
+metric or state it.
+F. The encoder's share of a caption (E1's configuration, \EsClips{} clips, medians): frame decode \EsDecPct\%,
+preprocessing \EsPrePct\%, vision encoder \EsEncPct\% (\EsEncMs\,ms for four frames), prefill
+\EsPrefillPct\%, generating about \EsTokens{} tokens \EsGenPct\% (of \EsTotalMs\,ms). Attention is about
+\AttnFlopPct\% of an encoder layer's FLOPs, so roughly \AttnCaptionPct\% of a caption: even a perfect attention
+kernel barely moves end-to-end latency, consistent with \cite{hwang2025dejavu}.}
 
 \begin{figure*}[t]
 \centering
-\placeholder{\textwidth}{2.2in}{Fig.: token-trace error against cost per footage group
-(plots/tokens\_era\_plot.py), redrawn at paper width}
-\caption{\pending{Token-trace caption.}}
+\includegraphics[width=\textwidth]{fig_tokens}
+\caption{Gate error against cost on ERA training clips, per footage group: the connector output's error at
+24\,fps, each method holding its latest output (FP32). Cost is full-frame equivalents per second of video. The
+dashed line is dense encoding at a lower frame rate with the output held, drawn as the chord between the rates run
+(dropping a fraction of frames achieves it). Points along each gate's curve are its thresholds: pixel block mean
+absolute difference 1--32 for stale input and stale rows, token change 0.05--0.5 for token deltas. Stale input is
+plotted at the pixel mask's cost, which no kernel achieves; token-delta cost is a FLOP estimate without fixed
+costs, so both are optimistic.}
 \label{fig:tokens}
 \end{figure*}
 
 \begin{figure}[t]
 \centering
-\placeholder{\columnwidth}{2.0in}{Fig.: caption quality against connector error and cost
-(plots/gate\_captions\_plot.py), one panel at column width}
-\caption{\pending{Caption-check caption.}}
+\includegraphics[width=\columnwidth]{fig_captions}
+\caption{Caption quality against the connector error at the four frames the captioner uses: CIDEr-D against
+the CapERA references minus dense's, mean over \CapClips{} test clips, whiskers 95\% bootstrap intervals.
+Labels give the held output's frame rate or the gate's threshold. The dotted line is the cost of scoring dense
+captions against another clip's references.}
 \label{fig:captions}
 \end{figure}
 
