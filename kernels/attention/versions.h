@@ -22,6 +22,7 @@ struct AttnVersion {
 static const AttnVersion ATTN_VERSIONS[] = {
     {"v1", "V1", attn_v1_workspace_bytes, attn_v1, attn_v1_scores, attn_v1_softmax, attn_v1_output},
     {"v2", "V2", attn_v2_workspace_bytes, attn_v2, attn_v2_scores, attn_v2_softmax, attn_v2_output},
+    {"v3", "V3", attn_v3_workspace_bytes, attn_v3, nullptr, nullptr, nullptr},
 };
 
 static inline const AttnVersion* attn_version(const char* name) {

@@ -9,8 +9,8 @@
 //    there (shapes, partial tiles, near one-hot rows, sampled rows at large N). Error per (head, row) is
 //    ||o - o_ref|| / ||o_ref||; the test requires the maximum below TOL.
 // 3. Invalid arguments are rejected.
-// Versions with alternative internal paths (V2's softmax variants) run every case once per path that can
-// handle it, so each path is tested on every shape, not only the one the dispatcher picks.
+// Versions with alternative internal paths (V2's softmax variants and tile shapes, V3's tile shapes) run
+// every case once per path that can handle it, so each path is tested on every shape, not only the default.
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -83,6 +83,15 @@ static std::vector<Variant> variants(const AttnVersion& ver) {
                 out.push_back({std::string(phase == ATTN_V2_PHASE_SCORES ? "v2/scores_" : "v2/output_") +
                                    attn_v2_config_name(phase, cfg), r, 0});
             }
+    }
+    if (std::string(ver.name) == "v3") {
+        for (int cfg = 0; cfg < attn_v3_config_count(); ++cfg) {
+            if (cfg == attn_v3_config_default()) continue;  // already covered by "v3"
+            Runner r = [cfg](const float* q, const float* k, const float* v, float* o, float*, int h, int n) {
+                return attn_v3_cfg(q, k, v, o, h, n, cfg, 0);
+            };
+            out.push_back({std::string("v3/") + attn_v3_config_name(cfg), r, 0});
+        }
     }
     return out;
 }

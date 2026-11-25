@@ -124,6 +124,8 @@ N is the number of tokens; M is the number that changed since the last frame.
 | V3 (fused, online softmax) | 0.66-1.2 ms | Compute: 3.2 GFLOP at 35-65% of peak; DRAM traffic only 13 MB |
 | B1 (library attention) | 0.5-1.8 ms | 35-85% of peak (the low end is the rate the whole PyTorch encoder reaches, 2.7 TFLOPS); the math backend also round-trips N x N |
 
+Added 2026-11-25, after V2 and before V3 existed. V2 ran at about 1.5 GHz under the software power cap (`results/attention/v2.json`), not the 1.9 GHz of the FMA peak above. If V3 also sits at that clock, the same efficiencies predict **0.84-1.56 ms** for V3 (peak scaled to 5.92 TFLOPS). V3 moves much less DRAM traffic than V2, so it may run faster than that; both ranges stand.
+
 Gated, at keep-rate k = M / N (G1 against our V3, B2 against B1):
 - G1 recomputing changed rows only (design option 1): break-even near k = 0.8-0.9. At small M the time is set by wave quantisation, 0.05-0.22 ms for k below 0.1, which split-KV would reduce.
 - G1 with the exact update (option 3): break-even near k = 0.42, since updating every unchanged row costs about 2k(1 - k) of dense on top of the changed rows.

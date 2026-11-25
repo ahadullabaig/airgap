@@ -32,6 +32,21 @@
  *   Tile shapes (BM, BN, BK, TM, TN) per phase were chosen by a timed sweep at 12 heads, N = 1024
  *   (results/attention/v2_tune.json); the defaults are in v2.cu.
  *
+ * V3 (fused, one kernel, online softmax, no N x N storage). Grid (ceil(N / BR), H); each thread block owns
+ * BR query rows of one head and walks the keys in tiles of BC (v3.cu, v3_fused):
+ *   1. K and V tiles go into shared memory (K transposed, d-major; V as stored). Q's tile was loaded once,
+ *      transposed.
+ *   2. S = Q K^T for the tile: each thread computes 4 rows x (BC / TC) keys in registers from float4
+ *      shared reads, where TC = NT / (BR / 4) threads share a group of 4 rows (contiguous lanes).
+ *   3. Online softmax per row: tile max and sum by warp shuffles across those TC lanes; the running max m
+ *      and sum l are kept per row, and the output accumulator is rescaled by exp(m_old - m_new).
+ *   4. P (the tile's probabilities) goes to shared memory, transposed; O += P V_tile with each thread
+ *      accumulating 4 rows x (64 / TC) output columns in registers, the same rows it scored.
+ *   At the end O is divided by l and written once. DRAM traffic is Q, K, V and O only (K and V are reread
+ *   per query tile, mostly from L2). No workspace: the workspace argument is ignored and may be NULL.
+ *   Tile shapes (BR, BC, NT) were chosen by a timed sweep at 12 heads, N = 1024
+ *   (results/attention/v3_tune.json); the default is in v3.cu.
+ *
  * Return value of the launch functions: 0 on success, 1 invalid arguments, 3 launch error.
  */
 #ifndef ATTN_H
@@ -80,6 +95,17 @@ int attn_v2_config_default(int phase);
 const char *attn_v2_config_name(int phase, int cfg); /* "BMxBNxBK/TMxTN" */
 int attn_v2_scores_cfg(const float *q, const float *k, float *s, int heads, int n, int cfg, cudaStream_t stream);
 int attn_v2_output_cfg(const float *p, const float *v, float *o, int heads, int n, int cfg, cudaStream_t stream);
+
+/* V3: one fused kernel; no workspace (attn_v3_workspace_bytes returns 0, the argument may be NULL). */
+size_t attn_v3_workspace_bytes(int heads, int n);
+int attn_v3(const float *q, const float *k, const float *v, float *o, float *workspace, int heads, int n,
+            cudaStream_t stream);
+/* V3 tile shapes, for the tests and the sweep. */
+int attn_v3_config_count(void);
+int attn_v3_config_default(void);
+const char *attn_v3_config_name(int cfg); /* "BRxBC/NT" */
+int attn_v3_cfg(const float *q, const float *k, const float *v, float *o, int heads, int n, int cfg,
+                cudaStream_t stream);
 
 #ifdef __cplusplus
 }

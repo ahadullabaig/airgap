@@ -1,0 +1,23 @@
+  void <unnamed>::v3_fused<128, 32, 256>(const float *, const float *, const float *, float *, int, float) (8, 12, 1)x(256, 1, 1), Context 1, Stream 7, Device 0, CC 8.6
+    Section: Command line profiler metrics
+    ----------------------------------------------------------- --------------- ------------
+    Metric Name                                                     Metric Unit Metric Value
+    ----------------------------------------------------------- --------------- ------------
+    dram__bytes_read.sum                                                  Mbyte         9.49
+    dram__bytes_write.sum                                                 Mbyte         3.30
+    dram__throughput.avg.pct_of_peak_sustained_elapsed                        %         4.03
+    gpu__time_duration.sum                                                   ms         1.66
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum                               0
+    l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum                       1,843,200
+    l1tex__data_pipe_lsu_wavefronts_mem_shared.sum                                20,583,659
+    l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum                                  417,792
+    l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum                       sector    1,671,168
+    l1tex__t_sectors_pipe_lsu_mem_local_op_ld.sum                        sector            0
+    l1tex__t_sectors_pipe_lsu_mem_local_op_st.sum                        sector            0
+    l1tex__throughput.avg.pct_of_peak_sustained_active                        %        53.40
+    launch__registers_per_thread                                register/thread           79
+    lts__throughput.avg.pct_of_peak_sustained_elapsed                         %         6.39
+    sm__pipe_fma_cycles_active.avg.pct_of_peak_sustained_active               %        36.30
+    sm__throughput.avg.pct_of_peak_sustained_elapsed                          %        46.70
+    sm__warps_active.avg.pct_of_peak_sustained_active                         %        16.66
+    ----------------------------------------------------------- --------------- ------------

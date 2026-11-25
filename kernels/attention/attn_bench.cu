@@ -7,10 +7,11 @@
 //   same model) are written into the op's params before anything is timed.
 // Groups "x1_n<N>": one head, N from 128 to 32,768 (X1). Each size is its own group, so a failed
 //   allocation (the N x N workspace is 4 GiB at N = 32,768) is recorded without disturbing the others.
-// --tune (V2 only): group "tune_h12_n1024" times every tile configuration of the scores and output
-//   phases (each op runs that phase alone, on the encoder's shape) and the softmax paths that handle
-//   N = 1024. Selection rule, fixed before the sweep: per phase, the configuration with the lowest median
-//   event time among those whose full attention passes the check; it becomes the default in v2.cu.
+// --tune (V2, V3): group "tune_h12_n1024" times every tile configuration on the encoder's shape. V2: each
+//   op runs the scores or output phase alone, plus the softmax paths that handle N = 1024. V3: each op
+//   runs the whole fused kernel with one tile shape. Selection rule, fixed before each sweep: per phase,
+//   the configuration with the lowest median event time among those whose full attention passes the
+//   check; it becomes the default in v2.cu or v3.cu.
 //
 // Every op is checked before timing: sampled rows (row 0, V1's 16-wide and V2's 32/64/128-wide tile edges,
 // the middle, the last rows, in every head) against a double-precision CPU reference, error
@@ -134,6 +135,8 @@ Op make_op(const AttnVersion& ver, const std::string& group, int heads, int n,
     op.params = {{"version", ver.label}, {"heads", std::to_string(heads)}, {"n", std::to_string(n)},
                  {"d", std::to_string(D)}, {"dtype", "fp32"},
                  {"workspace_mib", std::to_string(ver.workspace_bytes(heads, n) / 1048576.0)}};
+    if (std::strcmp(ver.name, "v3") == 0)
+        op.params.push_back({"config", attn_v3_config_name(attn_v3_config_default())});
     if (std::strcmp(ver.name, "v2") == 0) {
         op.params.push_back({"softmax_path", attn_v2_softmax_name(attn_v2_softmax_pick(n))});
         op.params.push_back({"scores_config", attn_v2_config_name(0, attn_v2_config_default(0))});
@@ -209,6 +212,28 @@ Op make_tune_op(const AttnVersion& ver, int phase, int cfg, int softmax_impl) {
     return op;
 }
 
+// V3 tile sweep: one op per tile shape, the whole fused kernel at 12 heads, N = 1024.
+Op make_tune_op_v3(const AttnVersion& ver, int cfg) {
+    auto p = std::make_shared<Problem>();
+    p->heads = 12;
+    p->n = 1024;
+    Op op;
+    op.group = "tune_h12_n1024";
+    op.name = "v3tune_" + std::to_string(cfg);
+    op.params = {{"phase", "fused"}, {"config", attn_v3_config_name(cfg)}, {"heads", "12"}, {"n", "1024"},
+                 {"selection_rule", "the lowest median event time among configurations whose attention passes "
+                                    "the check"}};
+    op.flops = 4.0 * p->heads * double(p->n) * p->n * D;
+    add_buffers(op, p, ver);
+    op.check = [p, cfg] {
+        return check(*p, [cfg](Problem& q, cudaStream_t st) {
+            return attn_v3_cfg(q.dq, q.dk, q.dv, q.dout, q.heads, q.n, cfg, st);
+        });
+    };
+    op.run = [p, cfg](cudaStream_t st) { attn_v3_cfg(p->dq, p->dk, p->dv, p->dout, p->heads, p->n, cfg, st); };
+    return op;
+}
+
 std::vector<std::pair<std::string, std::string>> predictions(const AttnVersion& ver) {
     if (std::strcmp(ver.name, "v1") == 0)
         return {{"predicted_ms", "1.98-4.86"}, {"predicted_scores_ms", "0.72-2.16"},
@@ -216,6 +241,8 @@ std::vector<std::pair<std::string, std::string>> predictions(const AttnVersion& 
     if (std::strcmp(ver.name, "v2") == 0)
         return {{"predicted_ms", "1.16-1.62"}, {"predicted_scores_ms", "0.31-0.54"},
                 {"predicted_softmax_ms", "0.54"}, {"predicted_output_ms", "0.31-0.54"}};
+    if (std::strcmp(ver.name, "v3") == 0)  // the second range assumes V2's measured clock (PLAN.md 3.1)
+        return {{"predicted_ms", "0.67-1.24"}, {"predicted_ms_at_v2_clock", "0.84-1.56"}};
     return {};
 }
 
@@ -233,13 +260,15 @@ int main(int argc, char** argv) {
         if (std::strcmp(argv[i], "--tune") == 0) tune = true;
         else out_path = argv[i];
     }
-    if (tune && std::strcmp(ver.name, "v2") != 0) {
-        fprintf(stderr, "--tune is for v2 only\n");
+    if (tune && std::strcmp(ver.name, "v2") != 0 && std::strcmp(ver.name, "v3") != 0) {
+        fprintf(stderr, "--tune is for v2 and v3\n");
         return 2;
     }
     harness::Runner run(std::string("attention_") + ver.name + (tune ? "_tune" : "_bench"),
                         harness::read_limits("../../results/cuda/peak.json"));
-    if (tune) {
+    if (tune && std::strcmp(ver.name, "v3") == 0) {
+        for (int c = 0; c < attn_v3_config_count(); ++c) run.add(make_tune_op_v3(ver, c));
+    } else if (tune) {
         for (int c = 0; c < attn_v2_config_count(ATTN_V2_PHASE_SCORES); ++c)
             run.add(make_tune_op(ver, ATTN_V2_PHASE_SCORES, c, 0));
         for (int c = 0; c < attn_v2_config_count(ATTN_V2_PHASE_OUTPUT); ++c)
