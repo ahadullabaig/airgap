@@ -1,0 +1,97 @@
+{
+ "video": "data/clips/demo_surfing_dana_point.mp4",
+ "source": "data/clips/surfing_dana_point_1080p.webm (DATA.md)",
+ "segment_of_source_s": [
+  120,
+  300
+ ],
+ "times": "seconds from the start of the cut file",
+ "boundaries": {
+  "cut": "a camera cut: boundary within about 1 s",
+  "gradual": "one continuous flight: boundary within about 5 s"
+ },
+ "written": "Written by Claude (claude-opus-5-5) on 2026-11-27, before any demo run on this video, from still frames: contact sheets of the source video (a frame every 4 s, the chosen segment every 3 s), event boundaries checked on the cut file at 1 s spacing with exact frame times, and a few frames viewed at full size. Not checked by a person. The same session chose the segment after viewing the frames. Movement is inferred from successive stills. Descriptions are plain words, not the demo's event-word list.",
+ "main": "events marked main are the ones a report must name (acceptance test, PLAN.md 2.4)",
+ "events": [
+  {
+   "id": 1,
+   "start_s": 0,
+   "end_s": 8,
+   "boundary": "cut",
+   "main": false,
+   "what": "Low over the open sea towards the sun, with glare; surfers sit on their boards far out."
+  },
+  {
+   "id": 2,
+   "start_s": 9,
+   "end_s": 30,
+   "boundary": "cut",
+   "main": true,
+   "what": "Stand-up paddleboarders ride waves holding paddles: one in an orange top (9-18 s), another in green (about 21-30 s)."
+  },
+  {
+   "id": 3,
+   "start_s": 31,
+   "end_s": 40,
+   "boundary": "cut",
+   "main": false,
+   "what": "A surfer rides a wave close to the camera."
+  },
+  {
+   "id": 4,
+   "start_s": 41,
+   "end_s": 51,
+   "boundary": "cut",
+   "main": true,
+   "what": "Near the shore below a cliff topped by buildings, a group of people stand and wade in the shallow water with boards."
+  },
+  {
+   "id": 5,
+   "start_s": 51,
+   "end_s": 60,
+   "boundary": "cut",
+   "main": false,
+   "what": "Surfers in the white water, one riding a wave."
+  },
+  {
+   "id": 6,
+   "start_s": 61,
+   "end_s": 63,
+   "boundary": "cut",
+   "main": false,
+   "what": "On the beach, people walk across the sand carrying surfboards."
+  },
+  {
+   "id": 7,
+   "start_s": 64,
+   "end_s": 71,
+   "boundary": "cut",
+   "main": false,
+   "what": "Looking down on waves breaking onto the sand, then along a long beach with people on it."
+  },
+  {
+   "id": 8,
+   "start_s": 72,
+   "end_s": 155,
+   "boundary": "cut",
+   "main": true,
+   "what": "Surfers ride waves one after another, with the camera following each closely; others paddle out or sit on their boards."
+  },
+  {
+   "id": 9,
+   "start_s": 155,
+   "end_s": 167,
+   "boundary": "cut",
+   "main": false,
+   "what": "Low sun over the sea and waves breaking towards the camera; a person stands in the shallows."
+  },
+  {
+   "id": 10,
+   "start_s": 168,
+   "end_s": 180,
+   "boundary": "cut",
+   "main": false,
+   "what": "More surfers ride waves."
+  }
+ ]
+}

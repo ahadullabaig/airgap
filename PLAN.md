@@ -107,11 +107,18 @@ before any report is generated, and E2-E4 run on the frozen demo.
   (`results/e1/scores_test.json`; prompt P1 chosen on 100 training clips, `eval/e1_config.json`)
 
 **Demo inputs (before building the report)**
-- [ ] (team) Choose three 2-3 minute aerial videos that we may show in class. ERA clips last about 5.75 s, too short
-  for this; record each video's source and terms in DATA.md
-- [ ] (team) For each video, write down the main events (type, rough time) and commit the list before running the
-  demo on it. This is E3's reference; two people writing separately is better
-- [ ] (team) Name E3's scorers (two, if possible, for agreement)
+- [x] (team) Choose three 2-3 minute aerial videos that we may show in class. ERA clips last about 5.75 s, too short
+  for this; record each video's source and terms in DATA.md. Done 2026-11-27: the authors chose three Wikimedia
+  Commons videos (OR58 truck recovery, Minnesota River flooding, surfing at Dana Point; DATA.md). Claude chose the
+  3-minute segments from contact sheets at the authors' request (`demo/prepare_videos.sh`)
+- [x] (team) For each video, write down the main events (type, rough time) and commit the list before running the
+  demo on it. This is E3's reference; two people writing separately is better. Done 2026-11-27 at the authors'
+  request by Claude, from still frames, not checked by a person (`eval/e3_events/`, provenance in each file). One
+  annotator gives no agreement figure; the write-up must say who wrote the reference and how. A person watching
+  the three 3-minute segments and correcting the lists before the first run would strengthen it
+- [x] (team) Name E3's scorers (two, if possible, for agreement). Decided 2026-11-27 by the authors: Claude scores,
+  by the rule in `eval/e3.py`, fixed before any demo run. Claude also wrote the reference, so one AI wrote it and
+  judged against it; the write-up must say so
 
 **Demo build (2.3, 2.4)**
 - [x] Windowing: window length, frames per window and prompt. Start from E1's frozen settings (P1, 4 frames, no

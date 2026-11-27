@@ -1,0 +1,73 @@
+{
+ "video": "data/clips/demo_minnesota_flood.mp4",
+ "source": "data/clips/minnesota_flood_hwy41_1080p.webm (DATA.md)",
+ "segment_of_source_s": [
+  40,
+  220
+ ],
+ "times": "seconds from the start of the cut file",
+ "boundaries": {
+  "cut": "a camera cut: boundary within about 1 s",
+  "gradual": "one continuous flight: boundary within about 5 s"
+ },
+ "written": "Written by Claude (claude-opus-5-5) on 2026-11-27, before any demo run on this video, from still frames: contact sheets of the source video (a frame every 4 s, the chosen segment every 3 s), event boundaries checked on the cut file at 1 s spacing with exact frame times, and a few frames viewed at full size. Not checked by a person. The same session chose the segment after viewing the frames. Movement is inferred from successive stills. Descriptions are plain words, not the demo's event-word list.",
+ "main": "events marked main are the ones a report must name (acceptance test, PLAN.md 2.4)",
+ "events": [
+  {
+   "id": 1,
+   "start_s": 0,
+   "end_s": 8,
+   "boundary": "gradual",
+   "main": false,
+   "what": "A road bridge over a wide, high, brown river, with woods on both banks."
+  },
+  {
+   "id": 2,
+   "start_s": 6,
+   "end_s": 20,
+   "boundary": "gradual",
+   "main": false,
+   "what": "A divided road runs through woods beside the swollen river, with water standing in the ditches and woods along it; a car is on the road around 14 s."
+  },
+  {
+   "id": 3,
+   "start_s": 20,
+   "end_s": 95,
+   "boundary": "gradual",
+   "main": true,
+   "what": "Ahead, the highway disappears under floodwater: the roadway between two lines of trees is covered by brown water, and water fills the woods and low ground on both sides while the river runs alongside."
+  },
+  {
+   "id": 4,
+   "start_s": 89,
+   "end_s": 116,
+   "boundary": "gradual",
+   "main": true,
+   "what": "A broad sheet of floodwater like a lake, with treetops standing in it and the submerged road crossing it towards farm fields; strong sun glare on the water from about 93 s."
+  },
+  {
+   "id": 5,
+   "start_s": 116,
+   "end_s": 132,
+   "boundary": "gradual",
+   "main": false,
+   "what": "Woods standing in floodwater: rows of bare trees in brown water."
+  },
+  {
+   "id": 6,
+   "start_s": 132,
+   "end_s": 158,
+   "boundary": "gradual",
+   "main": false,
+   "what": "The river between wooded banks, with a road on the strip of land beside it and floodwater in the woods on the far side; a town on the horizon."
+  },
+  {
+   "id": 7,
+   "start_s": 158,
+   "end_s": 180,
+   "boundary": "gradual",
+   "main": false,
+   "what": "The road leads along the river into a town with houses, a church spire and larger buildings; a car is on the road around 170 s."
+  }
+ ]
+}

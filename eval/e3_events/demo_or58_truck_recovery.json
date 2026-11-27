@@ -1,0 +1,76 @@
+{
+ "video": "data/clips/demo_or58_truck_recovery.mp4",
+ "source": "data/clips/or58_truck_recovery.webm (DATA.md)",
+ "segment_of_source_s": [
+  0,
+  180
+ ],
+ "times": "seconds from the start of the cut file",
+ "boundaries": {
+  "cut": "a camera cut: boundary within about 1 s",
+  "gradual": "one continuous flight: boundary within about 5 s"
+ },
+ "written": "Written by Claude (claude-opus-5-5) on 2026-11-27, before any demo run on this video, from still frames: contact sheets of the source video (a frame every 4 s, the chosen segment every 3 s), event boundaries checked on the cut file at 1 s spacing with exact frame times, and a few frames viewed at full size. Not checked by a person. The same session chose the segment after viewing the frames. Movement is inferred from successive stills. Descriptions are plain words, not the demo's event-word list.",
+ "main": "events marked main are the ones a report must name (acceptance test, PLAN.md 2.4)",
+ "events": [
+  {
+   "id": 1,
+   "start_s": 0,
+   "end_s": 34,
+   "boundary": "cut",
+   "main": false,
+   "what": "Flight along a two-lane highway through a steep forested valley. Cars and lorries are on the road; a yellow mobile crane stands on the highway with its boom out over a bare slope, and a queue of vehicles is stopped near it."
+  },
+  {
+   "id": 2,
+   "start_s": 35,
+   "end_s": 38,
+   "boundary": "cut",
+   "main": true,
+   "what": "The wreck at the foot of the embankment: a yellow lorry cab on its side and a long white trailer among rocks, snapped trees and debris, with workers in orange vests beside it.",
+   "found_if": "a crashed, wrecked or overturned lorry/truck (or its trailer) on or below the slope"
+  },
+  {
+   "id": 3,
+   "start_s": 39,
+   "end_s": 71,
+   "boundary": "cut",
+   "main": false,
+   "what": "Looking down on the crane parked in a coned-off lane with its outriggers down and workers on the road; a basket hangs on the slope below. From about 63 s the boom reaches out over the slope; the trailer is at the bottom of the frame from about 60 s."
+  },
+  {
+   "id": 4,
+   "start_s": 72,
+   "end_s": 91,
+   "boundary": "cut",
+   "main": true,
+   "what": "The lorry's cab hangs from the crane's cable above the trees on the slope, higher in later frames (being lifted, inferred).",
+   "found_if": "a truck or truck cab being lifted, hanging from or carried by a crane"
+  },
+  {
+   "id": 5,
+   "start_s": 87,
+   "end_s": 114,
+   "boundary": "gradual",
+   "main": false,
+   "what": "Wider view of the crane on the highway: workers in high-visibility vests around it, cones closing the lane, a tow truck and other vehicles behind; the cab still hangs beside the road."
+  },
+  {
+   "id": 6,
+   "start_s": 115,
+   "end_s": 180,
+   "boundary": "cut",
+   "main": true,
+   "what": "The white trailer hangs nose-down from the crane beside the road (being lifted, inferred), with workers standing on the highway.",
+   "found_if": "a truck trailer being lifted, hanging from or carried by a crane"
+  },
+  {
+   "id": 7,
+   "start_s": 130,
+   "end_s": 180,
+   "boundary": "gradual",
+   "main": false,
+   "what": "A queue of stopped lorries and cars waits further along the road beyond the trailer."
+  }
+ ]
+}
