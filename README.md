@@ -5,7 +5,7 @@
   <img src="docs/assets/banner-light.svg" alt="airgap" width="360">
 </picture>
 
-### Offline mission reports from drone video, on a 4 GB laptop GPU
+### Offline mission reports from drone video, on a laptop GPU
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f?style=flat-square)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](.python-version)
