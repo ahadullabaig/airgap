@@ -35,7 +35,8 @@
    "end_s": 95,
    "boundary": "gradual",
    "main": true,
-   "what": "Ahead, the highway disappears under floodwater: the roadway between two lines of trees is covered by brown water, and water fills the woods and low ground on both sides while the river runs alongside."
+   "what": "Ahead, the highway disappears under floodwater: the roadway between two lines of trees is covered by brown water, and water fills the woods and low ground on both sides while the river runs alongside.",
+   "found_if": "a road or highway covered by water, or flooding / floodwater around a road"
   },
   {
    "id": 4,
@@ -43,7 +44,8 @@
    "end_s": 116,
    "boundary": "gradual",
    "main": true,
-   "what": "A broad sheet of floodwater like a lake, with treetops standing in it and the submerged road crossing it towards farm fields; strong sun glare on the water from about 93 s."
+   "what": "A broad sheet of floodwater like a lake, with treetops standing in it and the submerged road crossing it towards farm fields; strong sun glare on the water from about 93 s.",
+   "found_if": "flooding: floodwater covering land, fields or woods (not just a river)"
   },
   {
    "id": 5,

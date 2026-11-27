@@ -27,7 +27,8 @@
    "end_s": 30,
    "boundary": "cut",
    "main": true,
-   "what": "Stand-up paddleboarders ride waves holding paddles: one in an orange top (9-18 s), another in green (about 21-30 s)."
+   "what": "Stand-up paddleboarders ride waves holding paddles: one in an orange top (9-18 s), another in green (about 21-30 s).",
+   "found_if": "a person on a board holding a paddle (stand-up paddleboarding)"
   },
   {
    "id": 3,
@@ -43,7 +44,8 @@
    "end_s": 51,
    "boundary": "cut",
    "main": true,
-   "what": "Near the shore below a cliff topped by buildings, a group of people stand and wade in the shallow water with boards."
+   "what": "Near the shore below a cliff topped by buildings, a group of people stand and wade in the shallow water with boards.",
+   "found_if": "people standing or wading in shallow water at the shore"
   },
   {
    "id": 5,
@@ -75,7 +77,8 @@
    "end_s": 155,
    "boundary": "cut",
    "main": true,
-   "what": "Surfers ride waves one after another, with the camera following each closely; others paddle out or sit on their boards."
+   "what": "Surfers ride waves one after another, with the camera following each closely; others paddle out or sit on their boards.",
+   "found_if": "people surfing: riding waves on surfboards"
   },
   {
    "id": 9,
