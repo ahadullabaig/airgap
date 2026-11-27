@@ -159,7 +159,7 @@ The caption check's metrics were fixed in a commit before it ran. Every check de
 | [Caption check](eval/gate_captions.py) | Caption quality under each gate on 100 CapERA test clips; [embedding similarity](eval/caption_embed.py) added post hoc. |
 | [Encoder profile](eval/encoder_profile.py) | The deployed bfloat16 encoder: attention is 15% of its GPU time, and the encoder 13% of a caption ([`eval/encoder_share.py`](eval/encoder_share.py)). |
 | [E1](eval/e1.py) | Zero-shot caption quality on the whole CapERA test split. |
-| [E2](eval/e2.py) | Zero-shot event recognition over ERA's 25 classes: the model over-uses "car racing" and never answers "no event". |
+| [E2](eval/e2.py) | Zero-shot event recognition over ERA's 25 classes: the model over-uses "car racing" and never answers "no event" ([confusion matrix](plots/e2_confusion.png)). |
 
 Supporting documents: the [project plan](PLAN.md), with every decision and its date; [data sources and terms](DATA.md); and the annotated [related work](docs/related_work.md).
 
