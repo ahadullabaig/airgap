@@ -129,6 +129,9 @@ before any report is generated, and E2-E4 run on the frozen demo.
 - [ ] (team) Screen recording of a successful run, as the demo-day fallback
 
 **Evaluation (2.5), on the frozen demo**
+
+E2 runs before the freeze (decided 2026-11-27): it uses E1's frozen settings, not the demo's windowing, so it does
+not wait for the demo. Rerun it if the demo changes the model or those settings.
 - [ ] E2 script: the 25 class names in the prompt, answer matched to a class name, unparseable answers counted wrong
   and reported. Parsing rule and metrics committed before the run
 - [ ] E2 run on the test split (about 15-20 min at E1's rate): accuracy, macro-F1, confusion matrix
