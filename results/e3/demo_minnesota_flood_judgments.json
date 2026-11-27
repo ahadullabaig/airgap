@@ -1,0 +1,210 @@
+{
+ "video": "demo_minnesota_flood",
+ "scorer": "Claude (claude-opus-5-5), 2026-11-27, from the four frames the model saw in each window and the event list",
+ "events": {
+  "1": {
+   "described_by": [
+    0,
+    1
+   ],
+   "note": ""
+  },
+  "2": {
+   "described_by": [
+    2
+   ],
+   "note": ""
+  },
+  "3": {
+   "described_by": [],
+   "summary": false,
+   "note": "no caption mentions water on the road or a flood"
+  },
+  "4": {
+   "described_by": [],
+   "summary": false,
+   "note": "windows 17-19 call the floodwater 'a small body of water'"
+  },
+  "5": {
+   "described_by": [],
+   "note": "flooded woods never mentioned"
+  },
+  "6": {
+   "described_by": [
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "note": ""
+  },
+  "7": {
+   "described_by": [
+    28,
+    29
+   ],
+   "note": ""
+  }
+ },
+ "timeline": {
+  "0": {
+   "verdict": "partly",
+   "note": "no person visible on the bridge"
+  },
+  "1": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "2": {
+   "verdict": "partly",
+   "note": "one car visible, not several; colours cannot be confirmed"
+  },
+  "3": {
+   "verdict": "supported",
+   "note": "misses that the road ahead is under water"
+  },
+  "4": {
+   "verdict": "supported",
+   "note": "a bridge is visible far ahead where the road crosses the main channel; misses the flood"
+  },
+  "5": {
+   "verdict": "supported",
+   "note": "misses the flood"
+  },
+  "6": {
+   "verdict": "supported",
+   "note": "misses the flood"
+  },
+  "7": {
+   "verdict": "partly",
+   "note": "no boats"
+  },
+  "8": {
+   "verdict": "partly",
+   "note": "no boats"
+  },
+  "9": {
+   "verdict": "invented",
+   "note": "no people"
+  },
+  "10": {
+   "verdict": "partly",
+   "note": "no boats"
+  },
+  "11": {
+   "verdict": "partly",
+   "note": "no people on the road"
+  },
+  "12": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "13": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "14": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "15": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "16": {
+   "verdict": "partly",
+   "note": "still floodwater, not water flowing rapidly"
+  },
+  "17": {
+   "verdict": "partly",
+   "note": "a lake-sized sheet of floodwater called 'a small body of water'"
+  },
+  "18": {
+   "verdict": "partly",
+   "note": "same as window 17"
+  },
+  "19": {
+   "verdict": "partly",
+   "note": "same as window 17"
+  },
+  "20": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "21": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "22": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "23": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "24": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "25": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "26": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "27": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "28": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "29": {
+   "verdict": "partly",
+   "note": "no people visible on the riverbank"
+  }
+ },
+ "notable": [
+  {
+   "verdict": "invented",
+   "note": "no boats"
+  },
+  {
+   "verdict": "invented",
+   "note": "no boats"
+  }
+ ],
+ "summary": [
+  {
+   "sentence": "The video shows a river flowing through a dense forest, with a bridge crossing the river.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "There are several cars driving on the bridge, and some people are walking along the riverbank.",
+   "verdict": "partly",
+   "note": "one car seen near the town; no people walking"
+  },
+  {
+   "sentence": "The river is brown and muddy, and the trees are lush and green.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "The sky is clear and blue, and the sun is shining brightly.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "There are also some buildings and a bridge visible in the background.",
+   "verdict": "supported",
+   "note": ""
+  }
+ ],
+ "rejudged": "Judged once, then re-judged once for consistency before commit (2026-11-27): notable-events lines as yes/no on their label, the same standard for misnamed objects in every video, 'swimming' judged the same in every section, absence calls checked on frames at 640x360, and borderline captions moved to a separate post hoc list."
+}

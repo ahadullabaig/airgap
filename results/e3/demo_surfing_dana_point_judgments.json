@@ -1,0 +1,251 @@
+{
+ "video": "demo_surfing_dana_point",
+ "scorer": "Claude (claude-opus-5-5), 2026-11-27, from the four frames the model saw in each window and the event list",
+ "events": {
+  "1": {
+   "described_by": [
+    0
+   ],
+   "note": ""
+  },
+  "2": {
+   "described_by": [
+    2,
+    5
+   ],
+   "summary": false,
+   "note": ""
+  },
+  "3": {
+   "described_by": [
+    5,
+    6
+   ],
+   "note": ""
+  },
+  "4": {
+   "described_by": [],
+   "summary": false,
+   "note": "window 8 says 'people standing on the beach'; they stand in the shallows at the shore",
+   "borderline": [
+    8
+   ]
+  },
+  "5": {
+   "described_by": [
+    9
+   ],
+   "note": ""
+  },
+  "6": {
+   "described_by": [
+    10
+   ],
+   "note": ""
+  },
+  "7": {
+   "described_by": [
+    11
+   ],
+   "note": ""
+  },
+  "8": {
+   "described_by": [
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25
+   ],
+   "summary": true,
+   "note": ""
+  },
+  "9": {
+   "described_by": [],
+   "note": "window 26 says 'a person standing on the beach, holding a camera'; the person stands in the white water",
+   "borderline": [
+    26
+   ]
+  },
+  "10": {
+   "described_by": [
+    28,
+    29
+   ],
+   "note": ""
+  }
+ },
+ "timeline": {
+  "0": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "1": {
+   "verdict": "partly",
+   "note": "riding in the sea near the shore, not on the beach"
+  },
+  "2": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "3": {
+   "verdict": "supported",
+   "note": "people on the distant beach are too small to rule out; benefit of the doubt"
+  },
+  "4": {
+   "verdict": "supported",
+   "note": "people on the distant beach are too small to rule out; benefit of the doubt"
+  },
+  "5": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "6": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "7": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "8": {
+   "verdict": "supported",
+   "note": "the people stand in the shallows at the water's edge"
+  },
+  "9": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "10": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "11": {
+   "verdict": "partly",
+   "note": "no swimmers seen"
+  },
+  "12": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "13": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "14": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "15": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "16": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "17": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "18": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "19": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "20": {
+   "verdict": "partly",
+   "note": "the 'swimmers' are surfers paddling on boards"
+  },
+  "21": {
+   "verdict": "partly",
+   "note": "the 'swimmers' are surfers paddling on boards"
+  },
+  "22": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "23": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "24": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "25": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "26": {
+   "verdict": "partly",
+   "note": "a person stands in the shallows, but no camera"
+  },
+  "27": {
+   "verdict": "invented",
+   "note": "no camera or photo, and no person on the beach seen"
+  },
+  "28": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "29": {
+   "verdict": "partly",
+   "note": "the 'swimmer' is a surfer paddling on a board"
+  }
+ },
+ "notable": [
+  {
+   "verdict": "invented",
+   "note": "no swimming or boats in this window"
+  },
+  {
+   "verdict": "invented",
+   "note": "surfers paddling on boards, not swimming or boats"
+  },
+  {
+   "verdict": "invented",
+   "note": "a surfer paddling, not swimming or boats"
+  }
+ ],
+ "summary": [
+  {
+   "sentence": "The video captures a serene and dynamic scene of surfing in the ocean.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "It begins with two people on surfboards enjoying the sunny day, with the ocean waves crashing around them.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "As the video progresses, we see more people on surfboards, including a person riding a wave, and a man standing on the beach, holding a surfboard.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "The video then shifts to a surfer riding a wave on the ocean, with the sun setting in the background.",
+   "verdict": "supported",
+   "note": ""
+  },
+  {
+   "sentence": "The final segment shows a person standing on the beach, taking a photo of the waves, and a surfer riding a wave in the ocean.",
+   "verdict": "partly",
+   "note": "no camera or photo"
+  }
+ ],
+ "rejudged": "Judged once, then re-judged once for consistency before commit (2026-11-27): notable-events lines as yes/no on their label, the same standard for misnamed objects in every video, 'swimming' judged the same in every section, absence calls checked on frames at 640x360, and borderline captions moved to a separate post hoc list."
+}

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Two course projects on one codebase, both on one RTX 3050 Laptop GPU (4 GB, 16 SMs, `sm_86`):
 
 - **Part B (Parallel Programming): a paper**, "Fewer Frames Beat Smarter Kernels" (`paper/`, full draft). FP32 attention kernels V1 (naive), V2 (tiled) and V3 (fused, online softmax) at the SmolVLM2 vision encoder's shape (12 heads, N = 1024, d = 64), plus a measured section on why temporal gating does not pay.
-- **Part A (NLP): an offline aerial-video captioner** on SmolVLM2-500M, with evaluations E1-E4. The demo (`demo/run_mission.py`), E1 and E2 exist, and E4's 50 clips are chosen; `PLAN.md` section 2.6 is the checklist for the rest (demo videos, E3, E4 tagging).
+- **Part A (NLP): an offline aerial-video captioner** on SmolVLM2-500M, with evaluations E1-E4. The demo (`demo/run_mission.py`), E1, E2 and E3 exist (E3 on the three demo videos in `eval/e3_events/`, before any freeze), and E4's 50 clips are chosen; `PLAN.md` section 2.6 is the checklist for the rest (the freeze decision, E4 tagging, the write-up).
 
 `PLAN.md` holds every decision with its date, including the gate decision (section 3.3): the gated kernel G1 is future work. `DATA.md` lists the data sources and their terms.
 
@@ -70,6 +70,8 @@ unshare -rn .venv/bin/python -I demo/run_mission.py --video data/clips/x.mp4 --o
 .venv/bin/python -I eval/e1.py {precheck,select,run,memory,score}
 .venv/bin/python -I eval/e2.py {select,run,score}
 .venv/bin/python -I eval/e4.py {select,show,count}       # E4: 50 clips for the team to tag
+.venv/bin/python -I eval/e3.py score                       # E3: tallies results/e3/*_judgments.json
+bash demo/prepare_videos.sh                               # cut the three demo videos (data/clips/demo_*.mp4)
 .venv/bin/python -I eval/gate_captions.py {check,run,score}
 
 # Paper

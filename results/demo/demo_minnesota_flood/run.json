@@ -1,0 +1,649 @@
+{
+ "video": {
+  "path": "data/clips/demo_minnesota_flood.mp4",
+  "duration_s": 180.0,
+  "fps": 30.0,
+  "width": 1280,
+  "height": 720,
+  "codec": "h264"
+ },
+ "settings": {
+  "window_s": 6.0,
+  "windows": 30,
+  "prompt_id": "P1",
+  "prompt": "These frames are from an aerial drone video, in time order. Describe in one or two sentences what is happening on the ground.",
+  "frames": 4,
+  "image_splitting": false,
+  "max_new_tokens": 48,
+  "dtype": "bfloat16",
+  "decoding": "greedy"
+ },
+ "offline_guard": true,
+ "uncertainty": {
+  "cutoff": -0.8792532682418823,
+  "rule": "uncertain when below the 10th percentile on E1's 100 train selection clips"
+ },
+ "windows": [
+  {
+   "index": 0,
+   "start_s": 0.0,
+   "end_s": 6.0,
+   "frame_times_s": [
+    0.767,
+    2.267,
+    3.767,
+    5.267
+   ],
+   "caption": "The video shows a bridge with a person walking on it, and a river flowing through the area.",
+   "mean_logprob": -0.9325727820396423,
+   "uncertain": true,
+   "new_tokens": 21,
+   "truncated": false,
+   "decode_s": 0.1201,
+   "preprocess_s": 0.1055,
+   "generate_s": 0.9344
+  },
+  {
+   "index": 1,
+   "start_s": 6.0,
+   "end_s": 12.0,
+   "frame_times_s": [
+    6.767,
+    8.267,
+    9.767,
+    11.267
+   ],
+   "caption": "The video shows a bridge over a river, with a road on the bridge and a river flowing beneath it. There are trees and greenery surrounding the area.",
+   "mean_logprob": -0.843146026134491,
+   "uncertain": false,
+   "new_tokens": 32,
+   "truncated": false,
+   "decode_s": 0.2087,
+   "preprocess_s": 0.0892,
+   "generate_s": 0.679
+  },
+  {
+   "index": 2,
+   "start_s": 12.0,
+   "end_s": 18.0,
+   "frame_times_s": [
+    12.767,
+    14.267,
+    15.767,
+    17.267
+   ],
+   "caption": "The video shows a road winding through a dense forest, with a river flowing nearby. There are several cars on the road, including a white car and a black car. The trees are tall and green, and the sky is clear.",
+   "mean_logprob": -0.6874147653579712,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.1978,
+   "preprocess_s": 0.0933,
+   "generate_s": 0.9606
+  },
+  {
+   "index": 3,
+   "start_s": 18.0,
+   "end_s": 24.0,
+   "frame_times_s": [
+    18.767,
+    20.267,
+    21.767,
+    23.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and a road visible in the background.",
+   "mean_logprob": -0.6873724460601807,
+   "uncertain": false,
+   "new_tokens": 29,
+   "truncated": false,
+   "decode_s": 0.1351,
+   "preprocess_s": 0.0946,
+   "generate_s": 0.627
+  },
+  {
+   "index": 4,
+   "start_s": 24.0,
+   "end_s": 30.0,
+   "frame_times_s": [
+    24.767,
+    26.267,
+    27.767,
+    29.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and a road visible on the ground.",
+   "mean_logprob": -0.7027188539505005,
+   "uncertain": false,
+   "new_tokens": 29,
+   "truncated": false,
+   "decode_s": 0.2474,
+   "preprocess_s": 0.095,
+   "generate_s": 0.6212
+  },
+  {
+   "index": 5,
+   "start_s": 30.0,
+   "end_s": 36.0,
+   "frame_times_s": [
+    30.767,
+    32.267,
+    33.767,
+    35.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. The river is brown and muddy, and the trees are green and lush. The sky is blue, and the sun is shining brightly.",
+   "mean_logprob": -0.5983268022537231,
+   "uncertain": false,
+   "new_tokens": 45,
+   "truncated": false,
+   "decode_s": 0.2216,
+   "preprocess_s": 0.0936,
+   "generate_s": 0.9163
+  },
+  {
+   "index": 6,
+   "start_s": 36.0,
+   "end_s": 42.0,
+   "frame_times_s": [
+    36.767,
+    38.267,
+    39.767,
+    41.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees lining the riverbanks. The river is brown and muddy, indicating it might be a river with sediment. The trees are lush and green, suggesting they are healthy and thriving. The",
+   "mean_logprob": -0.7531312704086304,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.1899,
+   "preprocess_s": 0.0917,
+   "generate_s": 0.9607
+  },
+  {
+   "index": 7,
+   "start_s": 42.0,
+   "end_s": 48.0,
+   "frame_times_s": [
+    42.767,
+    44.267,
+    45.767,
+    47.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees lining the riverbanks. There are also some boats on the river, and the water appears to be flowing smoothly.",
+   "mean_logprob": -0.7325068712234497,
+   "uncertain": false,
+   "new_tokens": 36,
+   "truncated": false,
+   "decode_s": 0.1307,
+   "preprocess_s": 0.0898,
+   "generate_s": 0.7403
+  },
+  {
+   "index": 8,
+   "start_s": 48.0,
+   "end_s": 54.0,
+   "frame_times_s": [
+    48.767,
+    50.267,
+    51.767,
+    53.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and bushes lining the riverbanks. There are also some boats on the river, possibly used for transportation or recreation.",
+   "mean_logprob": -0.7082714438438416,
+   "uncertain": false,
+   "new_tokens": 36,
+   "truncated": false,
+   "decode_s": 0.243,
+   "preprocess_s": 0.0917,
+   "generate_s": 0.7482
+  },
+  {
+   "index": 9,
+   "start_s": 54.0,
+   "end_s": 60.0,
+   "frame_times_s": [
+    54.767,
+    56.267,
+    57.767,
+    59.267
+   ],
+   "caption": "There are people walking on the riverbank, and some are standing on the riverbank.",
+   "mean_logprob": -1.0088030099868774,
+   "uncertain": true,
+   "new_tokens": 19,
+   "truncated": false,
+   "decode_s": 0.1904,
+   "preprocess_s": 0.0947,
+   "generate_s": 0.449
+  },
+  {
+   "index": 10,
+   "start_s": 60.0,
+   "end_s": 66.0,
+   "frame_times_s": [
+    60.767,
+    62.267,
+    63.767,
+    65.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and plants growing along the banks. There are also some boats on the river, and a bridge can be seen in the distance. The water in the river is muddy and brown,",
+   "mean_logprob": -0.6975297927856445,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.1415,
+   "preprocess_s": 0.086,
+   "generate_s": 0.9576
+  },
+  {
+   "index": 11,
+   "start_s": 66.0,
+   "end_s": 72.0,
+   "frame_times_s": [
+    66.767,
+    68.267,
+    69.767,
+    71.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are several people walking on the bridge, and some of them are carrying bags. The river is muddy and brown, and the trees are green.",
+   "mean_logprob": -0.7483258247375488,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.237,
+   "preprocess_s": 0.0965,
+   "generate_s": 0.9601
+  },
+  {
+   "index": 12,
+   "start_s": 72.0,
+   "end_s": 78.0,
+   "frame_times_s": [
+    72.767,
+    74.267,
+    75.767,
+    77.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and vegetation on both sides of the river. There are also some buildings and structures visible in the background.",
+   "mean_logprob": -0.6695967316627502,
+   "uncertain": false,
+   "new_tokens": 34,
+   "truncated": false,
+   "decode_s": 0.2049,
+   "preprocess_s": 0.0955,
+   "generate_s": 0.7068
+  },
+  {
+   "index": 13,
+   "start_s": 78.0,
+   "end_s": 84.0,
+   "frame_times_s": [
+    78.767,
+    80.267,
+    81.767,
+    83.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and a road visible on the riverbank.",
+   "mean_logprob": -0.7439414858818054,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.1787,
+   "preprocess_s": 0.0959,
+   "generate_s": 0.6345
+  },
+  {
+   "index": 14,
+   "start_s": 84.0,
+   "end_s": 90.0,
+   "frame_times_s": [
+    84.767,
+    86.267,
+    87.767,
+    89.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge spanning the river. There are trees and a road visible on the riverbank.",
+   "mean_logprob": -0.7601574659347534,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.1352,
+   "preprocess_s": 0.0926,
+   "generate_s": 0.6439
+  },
+  {
+   "index": 15,
+   "start_s": 90.0,
+   "end_s": 96.0,
+   "frame_times_s": [
+    90.767,
+    92.267,
+    93.767,
+    95.267
+   ],
+   "caption": "The video shows a river flowing through a lush green landscape with trees and fields. There are also some buildings and a bridge visible in the background.",
+   "mean_logprob": -0.733458399772644,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.2196,
+   "preprocess_s": 0.0942,
+   "generate_s": 0.6379
+  },
+  {
+   "index": 16,
+   "start_s": 96.0,
+   "end_s": 102.0,
+   "frame_times_s": [
+    96.767,
+    98.267,
+    99.767,
+    101.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and a bridge visible in the background. The water appears to be flowing rapidly, and the camera is capturing the movement of the water as it flows over the riverbed.",
+   "mean_logprob": -0.8050545454025269,
+   "uncertain": false,
+   "new_tokens": 47,
+   "truncated": false,
+   "decode_s": 0.1569,
+   "preprocess_s": 0.0923,
+   "generate_s": 0.9455
+  },
+  {
+   "index": 17,
+   "start_s": 102.0,
+   "end_s": 108.0,
+   "frame_times_s": [
+    102.767,
+    104.267,
+    105.767,
+    107.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and a small body of water in the foreground. There are also some buildings and a bridge visible in the background.",
+   "mean_logprob": -0.7355476021766663,
+   "uncertain": false,
+   "new_tokens": 36,
+   "truncated": false,
+   "decode_s": 0.1324,
+   "preprocess_s": 0.0937,
+   "generate_s": 0.7424
+  },
+  {
+   "index": 18,
+   "start_s": 108.0,
+   "end_s": 114.0,
+   "frame_times_s": [
+    108.767,
+    110.267,
+    111.767,
+    113.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and a small body of water in the foreground. There are also some buildings and a bridge visible in the background.",
+   "mean_logprob": -0.7125247120857239,
+   "uncertain": false,
+   "new_tokens": 36,
+   "truncated": false,
+   "decode_s": 0.2062,
+   "preprocess_s": 0.0906,
+   "generate_s": 0.7426
+  },
+  {
+   "index": 19,
+   "start_s": 114.0,
+   "end_s": 120.0,
+   "frame_times_s": [
+    114.767,
+    116.267,
+    117.767,
+    119.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with trees and a small body of water. There are also some buildings and a bridge visible in the background.",
+   "mean_logprob": -0.7630455493927002,
+   "uncertain": false,
+   "new_tokens": 33,
+   "truncated": false,
+   "decode_s": 0.184,
+   "preprocess_s": 0.0981,
+   "generate_s": 0.6979
+  },
+  {
+   "index": 20,
+   "start_s": 120.0,
+   "end_s": 126.0,
+   "frame_times_s": [
+    120.767,
+    122.267,
+    123.767,
+    125.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge visible in the distance. The river is brown and muddy, and the trees are green and lush. There are no people or animals visible in the video.",
+   "mean_logprob": -0.6407305598258972,
+   "uncertain": false,
+   "new_tokens": 45,
+   "truncated": false,
+   "decode_s": 0.1753,
+   "preprocess_s": 0.0906,
+   "generate_s": 0.914
+  },
+  {
+   "index": 21,
+   "start_s": 126.0,
+   "end_s": 132.0,
+   "frame_times_s": [
+    126.767,
+    128.267,
+    129.767,
+    131.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a town visible in the distance. The river is surrounded by trees and the town is nestled in the background. The sky is clear and blue, and the sun is shining brightly.",
+   "mean_logprob": -0.6714082956314087,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.1484,
+   "preprocess_s": 0.0934,
+   "generate_s": 0.9589
+  },
+  {
+   "index": 22,
+   "start_s": 132.0,
+   "end_s": 138.0,
+   "frame_times_s": [
+    132.767,
+    134.267,
+    135.767,
+    137.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are buildings and trees on the banks of the river.",
+   "mean_logprob": -0.6257469058036804,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.269,
+   "preprocess_s": 0.0889,
+   "generate_s": 0.6466
+  },
+  {
+   "index": 23,
+   "start_s": 138.0,
+   "end_s": 144.0,
+   "frame_times_s": [
+    138.767,
+    140.267,
+    141.767,
+    143.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are buildings and trees on the banks of the river.",
+   "mean_logprob": -0.5943122506141663,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.2259,
+   "preprocess_s": 0.0919,
+   "generate_s": 0.6402
+  },
+  {
+   "index": 24,
+   "start_s": 144.0,
+   "end_s": 150.0,
+   "frame_times_s": [
+    144.767,
+    146.267,
+    147.767,
+    149.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and buildings on the banks of the river.",
+   "mean_logprob": -0.5698183178901672,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.1607,
+   "preprocess_s": 0.0962,
+   "generate_s": 0.6567
+  },
+  {
+   "index": 25,
+   "start_s": 150.0,
+   "end_s": 156.0,
+   "frame_times_s": [
+    150.767,
+    152.267,
+    153.767,
+    155.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and buildings on the banks of the river.",
+   "mean_logprob": -0.6180652976036072,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.1234,
+   "preprocess_s": 0.0908,
+   "generate_s": 0.6374
+  },
+  {
+   "index": 26,
+   "start_s": 156.0,
+   "end_s": 162.0,
+   "frame_times_s": [
+    156.767,
+    158.267,
+    159.767,
+    161.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and buildings on the banks of the river.",
+   "mean_logprob": -0.6232063174247742,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.2417,
+   "preprocess_s": 0.0922,
+   "generate_s": 0.6572
+  },
+  {
+   "index": 27,
+   "start_s": 162.0,
+   "end_s": 168.0,
+   "frame_times_s": [
+    162.767,
+    164.267,
+    165.767,
+    167.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and buildings on the banks of the river.",
+   "mean_logprob": -0.5997821092605591,
+   "uncertain": false,
+   "new_tokens": 30,
+   "truncated": false,
+   "decode_s": 0.2071,
+   "preprocess_s": 0.0934,
+   "generate_s": 0.6422
+  },
+  {
+   "index": 28,
+   "start_s": 168.0,
+   "end_s": 174.0,
+   "frame_times_s": [
+    168.767,
+    170.267,
+    171.767,
+    173.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are trees and buildings on the banks of the river, and a road can be seen on the right side of the river. The sky is clear and",
+   "mean_logprob": -0.584396243095398,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.1503,
+   "preprocess_s": 0.0945,
+   "generate_s": 0.973
+  },
+  {
+   "index": 29,
+   "start_s": 174.0,
+   "end_s": 180.0,
+   "frame_times_s": [
+    174.767,
+    176.267,
+    177.767,
+    179.267
+   ],
+   "caption": "The video shows a river flowing through a forest, with a bridge crossing the river. There are several cars driving on the bridge, and some people are walking along the riverbank.",
+   "mean_logprob": -0.6582863330841064,
+   "uncertain": false,
+   "new_tokens": 37,
+   "truncated": false,
+   "decode_s": 0.2476,
+   "preprocess_s": 0.0992,
+   "generate_s": 0.7632
+  }
+ ],
+ "notable": [
+  {
+   "event": "boats or swimming",
+   "start_s": 42.0,
+   "end_s": 54.0,
+   "caption": "The video shows a river flowing through a forest, with trees and bushes lining the riverbanks. There are also some boats on the river, possibly used for transportation or recreation.",
+   "uncertain": 0,
+   "indices": [
+    7,
+    8
+   ]
+  },
+  {
+   "event": "boats or swimming",
+   "start_s": 60.0,
+   "end_s": 66.0,
+   "caption": "The video shows a river flowing through a forest, with trees and plants growing along the banks. There are also some boats on the river, and a bridge can be seen in the distance. The water in the river is muddy and brown,",
+   "uncertain": 0,
+   "indices": [
+    10
+   ]
+  }
+ ],
+ "summary": {
+  "prompt": "Below are short descriptions of consecutive parts of one aerial drone video, with their times.\n\n{lines}\n\nWrite a summary of the whole video in two or three sentences. Mention only things that appear in the descriptions.",
+  "max_new_tokens": 128,
+  "text": "The video shows a river flowing through a dense forest, with a bridge crossing the river. There are several cars driving on the bridge, and some people are walking along the riverbank. The river is brown and muddy, and the trees are lush and green. The sky is clear and blue, and the sun is shining brightly. There are also some buildings and a bridge visible in the background.",
+  "raw": "The video shows a river flowing through a dense forest, with a bridge crossing the river. There are several cars driving on the bridge, and some people are walking along the riverbank. The river is brown and muddy, and the trees are lush and green. The sky is clear and blue, and the sun is shining brightly. There are also some buildings and a bridge visible in the background.",
+  "truncated": false,
+  "prompt_tokens": 1426
+ },
+ "per_window_s": {
+  "median": 0.9978,
+  "max": 1.2936,
+  "decode_median": 0.19015,
+  "generate_median": 0.7235499999999999
+ },
+ "timing_s": {
+  "model_load": 0.9624028239995823,
+  "captioning": 31.39164765299938,
+  "summary": 1.562381767998886,
+  "total": 33.9276051429988
+ },
+ "memory_mib": {
+  "torch_peak_allocated": 1070.56982421875,
+  "torch_peak_reserved": 1146.0
+ },
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "torch": "2.15.0+cu132"
+ }
+}

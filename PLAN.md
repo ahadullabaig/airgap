@@ -133,15 +133,20 @@ before any report is generated, and E2-E4 run on the frozen demo.
 - [x] `run_mission.py --video X --offline`: one command; logs latency per window and peak VRAM
   (`demo/run_mission.py`; `--offline` also makes Python-level internet connections fail; `unshare -rn` is the
   guarantee)
-- [ ] First full run on one video; set the time budget for a live run. Development runs (2026-11-27, under
+- [x] First full run on one video; set the time budget for a live run. Demo runs (2026-11-27, `unshare -rn`
+  and `--offline`): 24-34 s per 3-minute video, 0.68-1.0 s per window, 1.1 GB peak GPU memory, so a live run fits
+  in under a minute (`results/demo/`). Development runs (2026-11-27, under
   `unshare -rn`), not demo videos: Sheboygan Falls (1:38, 720p) in 16.4 s, 0.82 s per window of which 0.23 s is
   decoding; 25 ERA train clips joined (2:23, 640x640) in 18.7 s, 0.62 s per window; 1.1 GB peak GPU memory; 17-19%
   of windows flagged uncertain. Decoding 1080p or 4K is unmeasured. The summary paragraph invents and reorders
   events on both, which E3 will count
-- [ ] Runs on all three videos
+- [x] Runs on all three videos (2026-11-27, before any freeze; nothing was tuned on them)
 - [ ] Acceptance test (2.4): fresh terminal, `unshare -rn`, `HF_HUB_OFFLINE=1`; each report names its video's main
-  events
-- [ ] Freeze the demo (tag the commit)
+  events. Run 2026-11-27: the offline one-command part passes on all three videos. Naming the main events fails
+  on two of three (E3): OR58 names 1 of 3 (the crane lifting the cab; not the wreck or the trailer), the flood
+  video 0 of 2 (flooding is never mentioned), surfing 2 of 3
+- [x] Freeze the demo (tag the commit). Frozen as it is, 2026-11-27, by the authors' decision: tag `demo-frozen`,
+  the version E3 scored. Any later change to the demo is post hoc for the three demo videos and must be labelled so
 - [ ] (team) Screen recording of a successful run, as the demo-day fallback
 
 **Evaluation (2.5), on the frozen demo**
@@ -153,8 +158,12 @@ not wait for the demo. Rerun it if the demo changes the model or those settings.
   chosen on 200 train clips, `eval/e2_config.json`)
 - [x] E2 run on the test split (8 min, 0.35 s per clip): accuracy 0.410 [0.384, 0.436], macro-F1 0.370 [0.353,
   0.386]; 54 of 1,391 answers match no name; 8 classes are never predicted (`results/e2/scores_test.json`)
-- [ ] (team) E3: score the three reports against the event lists: events found, events claimed that are not in the
-  video, timestamps in the right window; agreement if two scorers
+- [x] (team) E3: score the three reports against the event lists: events found, events claimed that are not in the
+  video, timestamps in the right window; agreement if two scorers. Scored 2026-11-27 by Claude (`eval/e3.py`,
+  `results/e3/`), on the demo as run, before any freeze: main events 3 of 8 found, all in the right window (5 of 8
+  on a lenient reading, post hoc); all events 17 of 24; 2 of 8 main events in the summaries. Timeline captions: 51
+  of 90 fully supported, 37 with a wrong detail, 2 invented; all 11 notable-events lines name an event that is not
+  happening. One scorer, who also wrote the reference: no agreement figure
 - [x] E4: pick about 50 clips across classes (E2's misclassifications plus E1's lowest-CIDEr captions). 50 clips,
   two per class (`eval/e4.py select`, rule in its docstring); 40 of them are E2 errors. The team tags
   `results/e4/tags.csv`; `eval/e4.py show` prints each clip's video path, references and our outputs

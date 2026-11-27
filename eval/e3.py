@@ -18,6 +18,9 @@ Rule:
     partly     its main content is right but a detail is not in the video
     invented   its main content is not in the video
     A notable-events line is judged on its event label: is that event in its windows?
+  Post hoc (added after the first judging, 2026-11-27): an event may also list "borderline" captions, ones
+    that describe it only under a looser reading than found_if (e.g. "a large white object" for the trailer).
+    They give a lenient count, reported beside the rule's count and never instead of it.
   Reported per video and over the three: main events found and in the right window, all events found and in the
   right window, main events in the summary, and the verdict counts per section.
 
@@ -58,14 +61,21 @@ def score_video(name: str) -> dict:
         found = bool(jd["described_by"])
         right = any(wins[k]["start_s"] < e["end_s"] + slack and wins[k]["end_s"] > e["start_s"] - slack
                     for k in jd["described_by"])
+        loose = jd["described_by"] + jd.get("borderline", [])
         rows.append({"id": e["id"], "main": e["main"], "found": found, "right_window": right,
-                     "summary": bool(jd.get("summary")) if e["main"] else None, "described_by": jd["described_by"]})
+                     "lenient_found": bool(loose),
+                     "lenient_right_window": any(wins[k]["start_s"] < e["end_s"] + slack
+                                                 and wins[k]["end_s"] > e["start_s"] - slack for k in loose),
+                     "summary": bool(jd.get("summary")) if e["main"] else None, "described_by": jd["described_by"],
+                     "borderline": jd.get("borderline", [])})
     for section in ("timeline", "notable", "summary"):
         items = j[section].values() if section == "timeline" else j[section]
         assert all(i["verdict"] in VERDICTS for i in items), f"bad verdict in {section}"
 
     def tally(rs):
-        return {"events": len(rs), "found": sum(r["found"] for r in rs), "right_window": sum(r["right_window"] for r in rs)}
+        return {"events": len(rs), "found": sum(r["found"] for r in rs), "right_window": sum(r["right_window"] for r in rs),
+                "lenient_found_post_hoc": sum(r["lenient_found"] for r in rs),
+                "lenient_right_window_post_hoc": sum(r["lenient_right_window"] for r in rs)}
     main = [r for r in rows if r["main"]]
     return {"video": name, "scorer": j["scorer"], "main": tally(main) | {"in_summary": sum(r["summary"] for r in main)},
             "all": tally(rows), "events": rows,
@@ -87,7 +97,8 @@ def score() -> None:
     for p in per + [{"video": "all three", **total}]:
         m, a = p["main"], p["all"]
         print(f"{p['video']:28s} main {m['found']}/{m['events']} found, {m['right_window']} in the right window, "
-              f"{m['in_summary']} in the summary; all {a['found']}/{a['events']} found, {a['right_window']} right window")
+              f"{m['in_summary']} in the summary; all {a['found']}/{a['events']} found, {a['right_window']} right window"
+              f"  [lenient, post hoc: main {m['lenient_found_post_hoc']}, all {a['lenient_found_post_hoc']}]")
         print(f"{'':28s} {p['verdicts']}")
 
 

@@ -1,0 +1,701 @@
+{
+ "video": {
+  "path": "data/clips/demo_or58_truck_recovery.mp4",
+  "duration_s": 180.0,
+  "fps": 30.0,
+  "width": 1280,
+  "height": 720,
+  "codec": "h264"
+ },
+ "settings": {
+  "window_s": 6.0,
+  "windows": 30,
+  "prompt_id": "P1",
+  "prompt": "These frames are from an aerial drone video, in time order. Describe in one or two sentences what is happening on the ground.",
+  "frames": 4,
+  "image_splitting": false,
+  "max_new_tokens": 48,
+  "dtype": "bfloat16",
+  "decoding": "greedy"
+ },
+ "offline_guard": true,
+ "uncertainty": {
+  "cutoff": -0.8792532682418823,
+  "rule": "uncertain when below the 10th percentile on E1's 100 train selection clips"
+ },
+ "windows": [
+  {
+   "index": 0,
+   "start_s": 0.0,
+   "end_s": 6.0,
+   "frame_times_s": [
+    0.767,
+    2.267,
+    3.767,
+    5.267
+   ],
+   "caption": "A car is driving on a road surrounded by trees.",
+   "mean_logprob": -0.8776125907897949,
+   "uncertain": false,
+   "new_tokens": 12,
+   "truncated": false,
+   "decode_s": 0.151,
+   "preprocess_s": 0.1121,
+   "generate_s": 0.7991
+  },
+  {
+   "index": 1,
+   "start_s": 6.0,
+   "end_s": 12.0,
+   "frame_times_s": [
+    6.767,
+    8.267,
+    9.767,
+    11.267
+   ],
+   "caption": "A truck is driving down a road in a forest, and a crane is lifting a truck.",
+   "mean_logprob": -0.7417289018630981,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.2457,
+   "preprocess_s": 0.0926,
+   "generate_s": 0.4515
+  },
+  {
+   "index": 2,
+   "start_s": 12.0,
+   "end_s": 18.0,
+   "frame_times_s": [
+    12.767,
+    14.267,
+    15.767,
+    17.267
+   ],
+   "caption": "A truck is driving down a road in a forest, and a crane is lifting a truck.",
+   "mean_logprob": -0.7612388134002686,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.1941,
+   "preprocess_s": 0.094,
+   "generate_s": 0.4791
+  },
+  {
+   "index": 3,
+   "start_s": 18.0,
+   "end_s": 24.0,
+   "frame_times_s": [
+    18.767,
+    20.267,
+    21.767,
+    23.267
+   ],
+   "caption": "A truck is driving down a road in a forest, and a crane is lifting a truck.",
+   "mean_logprob": -0.7810603380203247,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.1459,
+   "preprocess_s": 0.0944,
+   "generate_s": 0.4558
+  },
+  {
+   "index": 4,
+   "start_s": 24.0,
+   "end_s": 30.0,
+   "frame_times_s": [
+    24.767,
+    26.267,
+    27.767,
+    29.267
+   ],
+   "caption": "A truck is driving down the road, and a crane is lifting a truck.",
+   "mean_logprob": -0.7796335220336914,
+   "uncertain": false,
+   "new_tokens": 17,
+   "truncated": false,
+   "decode_s": 0.2404,
+   "preprocess_s": 0.0934,
+   "generate_s": 0.3972
+  },
+  {
+   "index": 5,
+   "start_s": 30.0,
+   "end_s": 36.0,
+   "frame_times_s": [
+    30.767,
+    32.267,
+    33.767,
+    35.267
+   ],
+   "caption": "There are two trucks on the road, one is yellow and the other is white. There are also some people on the road.",
+   "mean_logprob": -0.6487200260162354,
+   "uncertain": false,
+   "new_tokens": 27,
+   "truncated": false,
+   "decode_s": 0.2082,
+   "preprocess_s": 0.0892,
+   "generate_s": 0.5828
+  },
+  {
+   "index": 6,
+   "start_s": 36.0,
+   "end_s": 42.0,
+   "frame_times_s": [
+    36.767,
+    38.267,
+    39.767,
+    41.267
+   ],
+   "caption": "There are two trucks on the road, one is yellow and the other is white. There are some people standing on the road.",
+   "mean_logprob": -0.6688932776451111,
+   "uncertain": false,
+   "new_tokens": 27,
+   "truncated": false,
+   "decode_s": 0.1429,
+   "preprocess_s": 0.089,
+   "generate_s": 0.578
+  },
+  {
+   "index": 7,
+   "start_s": 42.0,
+   "end_s": 48.0,
+   "frame_times_s": [
+    42.767,
+    44.267,
+    45.767,
+    47.267
+   ],
+   "caption": "A construction site is being worked on, with a crane lifting a large piece of metal. There are several workers on the ground, some of them wearing hard hats.",
+   "mean_logprob": -0.79958575963974,
+   "uncertain": false,
+   "new_tokens": 34,
+   "truncated": false,
+   "decode_s": 0.1723,
+   "preprocess_s": 0.0934,
+   "generate_s": 0.699
+  },
+  {
+   "index": 8,
+   "start_s": 48.0,
+   "end_s": 54.0,
+   "frame_times_s": [
+    48.767,
+    50.267,
+    51.767,
+    53.267
+   ],
+   "caption": "A construction site is being worked on, with a yellow crane and a truck on the road.",
+   "mean_logprob": -0.8890840411186218,
+   "uncertain": true,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.1297,
+   "preprocess_s": 0.0942,
+   "generate_s": 0.4597
+  },
+  {
+   "index": 9,
+   "start_s": 54.0,
+   "end_s": 60.0,
+   "frame_times_s": [
+    54.767,
+    56.267,
+    57.767,
+    59.267
+   ],
+   "caption": "A construction site is being worked on, with a yellow crane and a pile of debris.",
+   "mean_logprob": -1.0136653184890747,
+   "uncertain": true,
+   "new_tokens": 19,
+   "truncated": false,
+   "decode_s": 0.2265,
+   "preprocess_s": 0.0916,
+   "generate_s": 0.4393
+  },
+  {
+   "index": 10,
+   "start_s": 60.0,
+   "end_s": 66.0,
+   "frame_times_s": [
+    60.767,
+    62.267,
+    63.767,
+    65.267
+   ],
+   "caption": "There are two trucks on the road, one is yellow and the other is blue. There are trees and a building in the background.",
+   "mean_logprob": -0.657431423664093,
+   "uncertain": false,
+   "new_tokens": 28,
+   "truncated": false,
+   "decode_s": 0.1916,
+   "preprocess_s": 0.0941,
+   "generate_s": 0.5968
+  },
+  {
+   "index": 11,
+   "start_s": 66.0,
+   "end_s": 72.0,
+   "frame_times_s": [
+    66.767,
+    68.267,
+    69.767,
+    71.267
+   ],
+   "caption": "There is a construction site with a crane and a truck on the road.",
+   "mean_logprob": -0.8127003312110901,
+   "uncertain": false,
+   "new_tokens": 16,
+   "truncated": false,
+   "decode_s": 0.1437,
+   "preprocess_s": 0.0921,
+   "generate_s": 0.3812
+  },
+  {
+   "index": 12,
+   "start_s": 72.0,
+   "end_s": 78.0,
+   "frame_times_s": [
+    72.767,
+    74.267,
+    75.767,
+    77.267
+   ],
+   "caption": "A truck is driving down a steep hill in a forest.",
+   "mean_logprob": -0.8137795925140381,
+   "uncertain": false,
+   "new_tokens": 13,
+   "truncated": false,
+   "decode_s": 0.1356,
+   "preprocess_s": 0.0987,
+   "generate_s": 0.3332
+  },
+  {
+   "index": 13,
+   "start_s": 78.0,
+   "end_s": 84.0,
+   "frame_times_s": [
+    78.767,
+    80.267,
+    81.767,
+    83.267
+   ],
+   "caption": "A truck is driving down a road in a forest, and it's carrying a large pile of rocks.",
+   "mean_logprob": -0.9497976303100586,
+   "uncertain": true,
+   "new_tokens": 22,
+   "truncated": false,
+   "decode_s": 0.2386,
+   "preprocess_s": 0.0953,
+   "generate_s": 0.4974
+  },
+  {
+   "index": 14,
+   "start_s": 84.0,
+   "end_s": 90.0,
+   "frame_times_s": [
+    84.767,
+    86.267,
+    87.767,
+    89.267
+   ],
+   "caption": "A truck is driving down a road, and a crane is lifting a truck.",
+   "mean_logprob": -0.9211348295211792,
+   "uncertain": true,
+   "new_tokens": 17,
+   "truncated": false,
+   "decode_s": 0.1942,
+   "preprocess_s": 0.0931,
+   "generate_s": 0.396
+  },
+  {
+   "index": 15,
+   "start_s": 90.0,
+   "end_s": 96.0,
+   "frame_times_s": [
+    90.767,
+    92.267,
+    93.767,
+    95.267
+   ],
+   "caption": "A yellow truck is driving down a road, and a crane is lifting a large piece of metal.",
+   "mean_logprob": -0.9088293313980103,
+   "uncertain": true,
+   "new_tokens": 21,
+   "truncated": false,
+   "decode_s": 0.1537,
+   "preprocess_s": 0.0903,
+   "generate_s": 0.4761
+  },
+  {
+   "index": 16,
+   "start_s": 96.0,
+   "end_s": 102.0,
+   "frame_times_s": [
+    96.767,
+    98.267,
+    99.767,
+    101.267
+   ],
+   "caption": "A yellow truck is driving down a road, and a yellow crane is lifting a large piece of wood.",
+   "mean_logprob": -0.8908868432044983,
+   "uncertain": true,
+   "new_tokens": 22,
+   "truncated": false,
+   "decode_s": 0.2494,
+   "preprocess_s": 0.093,
+   "generate_s": 0.4939
+  },
+  {
+   "index": 17,
+   "start_s": 102.0,
+   "end_s": 108.0,
+   "frame_times_s": [
+    102.767,
+    104.267,
+    105.767,
+    107.267
+   ],
+   "caption": "There are two trucks and a crane on the road, and a person is standing on the road.",
+   "mean_logprob": -0.8157870173454285,
+   "uncertain": false,
+   "new_tokens": 21,
+   "truncated": false,
+   "decode_s": 0.2186,
+   "preprocess_s": 0.0969,
+   "generate_s": 0.4724
+  },
+  {
+   "index": 18,
+   "start_s": 108.0,
+   "end_s": 114.0,
+   "frame_times_s": [
+    108.767,
+    110.267,
+    111.767,
+    113.267
+   ],
+   "caption": "There are several construction workers on the road, and a crane is being used to lift a large object.",
+   "mean_logprob": -0.9148563146591187,
+   "uncertain": true,
+   "new_tokens": 22,
+   "truncated": false,
+   "decode_s": 0.1668,
+   "preprocess_s": 0.0936,
+   "generate_s": 0.4968
+  },
+  {
+   "index": 19,
+   "start_s": 114.0,
+   "end_s": 120.0,
+   "frame_times_s": [
+    114.767,
+    116.267,
+    117.767,
+    119.267
+   ],
+   "caption": "There are construction workers on the road, and a crane is being used to lift a building.",
+   "mean_logprob": -0.861799955368042,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.1401,
+   "preprocess_s": 0.0955,
+   "generate_s": 0.4576
+  },
+  {
+   "index": 20,
+   "start_s": 120.0,
+   "end_s": 126.0,
+   "frame_times_s": [
+    120.767,
+    122.267,
+    123.767,
+    125.267
+   ],
+   "caption": "There are construction workers on the road, and they are working on a building.",
+   "mean_logprob": -0.7088761329650879,
+   "uncertain": false,
+   "new_tokens": 17,
+   "truncated": false,
+   "decode_s": 0.2153,
+   "preprocess_s": 0.0945,
+   "generate_s": 0.4139
+  },
+  {
+   "index": 21,
+   "start_s": 126.0,
+   "end_s": 132.0,
+   "frame_times_s": [
+    126.767,
+    128.267,
+    129.767,
+    131.267
+   ],
+   "caption": "There are construction workers on the road, and a truck is parked on the side of the road.",
+   "mean_logprob": -0.6156288981437683,
+   "uncertain": false,
+   "new_tokens": 21,
+   "truncated": false,
+   "decode_s": 0.1749,
+   "preprocess_s": 0.0948,
+   "generate_s": 0.471
+  },
+  {
+   "index": 22,
+   "start_s": 132.0,
+   "end_s": 138.0,
+   "frame_times_s": [
+    132.767,
+    134.267,
+    135.767,
+    137.267
+   ],
+   "caption": "There are construction workers on the road, and a truck is driving on the road.",
+   "mean_logprob": -0.6856197714805603,
+   "uncertain": false,
+   "new_tokens": 18,
+   "truncated": false,
+   "decode_s": 0.1418,
+   "preprocess_s": 0.0929,
+   "generate_s": 0.4281
+  },
+  {
+   "index": 23,
+   "start_s": 138.0,
+   "end_s": 144.0,
+   "frame_times_s": [
+    138.767,
+    140.267,
+    141.767,
+    143.267
+   ],
+   "caption": "There are two people walking on the road, one of them is wearing a yellow shirt, and the other is wearing a blue shirt. There is a yellow truck on the road, and a yellow and black car is driving on the road.",
+   "mean_logprob": -0.6516296863555908,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.2235,
+   "preprocess_s": 0.0964,
+   "generate_s": 0.9597
+  },
+  {
+   "index": 24,
+   "start_s": 144.0,
+   "end_s": 150.0,
+   "frame_times_s": [
+    144.767,
+    146.267,
+    147.767,
+    149.267
+   ],
+   "caption": "There are two people walking on the road, one of them is carrying a yellow bag.",
+   "mean_logprob": -0.6793726086616516,
+   "uncertain": false,
+   "new_tokens": 19,
+   "truncated": false,
+   "decode_s": 0.1848,
+   "preprocess_s": 0.0928,
+   "generate_s": 0.4534
+  },
+  {
+   "index": 25,
+   "start_s": 150.0,
+   "end_s": 156.0,
+   "frame_times_s": [
+    150.767,
+    152.267,
+    153.767,
+    155.267
+   ],
+   "caption": "There are several cars and trucks on the road, and a person is walking on the road.",
+   "mean_logprob": -0.7729410529136658,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.1476,
+   "preprocess_s": 0.0961,
+   "generate_s": 0.4554
+  },
+  {
+   "index": 26,
+   "start_s": 156.0,
+   "end_s": 162.0,
+   "frame_times_s": [
+    156.767,
+    158.267,
+    159.767,
+    161.267
+   ],
+   "caption": "There are trucks and cars driving on the road, and a person is walking on the road.",
+   "mean_logprob": -0.7318355441093445,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.2418,
+   "preprocess_s": 0.0946,
+   "generate_s": 0.4615
+  },
+  {
+   "index": 27,
+   "start_s": 162.0,
+   "end_s": 168.0,
+   "frame_times_s": [
+    162.767,
+    164.267,
+    165.767,
+    167.267
+   ],
+   "caption": "There are several trucks and cars on the road, and a person is walking on the road.",
+   "mean_logprob": -0.6952912211418152,
+   "uncertain": false,
+   "new_tokens": 20,
+   "truncated": false,
+   "decode_s": 0.2114,
+   "preprocess_s": 0.0938,
+   "generate_s": 0.4566
+  },
+  {
+   "index": 28,
+   "start_s": 168.0,
+   "end_s": 174.0,
+   "frame_times_s": [
+    168.767,
+    170.267,
+    171.767,
+    173.267
+   ],
+   "caption": "A truck is driving down the road, and a crane is lifting a large white object.",
+   "mean_logprob": -0.7974672317504883,
+   "uncertain": false,
+   "new_tokens": 19,
+   "truncated": false,
+   "decode_s": 0.1706,
+   "preprocess_s": 0.093,
+   "generate_s": 0.4366
+  },
+  {
+   "index": 29,
+   "start_s": 174.0,
+   "end_s": 180.0,
+   "frame_times_s": [
+    174.767,
+    176.267,
+    177.767,
+    179.267
+   ],
+   "caption": "There are two trucks on the road, one is carrying a white object, and the other is carrying a yellow object. There are two people standing on the road, one is wearing a yellow shirt and the other is wearing a blue shirt.",
+   "mean_logprob": -0.5791541337966919,
+   "uncertain": false,
+   "new_tokens": 48,
+   "truncated": true,
+   "decode_s": 0.1192,
+   "preprocess_s": 0.0933,
+   "generate_s": 0.9611
+  }
+ ],
+ "notable": [
+  {
+   "event": "construction",
+   "start_s": 6.0,
+   "end_s": 30.0,
+   "caption": "A truck is driving down a road in a forest, and a crane is lifting a truck.",
+   "uncertain": 0,
+   "indices": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "event": "construction",
+   "start_s": 42.0,
+   "end_s": 60.0,
+   "caption": "A construction site is being worked on, with a crane lifting a large piece of metal. There are several workers on the ground, some of them wearing hard hats.",
+   "uncertain": 2,
+   "indices": [
+    7,
+    8,
+    9
+   ]
+  },
+  {
+   "event": "collapsed or damaged buildings",
+   "start_s": 54.0,
+   "end_s": 60.0,
+   "caption": "A construction site is being worked on, with a yellow crane and a pile of debris.",
+   "uncertain": 1,
+   "indices": [
+    9
+   ]
+  },
+  {
+   "event": "construction",
+   "start_s": 66.0,
+   "end_s": 72.0,
+   "caption": "There is a construction site with a crane and a truck on the road.",
+   "uncertain": 0,
+   "indices": [
+    11
+   ]
+  },
+  {
+   "event": "construction",
+   "start_s": 84.0,
+   "end_s": 138.0,
+   "caption": "There are construction workers on the road, and a truck is parked on the side of the road.",
+   "uncertain": 4,
+   "indices": [
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22
+   ]
+  },
+  {
+   "event": "construction",
+   "start_s": 168.0,
+   "end_s": 174.0,
+   "caption": "A truck is driving down the road, and a crane is lifting a large white object.",
+   "uncertain": 0,
+   "indices": [
+    28
+   ]
+  }
+ ],
+ "summary": {
+  "prompt": "Below are short descriptions of consecutive parts of one aerial drone video, with their times.\n\n{lines}\n\nWrite a summary of the whole video in two or three sentences. Mention only things that appear in the descriptions.",
+  "max_new_tokens": 128,
+  "text": "The video shows a car driving on a road surrounded by trees, a truck driving down a road in a forest, a crane lifting a truck, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest ...",
+  "raw": "The video shows a car driving on a road surrounded by trees, a truck driving down a road in a forest, a crane lifting a truck, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest",
+  "truncated": true,
+  "prompt_tokens": 1020
+ },
+ "per_window_s": {
+  "median": 0.7573000000000001,
+  "max": 1.2796,
+  "decode_median": 0.17985,
+  "generate_median": 0.4606
+ },
+ "timing_s": {
+  "model_load": 1.0411018040031195,
+  "captioning": 23.910543967002013,
+  "summary": 2.414832029000536,
+  "total": 27.385554350999882
+ },
+ "memory_mib": {
+  "torch_peak_allocated": 1067.96826171875,
+  "torch_peak_reserved": 1132.0
+ },
+ "env": {
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "torch": "2.15.0+cu132"
+ }
+}

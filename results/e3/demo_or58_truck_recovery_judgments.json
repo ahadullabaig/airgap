@@ -1,0 +1,224 @@
+{
+ "video": "demo_or58_truck_recovery",
+ "scorer": "Claude (claude-opus-5-5), 2026-11-27, from the four frames the model saw in each window and the event list",
+ "events": {
+  "1": {
+   "described_by": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "summary": false,
+   "note": ""
+  },
+  "2": {
+   "described_by": [],
+   "summary": false,
+   "note": "windows 5-6 see a yellow and a white truck but not that they crashed"
+  },
+  "3": {
+   "described_by": [
+    7,
+    8,
+    9,
+    11
+   ],
+   "summary": false,
+   "note": ""
+  },
+  "4": {
+   "described_by": [
+    1,
+    2,
+    3,
+    4,
+    14
+   ],
+   "summary": true,
+   "note": "windows 1-4 claim the lift before it happens; window 14 is at the right time"
+  },
+  "5": {
+   "described_by": [
+    17,
+    18
+   ],
+   "summary": false,
+   "note": ""
+  },
+  "6": {
+   "described_by": [],
+   "summary": false,
+   "note": "window 28 says 'a crane is lifting a large white object' (the trailer, not named); window 19 says 'a building'",
+   "borderline": [
+    28
+   ]
+  },
+  "7": {
+   "described_by": [
+    25,
+    26,
+    27
+   ],
+   "summary": false,
+   "note": ""
+  }
+ },
+ "timeline": {
+  "0": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "1": {
+   "verdict": "partly",
+   "note": "the crane is set up with its boom out; it is not lifting a truck yet"
+  },
+  "2": {
+   "verdict": "partly",
+   "note": "same as window 1"
+  },
+  "3": {
+   "verdict": "partly",
+   "note": "same as window 1"
+  },
+  "4": {
+   "verdict": "partly",
+   "note": "same as window 1"
+  },
+  "5": {
+   "verdict": "partly",
+   "note": "the yellow and white trucks are the wreck below the road, not on it"
+  },
+  "6": {
+   "verdict": "partly",
+   "note": "same as window 5"
+  },
+  "7": {
+   "verdict": "partly",
+   "note": "a crash recovery, not a construction site; hard hats not visible"
+  },
+  "8": {
+   "verdict": "partly",
+   "note": "a crash recovery, not a construction site"
+  },
+  "9": {
+   "verdict": "partly",
+   "note": "not a construction site; the 'debris' is the rocky slope"
+  },
+  "10": {
+   "verdict": "partly",
+   "note": "no building; the white object is the trailer"
+  },
+  "11": {
+   "verdict": "partly",
+   "note": "not a construction site"
+  },
+  "12": {
+   "verdict": "partly",
+   "note": "the cab hangs from the crane; it is not driving"
+  },
+  "13": {
+   "verdict": "partly",
+   "note": "not driving on a road; it carries no rocks"
+  },
+  "14": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "15": {
+   "verdict": "supported",
+   "note": "the 'large piece of metal' is the cab"
+  },
+  "16": {
+   "verdict": "partly",
+   "note": "the 'wood' is the cab"
+  },
+  "17": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "18": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "19": {
+   "verdict": "partly",
+   "note": "the 'building' is the trailer"
+  },
+  "20": {
+   "verdict": "partly",
+   "note": "no building"
+  },
+  "21": {
+   "verdict": "partly",
+   "note": "the 'parked truck' is the trailer hanging beside the road"
+  },
+  "22": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "23": {
+   "verdict": "partly",
+   "note": "shirt and car colours cannot be confirmed"
+  },
+  "24": {
+   "verdict": "partly",
+   "note": "no bag seen"
+  },
+  "25": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "26": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "27": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "28": {
+   "verdict": "supported",
+   "note": ""
+  },
+  "29": {
+   "verdict": "partly",
+   "note": "the trucks are not carrying the objects; colours cannot be confirmed"
+  }
+ },
+ "notable": [
+  {
+   "verdict": "invented",
+   "note": "no construction: a crash recovery with a crane"
+  },
+  {
+   "verdict": "invented",
+   "note": "no construction"
+  },
+  {
+   "verdict": "invented",
+   "note": "no collapsed or damaged buildings"
+  },
+  {
+   "verdict": "invented",
+   "note": "no construction"
+  },
+  {
+   "verdict": "invented",
+   "note": "no construction"
+  },
+  {
+   "verdict": "invented",
+   "note": "no construction"
+  }
+ ],
+ "summary": [
+  {
+   "sentence": "The video shows a car driving on a road surrounded by trees, a truck driving down a road in a forest, a crane lifting a truck, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest, a truck driving down a road in a forest ...",
+   "verdict": "partly",
+   "note": "the first three clauses are right; then one clause repeats about ten times until the length limit"
+  }
+ ],
+ "rejudged": "Judged once, then re-judged once for consistency before commit (2026-11-27): notable-events lines as yes/no on their label, the same standard for misnamed objects in every video, 'swimming' judged the same in every section, absence calls checked on frames at 640x360, and borderline captions moved to a separate post hoc list."
+}
