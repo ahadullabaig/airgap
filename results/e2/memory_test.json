@@ -1,0 +1,7 @@
+{
+ "torch_peak_allocated_mib": 1067.97119140625,
+ "torch_peak_reserved_mib": 1102.0,
+ "device_used_mib": 1230.625,
+ "device_total_mib": 3790.0,
+ "note": "the last run session only (the run is resumable); device_used includes the CUDA context and other processes"
+}

@@ -132,9 +132,11 @@ before any report is generated, and E2-E4 run on the frozen demo.
 
 E2 runs before the freeze (decided 2026-11-27): it uses E1's frozen settings, not the demo's windowing, so it does
 not wait for the demo. Rerun it if the demo changes the model or those settings.
-- [ ] E2 script: the 25 class names in the prompt, answer matched to a class name, unparseable answers counted wrong
-  and reported. Parsing rule and metrics committed before the run
-- [ ] E2 run on the test split (about 15-20 min at E1's rate): accuracy, macro-F1, confusion matrix
+- [x] E2 script: the 25 class names in the prompt, answer matched to a class name, unparseable answers counted wrong
+  and reported. Parsing rule and metrics committed before the run (`96fcd01`; prompt P3, one option per line,
+  chosen on 200 train clips, `eval/e2_config.json`)
+- [x] E2 run on the test split (8 min, 0.35 s per clip): accuracy 0.410 [0.384, 0.436], macro-F1 0.370 [0.353,
+  0.386]; 54 of 1,391 answers match no name; 8 classes are never predicted (`results/e2/scores_test.json`)
 - [ ] (team) E3: score the three reports against the event lists: events found, events claimed that are not in the
   video, timestamps in the right window; agreement if two scorers
 - [ ] E4: pick about 50 clips across classes (E2's misclassifications plus E1's lowest-CIDEr captions)

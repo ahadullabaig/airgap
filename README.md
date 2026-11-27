@@ -116,10 +116,10 @@ The NLP part of the project is an offline command-line tool, in progress. Pointe
 | Model captions a clip with the network off | Done ([`demo/caption_clip.py`](demo/caption_clip.py)) |
 | **E1:** caption quality, zero-shot, all 1,391 CapERA test clips | Done: CIDEr 0.210, BLEU-4 0.059, METEOR 0.168, ROUGE-L 0.304; median 0.66 s per clip ([`results/e1/scores_test.json`](results/e1/scores_test.json)) |
 | `run_mission.py`: windows, report, uncertain items | Next |
-| **E2:** event recognition over 25 classes | Next |
+| **E2:** event recognition over 25 classes, zero-shot, all 1,391 test clips | Done: accuracy 0.410, macro-F1 0.370 (always answering the largest class: 0.111 and 0.008); 0.35 s per clip ([`results/e2/scores_test.json`](results/e2/scores_test.json)) |
 | **E3, E4:** scoring the reports; error analysis | After the demo is frozen |
 
-<sub>E1's prompt was chosen on 100 training clips before any test caption was generated. CapERA's five references per clip are one human caption and four paraphrases of it, and CapERA's own benchmark models are trained on it, so these zero-shot numbers are not comparable with theirs.</sub>
+<sub>E1's prompt was chosen on 100 training clips and E2's on 200, each before its own test run. CapERA's five references per clip are one human caption and four paraphrases of it, and CapERA's own benchmark models are trained on it, so these zero-shot numbers are not comparable with theirs.</sub>
 
 ## Reproducing the paper
 
@@ -159,6 +159,7 @@ The caption check's metrics were fixed in a commit before it ran. Every check de
 | [Caption check](eval/gate_captions.py) | Caption quality under each gate on 100 CapERA test clips; [embedding similarity](eval/caption_embed.py) added post hoc. |
 | [Encoder profile](eval/encoder_profile.py) | The deployed bfloat16 encoder: attention is 15% of its GPU time, and the encoder 13% of a caption ([`eval/encoder_share.py`](eval/encoder_share.py)). |
 | [E1](eval/e1.py) | Zero-shot caption quality on the whole CapERA test split. |
+| [E2](eval/e2.py) | Zero-shot event recognition over ERA's 25 classes: the model over-uses "car racing" and never answers "no event". |
 
 Supporting documents: the [project plan](PLAN.md), with every decision and its date; [data sources and terms](DATA.md); and the annotated [related work](docs/related_work.md).
 
@@ -184,7 +185,7 @@ kernels/
   microbench/    measured FMA, DRAM and launch limits
   smoke/         toolchain check
 bench/           Python drivers: PyTorch baselines, predictions, clock pin, X2 breakdown, ERA scans, token traces
-eval/            captioner evaluation (E1), caption-level gating check, encoder profile
+eval/            captioner evaluation (E1, E2), caption-level gating check, encoder profile
 demo/            offline captioning of one clip; frame decoding
 results/         committed result files: every number and figure is generated from these
 plots/           working plots from the experiments; the paper's figures supersede them
