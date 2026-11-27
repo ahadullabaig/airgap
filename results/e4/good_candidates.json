@@ -1,0 +1,202 @@
+[
+ {
+  "id": "Baseball_046.mp4",
+  "cls": "Baseball",
+  "e2_answer": "baseball",
+  "e2_right": 1,
+  "e1_caption": "There are people playing baseball on the field, and a baseball player is running towards the camera.",
+  "e1_cider": 1.262
+ },
+ {
+  "id": "Basketball_043.mp4",
+  "cls": "Basketball",
+  "e2_answer": "basketball.",
+  "e2_right": 1,
+  "e1_caption": "A group of people are playing basketball on a basketball court.",
+  "e1_cider": 2.933
+ },
+ {
+  "id": "Boating_016.mp4",
+  "cls": "Boating",
+  "e2_answer": "boating.",
+  "e2_right": 1,
+  "e1_caption": "A person is rowing a boat on a river.",
+  "e1_cider": 1.382
+ },
+ {
+  "id": "CarRacing_010.mp4",
+  "cls": "CarRacing",
+  "e2_answer": "car racing",
+  "e2_right": 1,
+  "e1_caption": "There are two cars racing on the track, one is blue and the other is yellow.",
+  "e1_cider": 0.743
+ },
+ {
+  "id": "Concert_041.mp4",
+  "cls": "Concert",
+  "e2_answer": "concert",
+  "e2_right": 1,
+  "e1_caption": "The video shows a concert with a stage, a band, and a large audience.",
+  "e1_cider": 0.644
+ },
+ {
+  "id": "Conflict_013.mp4",
+  "cls": "Conflict",
+  "e2_answer": "conflict",
+  "e2_right": 1,
+  "e1_caption": "A large crowd of people are gathered in a public square, some holding signs and flags.",
+  "e1_cider": 0.361
+ },
+ {
+  "id": "Constructing_029.mp4",
+  "cls": "Constructing",
+  "e2_answer": "construction.",
+  "e2_right": 1,
+  "e1_caption": "There are several buildings under construction, and a river flowing nearby.",
+  "e1_cider": 1.348
+ },
+ {
+  "id": "Cycling_015.mp4",
+  "cls": "Cycling",
+  "e2_answer": "cycling",
+  "e2_right": 1,
+  "e1_caption": "A person is riding a bike on a mountain road.",
+  "e1_cider": 2.609
+ },
+ {
+  "id": "Fire_044.mp4",
+  "cls": "Fire",
+  "e2_answer": "fire",
+  "e2_right": 1,
+  "e1_caption": "There is a fire in a house, and firefighters are trying to put it out.",
+  "e1_cider": 1.367
+ },
+ {
+  "id": "Flood_028.mp4",
+  "cls": "Flood",
+  "e2_answer": "flood",
+  "e2_right": 1,
+  "e1_caption": "The video shows a flooded area with houses and trees.",
+  "e1_cider": 0.894
+ },
+ {
+  "id": "Harvesting_023.mp4",
+  "cls": "Harvesting",
+  "e2_answer": "harvesting",
+  "e2_right": 1,
+  "e1_caption": "A red tractor is harvesting a field of wheat.",
+  "e1_cider": 0.673
+ },
+ {
+  "id": "Landslide_035.mp4",
+  "cls": "Landslide",
+  "e2_answer": "landslide",
+  "e2_right": 1,
+  "e1_caption": "The video shows a road going up a steep hill, with a lot of trees and greenery on the sides.",
+  "e1_cider": 0.054
+ },
+ {
+  "id": "Mudslide_015.mp4",
+  "cls": "Mudslide",
+  "e2_answer": "flood",
+  "e2_right": 0,
+  "e1_caption": "The video shows a flooded area with houses and trees, and a person walking through the water.",
+  "e1_cider": 0.648
+ },
+ {
+  "id": "NonEvent_088.mp4",
+  "cls": "NonEvent",
+  "e2_answer": "car racing",
+  "e2_right": 0,
+  "e1_caption": "There are people walking on the cliff, and a waterfall cascading down the cliff.",
+  "e1_cider": 1.079
+ },
+ {
+  "id": "ParadeProtest_031.mp4",
+  "cls": "ParadeProtest",
+  "e2_answer": "parade or protest",
+  "e2_right": 1,
+  "e1_caption": "A large crowd of people are gathered in a park, holding flags and banners.",
+  "e1_cider": 1.124
+ },
+ {
+  "id": "Party_048.mp4",
+  "cls": "Party",
+  "e2_answer": "boating.",
+  "e2_right": 0,
+  "e1_caption": "A group of people are riding a boat on the water.",
+  "e1_cider": 1.138
+ },
+ {
+  "id": "Ploughing_051.mp4",
+  "cls": "Ploughing",
+  "e2_answer": "ploughing",
+  "e2_right": 1,
+  "e1_caption": "A farmer is using a tractor to plow the field.",
+  "e1_cider": 0.274
+ },
+ {
+  "id": "PoliceChase_004.mp4",
+  "cls": "PoliceChase",
+  "e2_answer": "car racing",
+  "e2_right": 0,
+  "e1_caption": "There are police officers standing near a black car and a silver car.",
+  "e1_cider": 1.284
+ },
+ {
+  "id": "PostEarthquake_007.mp4",
+  "cls": "PostEarthquake",
+  "e2_answer": "construction.",
+  "e2_right": 0,
+  "e1_caption": "There are cranes and construction materials on the ground, and a building under construction.",
+  "e1_cider": 1.376
+ },
+ {
+  "id": "ReligiousActivity_035.mp4",
+  "cls": "ReligiousActivity",
+  "e2_answer": "concert",
+  "e2_right": 0,
+  "e1_caption": "There are many people standing in a line, some of them are holding candles.",
+  "e1_cider": 0.605
+ },
+ {
+  "id": "Running_083.mp4",
+  "cls": "Running",
+  "e2_answer": "running",
+  "e2_right": 1,
+  "e1_caption": "A person is running on a road, and the camera is capturing the scene from above.",
+  "e1_cider": 0.259
+ },
+ {
+  "id": "Soccer_060.mp4",
+  "cls": "Soccer",
+  "e2_answer": "soccer.",
+  "e2_right": 1,
+  "e1_caption": "There are children playing soccer on a field with houses in the background.",
+  "e1_cider": 1.512
+ },
+ {
+  "id": "Swimming_010.mp4",
+  "cls": "Swimming",
+  "e2_answer": "swimming",
+  "e2_right": 1,
+  "e1_caption": "There are people swimming in the pool, and some are wearing swim caps.",
+  "e1_cider": 1.139
+ },
+ {
+  "id": "TrafficCollision_016.mp4",
+  "cls": "TrafficCollision",
+  "e2_answer": "car racing",
+  "e2_right": 0,
+  "e1_caption": "There are many cars and trucks on the road, and some people are walking around.",
+  "e1_cider": 1.079
+ },
+ {
+  "id": "TrafficCongestion_006.mp4",
+  "cls": "TrafficCongestion",
+  "e2_answer": "car racing",
+  "e2_right": 0,
+  "e1_caption": "There are many cars parked in rows on the ground.",
+  "e1_cider": 0.592
+ }
+]
