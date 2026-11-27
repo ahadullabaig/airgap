@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Two course projects on one codebase, both on one RTX 3050 Laptop GPU (4 GB, 16 SMs, `sm_86`):
 
 - **Part B (Parallel Programming): a paper**, "Fewer Frames Beat Smarter Kernels" (`paper/`, full draft). FP32 attention kernels V1 (naive), V2 (tiled) and V3 (fused, online softmax) at the SmolVLM2 vision encoder's shape (12 heads, N = 1024, d = 64), plus a measured section on why temporal gating does not pay.
-- **Part A (NLP): an offline aerial-video captioner** on SmolVLM2-500M, with evaluations E1-E4. The demo (`demo/run_mission.py`), E1, E2 and E3 exist (E3 on the three demo videos in `eval/e3_events/`, before any freeze), E4 is tagged, and the evaluation is written up in `docs/part_a_evaluation.md`; `PLAN.md` section 2.6 lists what remains (the team's slides, screen recording and rehearsal).
+- **Part A (NLP): an offline aerial-video captioner** on SmolVLM2-500M, with evaluations E1-E4. The demo (`demo/run_mission.py`), E1, E2 and E3 exist (E3 on the three demo videos in `eval/e3_events/`, before any freeze), E4 is tagged, and the evaluation is written up in `docs/evaluation.md`; every item in `PLAN.md` section 2.6 is done except the acceptance test, which was run and failed (its result is reported).
 
 `PLAN.md` holds every decision with its date, including the gate decision (section 3.3): the gated kernel G1 is future work. `DATA.md` lists the data sources and their terms.
 

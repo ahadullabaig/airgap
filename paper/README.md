@@ -1,11 +1,11 @@
-# Part B paper (Parallel Programming)
+# Paper: *Fewer Frames Beat Smarter Kernels*
 
 *Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on a Laptop GPU.* IEEE conference
 format (`IEEEtran.cls` v1.8b, conference mode, US Letter), 8-page limit. Scope, decided 2026-11-25: the floor
 paper (kernel ladder, where the time goes, memory wall) plus a measured section on why temporal gating does not
-pay for this captioning pipeline (PLAN.md section 3.3).
+pay for this captioning pipeline.
 
-Status: **full draft**, six pages. Before submission, the authors check every citation and their author details.
+Status: **full draft**, six pages; every citation and the author details checked by the authors (2026-11-27).
 `main.tex` marks anything still needing an author's decision with a red `[pending: ...]` note; none are left.
 
 ## Build

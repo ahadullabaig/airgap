@@ -1,6 +1,6 @@
-# Part A evaluation: an offline aerial-video captioner
+# Evaluation: offline mission reports from aerial video
 
-This is the evaluation of Part A, the NLP project: an offline tool that captions aerial video with SmolVLM2-500M and writes a timestamped mission report. It covers the four evaluations in [`PLAN.md`](../PLAN.md) section 2.5. **E1** measures caption quality, **E2** event recognition, **E3** the demo's reports against event lists, and **E4** is an error analysis. Every number below comes from a committed result file, named beside it. Everything was run on one RTX 3050 Laptop GPU (4 GB) with the network off.
+This document evaluates airgap, an offline tool that captions aerial video with SmolVLM2-500M and writes a timestamped mission report. It covers four evaluations: **E1** measures caption quality, **E2** event recognition, **E3** the demo's reports against event lists, and **E4** is an error analysis. Every number below comes from a committed result file, named beside it. Everything was run on one RTX 3050 Laptop GPU (4 GB) with the network off.
 
 All results are **zero-shot**, as far as the model card shows: nothing was trained or fine-tuned on CapERA or ERA, and neither dataset is among the model's named training sets. CapERA's own benchmark models are trained on CapERA, so the numbers here do not belong in a table beside theirs.
 
@@ -70,7 +70,7 @@ The model was shown each test clip with the 25 class names, one per line, and as
 
 The demo ran once on each of the three videos, with the network off, before it was frozen; nothing was tuned on them. Each video's event list (the reference) was written and committed before its run, with the main events marked ([`eval/e3_events/`](../eval/e3_events)). The scoring rule was also committed before the runs ([`eval/e3.py`](../eval/e3.py)). Source: [`results/e3/scores.json`](../results/e3/scores.json), reports in [`results/demo/`](../results/demo).
 
-**Acceptance test** ([`PLAN.md`](../PLAN.md) 2.4). The offline, one-command part passes on all three videos. "Each report names its video's main events" **fails on all three** under the committed rule; surfing would pass only on the lenient reading:
+**Acceptance test.** The test asks for one command, run with no network, whose report names each video's main events. The offline, one-command part passes on all three videos. "Each report names its video's main events" **fails on all three** under the committed rule; surfing would pass only on the lenient reading:
 
 | Video | Main events named | All events named | Run time |
 |---|---|---|---|
@@ -174,4 +174,4 @@ unshare -rn .venv/bin/python -I demo/run_mission.py --video data/clips/demo_surf
 .venv/bin/python -I eval/e4.py count          # E4 from the committed tags
 ```
 
-Rerunning the GPU steps (`e1.py run`, `e2.py run`, `run_mission.py` without `--out`) overwrites the committed results; see [`CLAUDE.md`](../CLAUDE.md).
+Rerunning the GPU steps (`e1.py run`, `e2.py run`, `run_mission.py` without `--out`) overwrites the committed results; see [Reproducing the results](../README.md#reproducing-the-results) in the README.

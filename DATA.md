@@ -16,7 +16,7 @@ data/clips/                             other aerial clips (test clips, demo can
 | Item | Source | Terms |
 |---|---|---|
 | SmolVLM2-500M-Video-Instruct | https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Video-Instruct | See the model card |
-| CapERA captions | https://github.com/yakoubbazi/CapEra (`dataset/*.json`) | No licence stated; coursework only until confirmed |
+| CapERA captions | https://github.com/yakoubbazi/CapEra (`dataset/*.json`) | No licence stated: used for research only, and the reference captions are not redistributed |
 | ERA videos | https://lcmou.github.io/ERA_Dataset (Google Drive, `ERA_Dataset.zip`) | Academic use only; do not redistribute (`data/era/README.txt`). No ERA frames in the repo, artifacts or outside services; numbers and file names only |
 | `clips/sheboygan_falls.webm` | https://commons.wikimedia.org/wiki/File:Sheboygan_Falls,_Wisconsin;_aerial_drone_video.webm | CC BY 3.0 (attribution required if shown publicly). Used to develop `demo/run_mission.py`, so not a demo video for E3; it also shows a TV station's logo and a place-name banner, which the model reads |
 | `clips/or58_truck_recovery.webm` (demo video) | https://commons.wikimedia.org/wiki/File:OR58_Truck_Recovery_drone_video.webm (original file, 1080p) | CC BY 2.0, Oregon Department of Transportation (via Flickr). Credit when shown |

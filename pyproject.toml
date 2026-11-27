@@ -1,7 +1,7 @@
 [project]
 name = "airgap"
 version = "0.1.0"
-description = "Onboard drone perception: offline VLM demo (Part A) and attention-kernel benchmarks (Part B)"
+description = "Offline mission reports from drone video on a laptop GPU, and a measurement study of attention kernels and temporal gating"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "torch",

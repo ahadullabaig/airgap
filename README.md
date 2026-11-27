@@ -132,7 +132,7 @@ The captioning settings, the confidence cutoff and the event lexicon were all fi
 
 ## Evaluation
 
-Four evaluations, all zero-shot and all with their rules committed before they ran. Methods and every number: [the full evaluation report](docs/part_a_evaluation.md).
+Four evaluations, all zero-shot and all with their rules committed before they ran. Methods and every number: [the full evaluation report](docs/evaluation.md).
 
 | Evaluation | Data | Result | For scale |
 |---|---|---|---|
@@ -178,7 +178,7 @@ Decoding runs on the CPU: 0.14–0.19 s per window for the 720p H.264 test fligh
 ## Research: attention and temporal redundancy
 
 > [!NOTE]
-> **Paper draft.** A. U. Baig, D. Gera and C. G, "Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on a Laptop GPU." IEEE conference format, six pages; the PDF is in the [latest release](https://github.com/ahadullabaig/airgap/releases/latest). Citations and author details are still being checked before submission.
+> **Paper draft.** A. U. Baig, D. Gera and C. G, "Fewer Frames Beat Smarter Kernels: Attention, Clocks and Temporal Redundancy on a Laptop GPU." IEEE conference format, six pages; the PDF is in the [latest release](https://github.com/ahadullabaig/airgap/releases/latest).
 
 SmolVLM2's vision encoder sees each frame as 1024 tokens, and aerial footage often changes little from one frame to the next. That raises two questions for a small GPU. Where does attention's time go at this shape? And is it worth a kernel that recomputes only the tokens that changed?
 

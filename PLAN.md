@@ -150,7 +150,7 @@ before any report is generated, and E2-E4 run on the frozen demo.
   post hoc reading). Commit 129279e's message says "two of three"; that was wrong
 - [x] Freeze the demo (tag the commit). Frozen as it is, 2026-11-27, by the authors' decision: tag `demo-frozen`,
   the version E3 scored. Any later change to the demo is post hoc for the three demo videos and must be labelled so
-- [ ] (team) Screen recording of a successful run, as the demo-day fallback
+- [x] (team) Screen recording of a successful run, as the demo-day fallback. Done (reported by the authors, 2026-11-27)
 
 **Evaluation (2.5), on the frozen demo**
 
@@ -180,9 +180,10 @@ not wait for the demo. Rerun it if the demo changes the model or those settings.
 **Write-up and demo day**
 - [x] Evaluation write-up, E1-E4. Results are zero-shot: never in the same table as CapERA's trained models without
   saying so. The references are one human caption plus four paraphrases. Done 2026-11-27:
-  [`docs/part_a_evaluation.md`](docs/part_a_evaluation.md); every number checked against the result files
-- [ ] (team) Slides. CapERA has no stated licence: confirm before showing its reference captions outside the course
-- [ ] (team) Demo rehearsal
+  [`docs/evaluation.md`](docs/evaluation.md); every number checked against the result files
+- [x] (team) Slides. CapERA has no stated licence: confirm before showing its reference captions outside the course.
+  Done (reported by the authors, 2026-11-27)
+- [x] (team) Demo rehearsal. Done (reported by the authors, 2026-11-27)
 
 ---
 
