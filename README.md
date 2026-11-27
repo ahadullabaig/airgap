@@ -118,7 +118,8 @@ The NLP part of the project is an offline command-line tool, in progress. Pointe
 | [`run_mission.py`](demo/run_mission.py): windows, report, uncertain items | Run with no network on three 3-minute demo videos (Wikimedia Commons, [`DATA.md`](DATA.md)): 24-34 s each, 1.1 GB of GPU memory ([`results/demo/`](results/demo)) |
 | **E2:** event recognition over 25 classes, zero-shot, all 1,391 test clips | Done: accuracy 0.410, macro-F1 0.370 (always answering the largest class: 0.111 and 0.008); 0.35 s per clip ([`results/e2/scores_test.json`](results/e2/scores_test.json)) |
 | **E3:** the reports against event lists written before the runs | 3 of 8 main events named (the flood is never mentioned); 51 of 90 captions fully right, 2 invented ([`results/e3/scores.json`](results/e3/scores.json)). Reference and scoring by Claude, at the authors' request |
-| **E4:** error analysis | 50 clips chosen for the team to tag ([`eval/e4.py`](eval/e4.py)) |
+| **E4:** error analysis | 50 failure cases tagged from text: most misread the overhead view (a flooded road as sand dunes, a track as a parking lot); 9 of the 27 picked for a low caption score are fair captions the metric undervalued ([`results/e4/counts.json`](results/e4/counts.json)) |
+| **Write-up** | E1-E4 with every number from the result files: [`docs/part_a_evaluation.md`](docs/part_a_evaluation.md) |
 
 <sub>E1's prompt was chosen on 100 training clips and E2's on 200, each before its own test run. CapERA's five references per clip are one human caption and four paraphrases of it, and CapERA's own benchmark models are trained on it, so these zero-shot numbers are not comparable with theirs.</sub>
 

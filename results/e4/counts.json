@@ -1,0 +1,347 @@
+{
+ "sheet": "results/e4/tags.csv",
+ "rows": 50,
+ "note": "a sample of failures (E2 errors and each class's lowest E1 captions), not the test split",
+ "tags": {
+  "small_objects": {
+   "rows": 7,
+   "by_pick": {
+    "e2_wrong": 5,
+    "e1_low": 2
+   },
+   "e2_wrong": 7,
+   "classes": {
+    "Cycling": 2,
+    "Concert": 1,
+    "Harvesting": 1,
+    "Running": 1,
+    "Swimming": 1,
+    "TrafficCollision": 1
+   }
+  },
+  "counting": {
+   "rows": 2,
+   "by_pick": {
+    "e1_low": 2
+   },
+   "e2_wrong": 2,
+   "classes": {
+    "Cycling": 1,
+    "Swimming": 1
+   }
+  },
+  "viewpoint": {
+   "rows": 13,
+   "by_pick": {
+    "e2_wrong": 7,
+    "e1_low": 6
+   },
+   "e2_wrong": 9,
+   "classes": {
+    "CarRacing": 2,
+    "Flood": 2,
+    "Mudslide": 2,
+    "Basketball": 1,
+    "Boating": 1,
+    "PostEarthquake": 1,
+    "ReligiousActivity": 1,
+    "Running": 1,
+    "Soccer": 1,
+    "TrafficCongestion": 1
+   }
+  },
+  "invented_objects": {
+   "rows": 6,
+   "by_pick": {
+    "e1_low": 3,
+    "e2_wrong": 3
+   },
+   "e2_wrong": 5,
+   "classes": {
+    "Boating": 1,
+    "Mudslide": 1,
+    "Party": 1,
+    "ReligiousActivity": 1,
+    "Running": 1,
+    "Swimming": 1
+   }
+  },
+  "wrong_event": {
+   "rows": 44,
+   "by_pick": {
+    "e2_wrong": 23,
+    "e1_low": 21
+   },
+   "e2_wrong": 40,
+   "classes": {
+    "CarRacing": 2,
+    "Conflict": 2,
+    "Cycling": 2,
+    "Fire": 2,
+    "Flood": 2,
+    "Harvesting": 2,
+    "Landslide": 2,
+    "Mudslide": 2,
+    "NonEvent": 2,
+    "ParadeProtest": 2,
+    "Party": 2,
+    "Ploughing": 2,
+    "PoliceChase": 2,
+    "PostEarthquake": 2,
+    "ReligiousActivity": 2,
+    "Running": 2,
+    "Swimming": 2,
+    "TrafficCollision": 2,
+    "TrafficCongestion": 2,
+    "Baseball": 1,
+    "Basketball": 1,
+    "Boating": 1,
+    "Concert": 1,
+    "Constructing": 1,
+    "Soccer": 1
+   }
+  },
+  "acceptable": {
+   "rows": 16,
+   "by_pick": {
+    "e2_wrong": 7,
+    "e1_low": 9
+   },
+   "e2_wrong": 13,
+   "classes": {
+    "Conflict": 2,
+    "Ploughing": 2,
+    "Baseball": 1,
+    "Basketball": 1,
+    "Concert": 1,
+    "Constructing": 1,
+    "Fire": 1,
+    "Harvesting": 1,
+    "NonEvent": 1,
+    "ParadeProtest": 1,
+    "Party": 1,
+    "ReligiousActivity": 1,
+    "Swimming": 1,
+    "TrafficCongestion": 1
+   }
+  },
+  "other": {
+   "rows": 9,
+   "by_pick": {
+    "e2_wrong": 3,
+    "e1_low": 6
+   },
+   "e2_wrong": 7,
+   "classes": {
+    "Baseball": 2,
+    "Conflict": 2,
+    "NonEvent": 2,
+    "Landslide": 1,
+    "ReligiousActivity": 1,
+    "Soccer": 1
+   }
+  }
+ },
+ "notes": [
+  {
+   "id": "Baseball_047.mp4",
+   "note": "label boundary: the references do not name the class; the caption is fair to them"
+  },
+  {
+   "id": "Baseball_033.mp4",
+   "note": "too generic: people holding a stick; baseball is not named"
+  },
+  {
+   "id": "Basketball_039.mp4",
+   "note": "the caption also says soccer: the court read as a soccer field"
+  },
+  {
+   "id": "Basketball_015.mp4",
+   "note": "names the basketball hoop; fair"
+  },
+  {
+   "id": "Boating_014.mp4",
+   "note": "a person on the ground taking pictures, no boating; the camera has no counterpart"
+  },
+  {
+   "id": "Boating_028.mp4",
+   "note": "paddles right, but the people are put on the ground rather than on the water"
+  },
+  {
+   "id": "CarRacing_009.mp4",
+   "note": "parked vehicles in a parking lot: the track read as a lot, no racing"
+  },
+  {
+   "id": "CarRacing_001.mp4",
+   "note": "cars in a parking lot: the track read as a lot, no racing"
+  },
+  {
+   "id": "Concert_044.mp4",
+   "note": "city, road and cars; the audience and the concert are missed by both outputs"
+  },
+  {
+   "id": "Concert_021.mp4",
+   "note": "people gathered outdoors; fair"
+  },
+  {
+   "id": "Conflict_002.mp4",
+   "note": "label boundary: E2's 'parade or protest' is consistent with the references; the marching crowd is fair"
+  },
+  {
+   "id": "Conflict_011.mp4",
+   "note": "label boundary: the references do not show a conflict; the street crowd is fair"
+  },
+  {
+   "id": "Constructing_045.mp4",
+   "note": "bridge and road right; construction is not named"
+  },
+  {
+   "id": "Constructing_003.mp4",
+   "note": "tower, cranes and construction equipment; fair"
+  },
+  {
+   "id": "Cycling_034.mp4",
+   "note": "the cyclist read as a person walking"
+  },
+  {
+   "id": "Cycling_018.mp4",
+   "note": "one person walking: the cyclists misread and miscounted"
+  },
+  {
+   "id": "Fire_043.mp4",
+   "note": "people looking at the fire; fair"
+  },
+  {
+   "id": "Fire_042.mp4",
+   "note": "a car and a truck driving; the fire is not named"
+  },
+  {
+   "id": "Flood_030.mp4",
+   "note": "the car is right; the floodwater read as sand dunes"
+  },
+  {
+   "id": "Flood_022.mp4",
+   "note": "people and cars on an ordinary road: the flooded road read as dry"
+  },
+  {
+   "id": "Harvesting_058.mp4",
+   "note": "tractors and a trailer; fair, though harvesting is not named"
+  },
+  {
+   "id": "Harvesting_021.mp4",
+   "note": "the farm vehicles read as two cars"
+  },
+  {
+   "id": "Landslide_020.mp4",
+   "note": "a person and rocks; the landslide is not named"
+  },
+  {
+   "id": "Landslide_041.mp4",
+   "note": "label boundary: E2's 'flood' is partly consistent with the references; the caption sees a river among rocks"
+  },
+  {
+   "id": "Mudslide_031.mp4",
+   "note": "the mud-covered road read as an ordinary road with a car"
+  },
+  {
+   "id": "Mudslide_027.mp4",
+   "note": "the mud read as a sandy beach; the boat has no counterpart"
+  },
+  {
+   "id": "NonEvent_092.mp4",
+   "note": "label boundary: E2's 'soccer' is consistent with the references; the caption is fair"
+  },
+  {
+   "id": "NonEvent_131.mp4",
+   "note": "too generic: 'a drone flying over a residential area'"
+  },
+  {
+   "id": "ParadeProtest_039.mp4",
+   "note": "a large crowd in a square; fair"
+  },
+  {
+   "id": "ParadeProtest_006.mp4",
+   "note": "people on a sidewalk; the protest is not named"
+  },
+  {
+   "id": "Party_014.mp4",
+   "note": "people with cameras photographing 'people in the air'; the cameras have no counterpart"
+  },
+  {
+   "id": "Party_037.mp4",
+   "note": "a crowd throwing coloured powder: fair, yet CIDEr 0.004 (a metric failure)"
+  },
+  {
+   "id": "Ploughing_034.mp4",
+   "note": "a tractor on a muddy field; fair"
+  },
+  {
+   "id": "Ploughing_028.mp4",
+   "note": "a tractor pulling a trailer; fair, though it says 'dirt road'"
+  },
+  {
+   "id": "PoliceChase_009.mp4",
+   "note": "two cars, colours right; the chase is not named"
+  },
+  {
+   "id": "PoliceChase_006.mp4",
+   "note": "two people standing; the police action is not named"
+  },
+  {
+   "id": "PostEarthquake_019.mp4",
+   "note": "the earthquake damage read as an intact snowy village"
+  },
+  {
+   "id": "PostEarthquake_035.mp4",
+   "note": "people walking near a church; the damage is not named"
+  },
+  {
+   "id": "ReligiousActivity_009.mp4",
+   "note": "the gathering read as a stadium crowd; the waving flags have no counterpart"
+  },
+  {
+   "id": "ReligiousActivity_020.mp4",
+   "note": "label boundary: E2's 'parade' is consistent with the references; the caption repeats a clause"
+  },
+  {
+   "id": "Running_013.mp4",
+   "note": "the runners read as cyclists"
+  },
+  {
+   "id": "Running_069.mp4",
+   "note": "running read as walking; the track read as a road; 'holding hands' has no counterpart"
+  },
+  {
+   "id": "Soccer_025.mp4",
+   "note": "the pitch read as a sand pit"
+  },
+  {
+   "id": "Soccer_038.mp4",
+   "note": "repeats 'people standing / sitting on the ground' until the token limit"
+  },
+  {
+   "id": "Swimming_020.mp4",
+   "note": "the swimmer read as a person on the beach; the camera has no counterpart"
+  },
+  {
+   "id": "Swimming_018.mp4",
+   "note": "swimming right; miscounted"
+  },
+  {
+   "id": "TrafficCollision_035.mp4",
+   "note": "a large vehicle read as a car; the collision is not named"
+  },
+  {
+   "id": "TrafficCollision_008.mp4",
+   "note": "cars and people on a road; the collision is not named"
+  },
+  {
+   "id": "TrafficCongestion_046.mp4",
+   "note": "the jammed road read as a parking lot"
+  },
+  {
+   "id": "TrafficCongestion_007.mp4",
+   "note": "cars on a road, some stopped; fair"
+  }
+ ]
+}

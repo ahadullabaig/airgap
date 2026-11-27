@@ -6,7 +6,9 @@ Two outcomes from one codebase:
 - **Part B (Parallel Programming course):** a research paper.
 
 **Done means:**
-- Part A: the acceptance test (2.4) passes and the evaluation (2.5) is written up.
+- Part A: the acceptance test (2.4) is run and its result reported, and the evaluation (2.5) is written up.
+  Changed 2026-11-27 by the authors from "the acceptance test passes": the demo was frozen as run, and naming the
+  main events fails on all three demo videos (E3), which the write-up reports.
 - Part B: a complete paper with the floor contributions (3.3), every number traceable to a result file. The ceiling is included only if the decision gate passed.
 
 ## 0. Confirmed and assumed
@@ -143,8 +145,9 @@ before any report is generated, and E2-E4 run on the frozen demo.
 - [x] Runs on all three videos (2026-11-27, before any freeze; nothing was tuned on them)
 - [ ] Acceptance test (2.4): fresh terminal, `unshare -rn`, `HF_HUB_OFFLINE=1`; each report names its video's main
   events. Run 2026-11-27: the offline one-command part passes on all three videos. Naming the main events fails
-  on two of three (E3): OR58 names 1 of 3 (the crane lifting the cab; not the wreck or the trailer), the flood
-  video 0 of 2 (flooding is never mentioned), surfing 2 of 3
+  on all three under the committed E3 rule: OR58 names 1 of 3 (the crane lifting the cab; not the wreck or the
+  trailer), the flood video 0 of 2 (flooding is never mentioned), surfing 2 of 3 (it would pass only on the lenient,
+  post hoc reading). Commit 129279e's message says "two of three"; that was wrong
 - [x] Freeze the demo (tag the commit). Frozen as it is, 2026-11-27, by the authors' decision: tag `demo-frozen`,
   the version E3 scored. Any later change to the demo is post hoc for the three demo videos and must be labelled so
 - [ ] (team) Screen recording of a successful run, as the demo-day fallback
@@ -167,13 +170,17 @@ not wait for the demo. Rerun it if the demo changes the model or those settings.
 - [x] E4: pick about 50 clips across classes (E2's misclassifications plus E1's lowest-CIDEr captions). 50 clips,
   two per class (`eval/e4.py select`, rule in its docstring); 40 of them are E2 errors. The team tags
   `results/e4/tags.csv`; `eval/e4.py show` prints each clip's video path, references and our outputs
-- [ ] (team) E4: tag each by failure type (small objects, counting, viewpoint, invented objects, wrong event); counts;
-  five good and five bad examples
-- [ ] Latency and peak VRAM reported next to the quality numbers
+- [x] (team) E4: tag each by failure type (small objects, counting, viewpoint, invented objects, wrong event); counts;
+  five good and five bad examples. Done 2026-11-27 by Claude at the authors' request, from text only (references,
+  caption, E2 answer; no ERA frame viewed), by definitions written before tagging. A criterion for misreads was added
+  after a first pass (post hoc) and all rows were re-tagged with it; everything was committed together with the tags. Viewpoint 13, small objects 7, invented objects 6, counting 2, acceptable
+  16 of 50 (`results/e4/counts.json`); examples in the write-up
+- [x] Latency and peak VRAM reported next to the quality numbers (write-up section 7)
 
 **Write-up and demo day**
-- [ ] Evaluation write-up, E1-E4. Results are zero-shot: never in the same table as CapERA's trained models without
-  saying so. The references are one human caption plus four paraphrases
+- [x] Evaluation write-up, E1-E4. Results are zero-shot: never in the same table as CapERA's trained models without
+  saying so. The references are one human caption plus four paraphrases. Done 2026-11-27:
+  [`docs/part_a_evaluation.md`](docs/part_a_evaluation.md); every number checked against the result files
 - [ ] (team) Slides. CapERA has no stated licence: confirm before showing its reference captions outside the course
 - [ ] (team) Demo rehearsal
 

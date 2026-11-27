@@ -27,6 +27,27 @@ our outputs: the E1 caption and the E2 answer. Put 1 in every column that applie
   other             anything else; say what in notes
 Fill tagger with your initials on each row you have tagged; `count` refuses a sheet with any row untagged.
 
+Text-only tagging (decided 2026-11-27 by the authors, written before any row was tagged). Claude tagged the 50
+rows from text alone: the five CapERA references, the E1 caption and the E2 answer, without viewing any ERA frame
+(the ERA terms keep frames out of outside services). So each tag is an inference from the references:
+  small_objects     the references name people, vehicles or boats that both outputs miss or misread
+  counting          an output's number or amount conflicts with the references
+  viewpoint         an output misreads the scene in a way typical of the overhead view (shapes or scale), as the
+                    references show
+  invented_objects  an output names something that contradicts the scene the references describe (being absent
+                    from five short references alone is not enough)
+  wrong_event       as above; for the caption, it names a different event from the references'
+  acceptable        the caption agrees with the references in substance despite its low score
+  other             e.g. a caption too generic to be wrong, or one that repeats itself; say what in notes
+The tagger field reads "Claude (text only)".
+Re-applied once, literally, before the counts were reported (2026-11-27), with one criterion for misreads, written
+after a first pass (post hoc): a person,
+vehicle or boat the references name, missed or read as another person or vehicle by both outputs, is small_objects;
+a misread surface or place (water, mud, a court, a track, rubble, a plaza) is viewpoint; something named with no
+counterpart in the references' scene (a camera, flags, a boat on a beach) is invented_objects. A caption that names
+a different activity from the class gets wrong_event even when E2 was right. Notes judge our outputs against the
+class name and never restate the references; notes that do are kept in results/e4/raw/ (git-ignored).
+
 Counts (results/e4/counts.json): how many rows carry each tag, overall, by why the row was picked, and by
 whether E2 got it wrong; the classes behind each tag; the notes. If two people tag, each fills their own copy (tags_<initials>.csv); the
 counts then come from the first sheet given, and the agreement per tag between the two is added (share of rows
