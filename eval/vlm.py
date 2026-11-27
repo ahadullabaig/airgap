@@ -44,13 +44,30 @@ class Captioner:
         return inp
 
     @torch.inference_mode()
-    def generate(self, inp, max_new_tokens: int) -> dict:
+    def generate(self, inp, max_new_tokens: int, logprobs: bool = False) -> dict:
+        """Greedy generation. With logprobs, also the mean log-probability of the generated tokens other than
+        special tokens (the demo's confidence score); the tokens chosen are the same either way."""
         torch.cuda.synchronize()
         t0 = time.perf_counter()
-        out = self.model.generate(**inp, max_new_tokens=max_new_tokens, do_sample=False)
+        out = self.model.generate(**inp, max_new_tokens=max_new_tokens, do_sample=False,
+                                  return_dict_in_generate=logprobs, output_scores=logprobs)
         torch.cuda.synchronize()
         t = time.perf_counter() - t0
-        new = out[0, inp["input_ids"].shape[1]:]
-        return {"caption": self.processor.decode(new, skip_special_tokens=True).strip(),
-                "new_tokens": int(new.shape[0]), "prompt_tokens": int(inp["input_ids"].shape[1]),
-                "truncated": int(new.shape[0]) >= max_new_tokens, "generate_s": t}
+        seq = out.sequences if logprobs else out
+        new = seq[0, inp["input_ids"].shape[1]:]
+        res = {"caption": self.processor.decode(new, skip_special_tokens=True).strip(),
+               "new_tokens": int(new.shape[0]), "prompt_tokens": int(inp["input_ids"].shape[1]),
+               "truncated": int(new.shape[0]) >= max_new_tokens, "generate_s": t}
+        if logprobs:
+            lp = self.model.compute_transition_scores(out.sequences, out.scores, normalize_logits=True)[0].float()
+            special = torch.tensor([int(i) not in self.processor.tokenizer.all_special_ids for i in new],
+                                   device=lp.device)
+            res["mean_logprob"] = float(lp[special].mean()) if special.any() else float("nan")
+        return res
+
+    def text_inputs(self, prompt: str):
+        """A text-only chat message (no images), for the report's summary."""
+        text = self.processor.apply_chat_template(
+            [{"role": "user", "content": [{"type": "text", "text": prompt}]}], add_generation_prompt=True)
+        inp = self.processor(text=text, return_tensors="pt").to("cuda")
+        return inp

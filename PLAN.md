@@ -114,14 +114,23 @@ before any report is generated, and E2-E4 run on the frozen demo.
 - [ ] (team) Name E3's scorers (two, if possible, for agreement)
 
 **Demo build (2.3, 2.4)**
-- [ ] Windowing: window length, frames per window and prompt. Start from E1's frozen settings (P1, 4 frames, no
-  image splitting, greedy, 48 new tokens)
-- [ ] "Uncertain items": choose the source (low mean token log-probability, or disagreement between neighbouring
-  windows) and its threshold
-- [ ] Report: fixed Markdown template (timeline table, notable events, uncertain items); the language model writes
-  only the summary paragraph
-- [ ] `run_mission.py --video X --offline`: one command; logs latency per window and peak VRAM
-- [ ] First full run on one video; set the time budget for a live run
+- [x] Windowing: window length, frames per window and prompt. Start from E1's frozen settings (P1, 4 frames, no
+  image splitting, greedy, 48 new tokens). Decided 2026-11-27: E1's settings unchanged; the video is cut into
+  round(duration / 6 s) equal windows, so no short tail is left
+- [x] "Uncertain items": choose the source (low mean token log-probability, or disagreement between neighbouring
+  windows) and its threshold. Decided 2026-11-27: mean token log-probability below -0.879, the 10th percentile on
+  E1's 100 train selection clips (`demo/uncertainty.json`; the calibration reproduced E1's captions exactly)
+- [x] Report: fixed Markdown template (timeline table, notable events, uncertain items); the language model writes
+  only the summary paragraph. Notable events: captions containing a word from a fixed list built from ERA's 25
+  event classes (`EVENTS` in `demo/run_mission.py`), runs of windows joined
+- [x] `run_mission.py --video X --offline`: one command; logs latency per window and peak VRAM
+  (`demo/run_mission.py`; `--offline` also makes Python-level internet connections fail; `unshare -rn` is the
+  guarantee)
+- [ ] First full run on one video; set the time budget for a live run. Development runs (2026-11-27, under
+  `unshare -rn`), not demo videos: Sheboygan Falls (1:38, 720p) in 16.4 s, 0.82 s per window of which 0.23 s is
+  decoding; 25 ERA train clips joined (2:23, 640x640) in 18.7 s, 0.62 s per window; 1.1 GB peak GPU memory; 17-19%
+  of windows flagged uncertain. Decoding 1080p or 4K is unmeasured. The summary paragraph invents and reorders
+  events on both, which E3 will count
 - [ ] Runs on all three videos
 - [ ] Acceptance test (2.4): fresh terminal, `unshare -rn`, `HF_HUB_OFFLINE=1`; each report names its video's main
   events
@@ -139,7 +148,9 @@ not wait for the demo. Rerun it if the demo changes the model or those settings.
   0.386]; 54 of 1,391 answers match no name; 8 classes are never predicted (`results/e2/scores_test.json`)
 - [ ] (team) E3: score the three reports against the event lists: events found, events claimed that are not in the
   video, timestamps in the right window; agreement if two scorers
-- [ ] E4: pick about 50 clips across classes (E2's misclassifications plus E1's lowest-CIDEr captions)
+- [x] E4: pick about 50 clips across classes (E2's misclassifications plus E1's lowest-CIDEr captions). 50 clips,
+  two per class (`eval/e4.py select`, rule in its docstring); 40 of them are E2 errors. The team tags
+  `results/e4/tags.csv`; `eval/e4.py show` prints each clip's video path, references and our outputs
 - [ ] (team) E4: tag each by failure type (small objects, counting, viewpoint, invented objects, wrong event); counts;
   five good and five bad examples
 - [ ] Latency and peak VRAM reported next to the quality numbers

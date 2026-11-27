@@ -115,9 +115,9 @@ The NLP part of the project is an offline command-line tool, in progress. Pointe
 |---|---|
 | Model captions a clip with the network off | Done ([`demo/caption_clip.py`](demo/caption_clip.py)) |
 | **E1:** caption quality, zero-shot, all 1,391 CapERA test clips | Done: CIDEr 0.210, BLEU-4 0.059, METEOR 0.168, ROUGE-L 0.304; median 0.66 s per clip ([`results/e1/scores_test.json`](results/e1/scores_test.json)) |
-| `run_mission.py`: windows, report, uncertain items | Next |
+| [`run_mission.py`](demo/run_mission.py): windows, report, uncertain items | Built and run with no network on two development videos: 16 s for 1:38 of 720p, 19 s for 2:23 of 640x640; 1.1 GB of GPU memory. Waiting for the three demo videos; the time budget is set on the first |
 | **E2:** event recognition over 25 classes, zero-shot, all 1,391 test clips | Done: accuracy 0.410, macro-F1 0.370 (always answering the largest class: 0.111 and 0.008); 0.35 s per clip ([`results/e2/scores_test.json`](results/e2/scores_test.json)) |
-| **E3, E4:** scoring the reports; error analysis | After the demo is frozen |
+| **E3, E4:** scoring the reports; error analysis | E4: 50 clips chosen for the team to tag ([`eval/e4.py`](eval/e4.py)); E3 after the demo videos |
 
 <sub>E1's prompt was chosen on 100 training clips and E2's on 200, each before its own test run. CapERA's five references per clip are one human caption and four paraphrases of it, and CapERA's own benchmark models are trained on it, so these zero-shot numbers are not comparable with theirs.</sub>
 
@@ -185,8 +185,8 @@ kernels/
   microbench/    measured FMA, DRAM and launch limits
   smoke/         toolchain check
 bench/           Python drivers: PyTorch baselines, predictions, clock pin, X2 breakdown, ERA scans, token traces
-eval/            captioner evaluation (E1, E2), caption-level gating check, encoder profile
-demo/            offline captioning of one clip; frame decoding
+eval/            captioner evaluation (E1, E2, E4 selection), caption-level gating check, encoder profile
+demo/            the offline mission report (run_mission.py), one-clip captioning, frame decoding
 results/         committed result files: every number and figure is generated from these
 plots/           working plots from the experiments; the paper's figures supersede them
 paper/           the manuscript, number and figure generators, number-to-source map

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Two course projects on one codebase, both on one RTX 3050 Laptop GPU (4 GB, 16 SMs, `sm_86`):
 
 - **Part B (Parallel Programming): a paper**, "Fewer Frames Beat Smarter Kernels" (`paper/`, full draft). FP32 attention kernels V1 (naive), V2 (tiled) and V3 (fused, online softmax) at the SmolVLM2 vision encoder's shape (12 heads, N = 1024, d = 64), plus a measured section on why temporal gating does not pay.
-- **Part A (NLP): an offline aerial-video captioner** on SmolVLM2-500M, with evaluations E1-E4. Only the one-clip captioner, E1 and E2 exist; `PLAN.md` section 2.6 is the checklist for the rest (`run_mission.py`, E3, E4).
+- **Part A (NLP): an offline aerial-video captioner** on SmolVLM2-500M, with evaluations E1-E4. The demo (`demo/run_mission.py`), E1 and E2 exist, and E4's 50 clips are chosen; `PLAN.md` section 2.6 is the checklist for the rest (demo videos, E3, E4 tagging).
 
 `PLAN.md` holds every decision with its date, including the gate decision (section 3.3): the gated kernel G1 is future work. `DATA.md` lists the data sources and their terms.
 
@@ -65,8 +65,11 @@ make -C kernels/microbench run                     # FMA, DRAM and launch limits
 .venv/bin/python -I bench/check_bench_schema.py results/attention/*.json
 
 # Evaluations: subcommands, resumable
+# Demo: one offline report per video (default output results/demo/<video name>/report.md and run.json)
+unshare -rn .venv/bin/python -I demo/run_mission.py --video data/clips/x.mp4 --offline [--out DIR]
 .venv/bin/python -I eval/e1.py {precheck,select,run,memory,score}
 .venv/bin/python -I eval/e2.py {select,run,score}
+.venv/bin/python -I eval/e4.py {select,show,count}       # E4: 50 clips for the team to tag
 .venv/bin/python -I eval/gate_captions.py {check,run,score}
 
 # Paper
@@ -144,7 +147,9 @@ Use this section when either check under [Which machine](#which-machine) fails.
   - `coco_scores`: BLEU, METEOR, ROUGE-L and CIDEr via pycocoevalcap.
 - `eval/e2.py`: `parse`, the frozen answer-matching rule. E4 draws E2's misclassifications from `results/e2/per_clip_test.json`.
 - `eval/gate_captions.py`: `interval` (bootstrap, 10,000 resamples, seed 0) and `chord` (equal-cost interpolation).
-- The demo starts from E1's frozen settings in `eval/e1_config.json`: prompt P1, 4 frames, no image splitting, greedy decoding, 48 new tokens.
+- `demo/run_mission.py` reads E1's frozen settings from `eval/e1_config.json` (prompt P1, 4 frames, no image splitting, greedy decoding, 48 new tokens) and the uncertainty cutoff from `demo/uncertainty.json`. Its event words (`EVENTS`) and cutoff were fixed before any demo video was run; changing either after a demo video has been run is post hoc.
+- `Captioner.generate(..., logprobs=True)` adds the caption's mean token log-probability without changing the caption; `Captioner.text_inputs` builds a text-only prompt.
+- Develop the demo on footage that is not a demo video (`data/clips/sheboygan_falls.webm`, or ERA train clips joined in a scratch folder), and send development output outside `results/`.
 - For E3, each demo video's event list must be written and committed before any report is generated for it.
 
 **Paper edits.**

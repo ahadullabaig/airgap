@@ -1,0 +1,14 @@
+{
+ "frozen": "2026-11-27T15:07:22+0530",
+ "score": "mean token log-probability of the caption",
+ "rule": "uncertain when below the 10th percentile on E1's 100 train selection clips",
+ "cutoff": -0.8792532682418823,
+ "clips": 100,
+ "percentile": 10,
+ "train_scores": {
+  "min": -1.2078585624694824,
+  "median": -0.7142153084278107,
+  "max": -0.3103252649307251
+ },
+ "captions_identical_to_e1": true
+}
